@@ -12,3 +12,6 @@ Halcyon codebase and report an issue relating to their code, the issue will be c
 ## Build Status
 ###### Current status: [![Build status](https://ci.appveyor.com/api/projects/status/wwse7uifn3dje44f?svg=true)](https://ci.appveyor.com/project/emperorstarfinder/my-halcyon) 
 ###### Master branch: [![Build status](https://ci.appveyor.com/api/projects/status/wwse7uifn3dje44f/branch/master?svg=true)](https://ci.appveyor.com/project/emperorstarfinder/my-halcyon/branch/master)
+
+## Security Scanning
+###### Codacy Status: [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7af231ecd2f440bead1f2f800a1f43c6)](https://www.codacy.com/app/emperorstarfinder/My-Halcyon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=emperorstarfinder/My-Halcyon&amp;utm_campaign=Badge_Grade)
