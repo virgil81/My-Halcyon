@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\OpenSim.Region.Physics.BasicPhysicsPlugin.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\OpenSim.Region.Physics.BasicPhysicsPlugin.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\BasicPhysicsPlugin\obj\x64\Debug\OpenSim.Region.Physics.BasicPhysicsPlugin.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\BasicPhysicsPlugin\obj\x64\Debug\OpenSim.Region.Physics.BasicPhysicsPlugin.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\BasicPhysicsPlugin\obj\x64\Debug\OpenSim.Region.Physics.BasicPhysicsPlugin.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\BasicPhysicsPlugin\obj\x64\Debug\OpenSim.Region.Physics.BasicPhysicsPlugin.pdb

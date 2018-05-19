@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.Data.Inventory.Cassandra.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.Data.Inventory.Cassandra.pdb
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Data.Inventory.Cassandra\obj\x64\Debug\InWorldz.Data.Inventory.Cassandra.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Data.Inventory.Cassandra\obj\x64\Debug\InWorldz.Data.Inventory.Cassandra.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Data.Inventory.Cassandra\obj\x64\Debug\InWorldz.Data.Inventory.Cassandra.dll
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Data.Inventory.Cassandra\obj\x64\Debug\InWorldz.Data.Inventory.Cassandra.pdb

@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Data.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Data.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Data\obj\x64\Debug\OpenSim.Data.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Data\obj\x64\Debug\OpenSim.Data.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Data\obj\x64\Debug\OpenSim.Data.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Data\obj\x64\Debug\OpenSim.Data.pdb

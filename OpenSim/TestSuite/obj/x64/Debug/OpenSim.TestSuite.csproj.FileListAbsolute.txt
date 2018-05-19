@@ -1,0 +1,5 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.TestSuite.exe
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.TestSuite.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\TestSuite\obj\x64\Debug\OpenSim.TestSuite.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\TestSuite\obj\x64\Debug\OpenSim.TestSuite.exe
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\TestSuite\obj\x64\Debug\OpenSim.TestSuite.pdb

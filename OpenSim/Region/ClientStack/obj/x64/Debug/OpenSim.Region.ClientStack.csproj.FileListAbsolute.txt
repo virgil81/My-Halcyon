@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ClientStack.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ClientStack.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\obj\x64\Debug\OpenSim.Region.ClientStack.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\obj\x64\Debug\OpenSim.Region.ClientStack.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\obj\x64\Debug\OpenSim.Region.ClientStack.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\obj\x64\Debug\OpenSim.Region.ClientStack.pdb

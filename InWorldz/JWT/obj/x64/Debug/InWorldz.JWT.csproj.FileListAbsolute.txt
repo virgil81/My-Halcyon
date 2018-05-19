@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.JWT.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.JWT.pdb
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\JWT\obj\x64\Debug\InWorldz.JWT.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\JWT\obj\x64\Debug\InWorldz.JWT.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\JWT\obj\x64\Debug\InWorldz.JWT.dll
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\JWT\obj\x64\Debug\InWorldz.JWT.pdb

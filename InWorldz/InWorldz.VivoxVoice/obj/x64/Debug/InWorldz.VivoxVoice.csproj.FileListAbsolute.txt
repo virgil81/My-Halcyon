@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.VivoxVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.VivoxVoice.pdb
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.VivoxVoice\obj\x64\Debug\InWorldz.VivoxVoice.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.VivoxVoice\obj\x64\Debug\InWorldz.VivoxVoice.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.VivoxVoice\obj\x64\Debug\InWorldz.VivoxVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.VivoxVoice\obj\x64\Debug\InWorldz.VivoxVoice.pdb

@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Serialization.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Serialization.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Serialization\obj\x64\Debug\OpenSim.Framework.Serialization.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Serialization\obj\x64\Debug\OpenSim.Framework.Serialization.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Serialization\obj\x64\Debug\OpenSim.Framework.Serialization.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Serialization\obj\x64\Debug\OpenSim.Framework.Serialization.pdb

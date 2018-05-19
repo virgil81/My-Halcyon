@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.RegionLoader.Filesystem.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.RegionLoader.Filesystem.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\RegionLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.RegionLoader.Filesystem.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\RegionLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.RegionLoader.Filesystem.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\RegionLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.RegionLoader.Filesystem.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\RegionLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.RegionLoader.Filesystem.pdb

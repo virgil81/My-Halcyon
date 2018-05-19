@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Statistics.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Statistics.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Statistics\obj\x64\Debug\OpenSim.Framework.Statistics.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Statistics\obj\x64\Debug\OpenSim.Framework.Statistics.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Statistics\obj\x64\Debug\OpenSim.Framework.Statistics.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Statistics\obj\x64\Debug\OpenSim.Framework.Statistics.pdb

@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ScriptEngine.Shared.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ScriptEngine.Shared.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ScriptEngine\Shared\obj\x64\Debug\OpenSim.Region.ScriptEngine.Shared.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ScriptEngine\Shared\obj\x64\Debug\OpenSim.Region.ScriptEngine.Shared.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ScriptEngine\Shared\obj\x64\Debug\OpenSim.Region.ScriptEngine.Shared.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ScriptEngine\Shared\obj\x64\Debug\OpenSim.Region.ScriptEngine.Shared.pdb

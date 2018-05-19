@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\OpenSim.Region.Physics.Meshing.dll
+C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\OpenSim.Region.Physics.Meshing.pdb
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\Meshing\obj\x64\Debug\OpenSim.Region.Physics.Meshing.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\Meshing\obj\x64\Debug\OpenSim.Region.Physics.Meshing.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\Meshing\obj\x64\Debug\OpenSim.Region.Physics.Meshing.dll
+C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\Meshing\obj\x64\Debug\OpenSim.Region.Physics.Meshing.pdb
