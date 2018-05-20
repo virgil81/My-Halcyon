@@ -1,38 +1,35 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <summary>
+///     Copyright (c) InWorldz Halcyon Developers
+///     Copyright (c) Contributors, http://opensimulator.org/
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the OpenSimulator Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </summary>
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using OpenMetaverse;
 using log4net;
-using System.Reflection;
 using OpenSim.Framework;
 using OpenSim.Data.SimpleDB;
 
@@ -48,7 +45,10 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
 
         private ISimpleDB GetConnection()
         {
-            if (_connectionFactory == null) return null;
+            if (_connectionFactory == null)
+            {
+                return null;
+            }
 
             try
             {
@@ -56,8 +56,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             }
             catch (MySql.Data.MySqlClient.MySqlException e)
             {
-                m_log.Info("[GROUPS]: MySQL connection exception: " + e.ToString());
+                m_log.Info("[Groups]: MySQL connection exception: " + e.ToString());
             }
+
             return null;
         }
 
@@ -65,18 +66,18 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             _connectionFactory = connectionFactory;
 
-            m_log.Info("[GROUPS]: Testing database connection");
+            m_log.Info("[Groups]: Testing database connection");
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
                 {
-                    m_log.Info("[GROUPS]: Testing connection failed.");
+                    m_log.Info("[Groups]: Testing connection failed.");
                     return;
                 }
             }
 
-            m_log.Info("[GROUPS]: Testing connection succeeded");
+            m_log.Info("[Groups]: Testing connection succeeded");
         }
 
         #region IGroupDataProvider Members
@@ -86,7 +87,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return UUID.Zero;
+                }
 
                 UUID groupID = UUID.Random();
                 UUID ownerRoleID = UUID.Random();
@@ -143,6 +146,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         bool TestForPower(GroupRequestID requestID, OpenMetaverse.UUID agentID, OpenMetaverse.UUID groupID, ulong power)
         {
             GroupMembershipData membershipData = GetAgentGroupMembership(requestID, agentID, groupID);
+
             if (membershipData == null)
             {
                 return false;
@@ -160,14 +164,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             if (!TestForPower(requestID, requestID.AgentID, groupID, (ulong)GroupPowers.ChangeIdentity))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to change group options", requestID.AgentID);
+                m_log.WarnFormat("[Groups]: {0} No permission to change group options", requestID.AgentID);
                 return;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 string query
                     = "UPDATE osgroup " +
@@ -194,7 +200,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
 
                 db.QueryNoResults(query, parms);
             }
-            
         }
 
         public OpenSim.Framework.GroupRecord GetGroupRecord(GroupRequestID requestID, OpenMetaverse.UUID GroupID, string GroupName)
@@ -202,7 +207,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;
+                }
 
                 string query =  " SELECT osgroup.GroupID, osgroup.Name, Charter, InsigniaID, FounderID, MembershipFee, " +
                                     "OpenEnrollment, ShowInList, AllowPublish, MaturePublish, OwnerRoleID " +
@@ -238,18 +245,12 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                     return this.MapGroupRecordFromResult(results[0]);
                 }
 
-                // string trace = Environment.StackTrace;
-                // m_log.WarnFormat("[GROUPS]: GetGroupRecord: Could not find exact match for {0} '{1}':", GroupID, GroupName);
-                // m_log.Warn(trace);
                 return null;
             }
         }
 
         private OpenSim.Framework.GroupRecord MapGroupRecordFromResult(Dictionary<string, string> result)
         {
-            //osgroup.GroupID, osgroup.Name, Charter, InsigniaID, FounderID, MembershipFee, " +
-            //"OpenEnrollment, ShowInList, AllowPublish, MaturePublish, OwnerRoleID
-
             OpenSim.Framework.GroupRecord record = new OpenSim.Framework.GroupRecord();
             record.GroupID = new UUID(result["GroupID"]);
             record.GroupName = result["Name"];
@@ -273,12 +274,13 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return replyData;
+                }
 
                 string query = " SELECT osgroup.GroupID, osgroup.Name, count(osgroupmembership.AgentID) as Members " +
                                 " FROM osgroup " +
                                     "LEFT JOIN osgroupmembership ON (osgroup.GroupID = osgroupmembership.GroupID) " +
-                                /*" WHERE MATCH (osgroup.name) AGAINST (?search IN BOOLEAN MODE) " +*/
                                 " WHERE osgroup.name LIKE ?likeSearch " +
                                 " OR osgroup.name REGEXP ?search " +
                                 " OR osgroup.charter LIKE ?likeSearch " +
@@ -290,6 +292,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?likeSearch", "%" + search + "%");
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     replyData.Add(MapGroupReplyDataFromResult(result));
@@ -314,7 +317,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return new List<OpenSim.Framework.GroupMembersData>();
+                }
 
                 string query = " SELECT osgroupmembership.AgentID" +
                                 " , osgroupmembership.Contribution, osgroupmembership.ListInProfile, osgroupmembership.AcceptNotices" +
@@ -338,13 +343,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 //map the group member data first into a dict so that it'll be easy to search to fill
                 //the agent powers
                 Dictionary<string, OpenSim.Framework.GroupMembersData> memberData = new Dictionary<string, OpenSim.Framework.GroupMembersData>();
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     GroupMembersData member = this.MapGroupMemberFromResult(result);
-                    if (member.IsOwner || !ownersOnly)
-                        memberData.Add(result["AgentID"], member);
-                }
 
+                    if (member.IsOwner || !ownersOnly)
+                    {
+                        memberData.Add(result["AgentID"], member);
+                    }
+                }
 
                 //now, assign the agent powers returned
                 query = " SELECT BIT_OR(osrole.Powers) AS AgentPowers, osgrouprolemembership.AgentID " +
@@ -354,6 +362,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                         " GROUP BY osgrouprolemembership.AgentID ";
 
                 results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     if (memberData.ContainsKey(result["AgentID"]))
@@ -369,11 +378,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         }
 
         private OpenSim.Framework.GroupMembersData MapGroupMemberFromResult(Dictionary<string, string> result)
-        {
-            //SELECT osgroupmembership.AgentID" +
-            //" , osgroupmembership.Contribution, osgroupmembership.ListInProfile, osgroupmembership.AcceptNotices" +
-            //" , osgroupmembership.SelectedRoleID, osrole.Title
-            
+        {            
             OpenSim.Framework.GroupMembersData membersData = new OpenSim.Framework.GroupMembersData();
             membersData.AgentID = new UUID(result["AgentID"]);
             membersData.Contribution = Int32.Parse(result["Contribution"]);
@@ -387,14 +392,13 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             return membersData;
         }
 
-        public void AddGroupRole(GroupRequestID requestID, OpenMetaverse.UUID groupID, OpenMetaverse.UUID roleID, string name, 
-            string description, string title, ulong powers, bool skipPermissionTests)
+        public void AddGroupRole(GroupRequestID requestID, OpenMetaverse.UUID groupID, OpenMetaverse.UUID roleID, string name, string description, string title, ulong powers, bool skipPermissionTests)
         {
             if (!skipPermissionTests)
             {
                 if (!TestForPower(requestID, requestID.AgentID, groupID, (ulong)GroupPowers.CreateRole))
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} No permission to add group roles", requestID.AgentID);
+                    m_log.WarnFormat("[Groups]: {0} No permission to add group roles", requestID.AgentID);
                     return;
                 }
             }
@@ -402,7 +406,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 string query
                     =   "INSERT INTO osrole (GroupID, RoleID, Name, Description, Title, Powers) " +
@@ -420,12 +426,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             }
         }
 
-        public void UpdateGroupRole(GroupRequestID requestID, OpenMetaverse.UUID groupID, OpenMetaverse.UUID roleID, 
-            string name, string description, string title, ulong powers)
+        public void UpdateGroupRole(GroupRequestID requestID, OpenMetaverse.UUID groupID, OpenMetaverse.UUID roleID, string name, string description, string title, ulong powers)
         {
             if (!TestForPower(requestID, requestID.AgentID, groupID, (ulong)GroupPowers.RoleProperties))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to change group roles", requestID.AgentID);
+                m_log.WarnFormat("[Groups]: {0} No permission to change group roles", requestID.AgentID);
                 return;
             }
 
@@ -461,7 +466,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db != null)
+                {
                     db.QueryNoResults(query, parms);
+                }
             }
         }
 
@@ -469,14 +476,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             if (!TestForPower(requestID, requestID.AgentID, groupID, (ulong)GroupPowers.DeleteRole))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to remove group roles", requestID.AgentID);
+                m_log.WarnFormat("[Groups]: {0} No permission to remove group roles", requestID.AgentID);
                 return;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 Dictionary<string, object> parms = new Dictionary<string,object>();
                 parms.Add("?groupID", groupID);
@@ -485,8 +494,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 string query = "DELETE FROM osgrouprolemembership WHERE GroupID = ?groupID AND RoleID = ?roleID";
                 db.QueryNoResults(query, parms);
 
-                query = "UPDATE osgroupmembership SET SelectedRoleID = '" +
-                    EVERYONE_ROLEID.ToString() + "' WHERE GroupID = ?groupID AND SelectedRoleID = ?roleID";
+                query = "UPDATE osgroupmembership SET SelectedRoleID = '" + EVERYONE_ROLEID.ToString() + "' WHERE GroupID = ?groupID AND SelectedRoleID = ?roleID";
                 db.QueryNoResults(query, parms);
 
                 query = "DELETE FROM osrole WHERE GroupID = ?groupID AND RoleID = ?roleID";
@@ -501,7 +509,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return foundRoles;
+                }
 
                 string query 
                     =   " SELECT osrole.RoleID, osrole.Name, osrole.Title, osrole.Description, osrole.Powers, " +
@@ -516,11 +526,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?groupID", GroupID);
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     foundRoles.Add(this.MapGroupRolesDataFromResult(result));
                 }
-
             }
 
             return foundRoles;
@@ -528,9 +538,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
 
         private OpenSim.Framework.GroupRolesData MapGroupRolesDataFromResult(Dictionary<string, string> result)
         {
-            //osrole.RoleID, osrole.Name, osrole.Title, osrole.Description, osrole.Powers, " +
-            //count(osgrouprolemembership.AgentID) as Members
-
             OpenSim.Framework.GroupRolesData rolesData = new OpenSim.Framework.GroupRolesData();
             rolesData.RoleID = new UUID(result["RoleID"]);
             rolesData.Name = result["Name"];
@@ -555,15 +562,22 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             parms.Add("?roleID", RoleID);
 
             List<UUID> roleMembersData = new List<UUID>();
+
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return roleMembersData;
+                }
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
+                {
                     roleMembersData.Add(new UUID(result["AgentID"]));
+                }
             }
+
             return roleMembersData;
         }
 
@@ -583,9 +597,12 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return foundMembersData;
+                }
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     foundMembersData.Add(this.MapFoundMembersDataFromResult(result));
@@ -623,7 +640,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             // If the caller intends to allow a group operation for a null group ID (e.g. ActivateGroup),
             // then the caller is the one that needs to check that case and support it.
             if (groupID == UUID.Zero)
+            {
                 return false;   // don't bother making the DB call
+            }
 
             string qIsAgentMember =
                     "SELECT count(AgentID) AS isMember " +
@@ -639,13 +658,15 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             if (isAgentMemberResults.Count == 0)
             {
                 //this shouldnt happen
-                m_log.Error("[GROUPS]: IsAgentMemberOfGroup: Expected at least one record");
+                m_log.Error("[Groups]: IsAgentMemberOfGroup: Expected at least one record");
                 return false;
             }
+
             if (Convert.ToInt32(isAgentMemberResults[0]["isMember"]) > 0)
             {
                 return true;
             }
+
             return false;
         }
 
@@ -654,7 +675,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return false;
+                }
 
                 return IsAgentMemberOfGroup(db, agentID, groupID);
             }
@@ -675,9 +698,12 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return false;
+                }
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 if (results.Count == 0)
                 {
                     return false;
@@ -695,6 +721,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         private bool AgentCanJoinGroup(GroupRequestID requestID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID, OpenMetaverse.UUID RoleID)
         {
             GroupRecord record = GetGroupRecord(requestID, GroupID, null);
+
             if (record == null)
             {
                 return false;
@@ -716,17 +743,18 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             return false;
         }
 
-        public bool AddAgentToGroup(GroupRequestID requestID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID, 
-            OpenMetaverse.UUID RoleID, bool skipPermissionTests)
+        public bool AddAgentToGroup(GroupRequestID requestID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID, OpenMetaverse.UUID RoleID, bool skipPermissionTests)
         {
             if (GroupID == UUID.Zero)
+            {
                 return false;   // not a valid group
+            }
 
             if (!skipPermissionTests)
             {
                 if (!AgentCanJoinGroup(requestID, AgentID, GroupID, RoleID))
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} No permission to join group {1}", AgentID, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} No permission to join group {1}", AgentID, GroupID);
                     return false;
                 }
             }
@@ -734,12 +762,15 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return false;
+                }
 
                 uint numGroups = GetAgentGroupCount(AgentID);
+
                 if (numGroups >= Constants.MaxGroups)
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} Already in {1} groups, cannot join group {2}", AgentID, numGroups, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} Already in {1} groups, cannot join group {2}", AgentID, numGroups, GroupID);
                     return false;
                 }
 
@@ -765,22 +796,28 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             // Extra check needed for group owner removals - cannot remove the Owner role unless you are the user
             GroupRecord groupRec = GetGroupRecord(requestID, GroupID, null);
-            if (groupRec == null) return (int)Constants.GenericReturnCodes.PARAMETER;
+
+            if (groupRec == null)
+            {
+                return (int)Constants.GenericReturnCodes.PARAMETER;
+            }
 
             // Is this the last owner in a group? Don't let group managers shoot themselves in the foot.
             List<UUID> groupOwners = GetGroupMembersWithRole(requestID, GroupID, groupRec.OwnerRoleID);
+
             if (groupOwners.Contains(AgentID))
             {
                 // Sorry Dave, I can't allow you to remove yourself if you are the only owner.
                 if (groupOwners.Count < 2)
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} Cannot remove the only owner {1} in group {2}", RequesterID, AgentID, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} Cannot remove the only owner {1} in group {2}", RequesterID, AgentID, GroupID);
                     return (int)Constants.GenericReturnCodes.PERMISSION;
                 }
+
                 // An owner can only be removed by themselves...
                 if (RequesterID != AgentID)
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} Cannot remove owner {1} of group {2}", RequesterID, AgentID, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} Cannot remove owner {1} of group {2}", RequesterID, AgentID, GroupID);
                     return (int)Constants.GenericReturnCodes.PERMISSION;
                 }
             }
@@ -790,7 +827,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             {
                 if (!this.TestForPower(requestID, RequesterID, GroupID, (ulong)GroupPowers.Eject))
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} No permission to remove {1} from group {2}", RequesterID, AgentID, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} No permission to remove {1} from group {2}", RequesterID, AgentID, GroupID);
                     return (int)Constants.GenericReturnCodes.PERMISSION;
                 }
             }
@@ -798,11 +835,13 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return (int)Constants.GenericReturnCodes.ERROR;
+                }
 
                 if (!IsAgentMemberOfGroup(db, AgentID, GroupID))
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} Cannot remove non-member {1} from group {2}", requestID.AgentID, AgentID, GroupID);
+                    m_log.WarnFormat("[Groups]: {0} Cannot remove non-member {1} from group {2}", requestID.AgentID, AgentID, GroupID);
                     return (int)Constants.GenericReturnCodes.PERMISSION;
                 }
 
@@ -813,7 +852,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 Dictionary<string, object> parms = new Dictionary<string,object>();
                 parms.Add("?agentID", AgentID);
                 parms.Add("?groupID", GroupID);
-
 
                 db.QueryNoResults(query, parms);
                 
@@ -831,12 +869,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             return (int)Constants.GenericReturnCodes.SUCCESS;
         }
 
-        public int AddAgentToGroupInvite(GroupRequestID requestID, OpenMetaverse.UUID inviterID, OpenMetaverse.UUID inviteID, OpenMetaverse.UUID groupID, 
-            OpenMetaverse.UUID roleID, OpenMetaverse.UUID agentID, out string reason)
+        public int AddAgentToGroupInvite(GroupRequestID requestID, OpenMetaverse.UUID inviterID, OpenMetaverse.UUID inviteID, OpenMetaverse.UUID groupID, OpenMetaverse.UUID roleID, OpenMetaverse.UUID agentID, out string reason)
         {
             if (!this.TestForPower(requestID, inviterID, groupID, (ulong)GroupPowers.Invite))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to invite {1} to group {2}", inviterID, agentID, groupID);
+                m_log.WarnFormat("[Groups]: {0} No permission to invite {1} to group {2}", inviterID, agentID, groupID);
                 reason = "You do not have permission to invite others into that group.";
                 return (int)Constants.GenericReturnCodes.PERMISSION;
             }
@@ -845,16 +882,13 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             {
                 if (!CanAddAgentToRole(requestID, inviterID, agentID, groupID, roleID, false))
                 {
-                    m_log.WarnFormat("[GROUPS]: {0} No permission to assign new role for user {1} in group {2}.", inviterID, agentID, groupID);
+                    m_log.WarnFormat("[Groups]: {0} No permission to assign new role for user {1} in group {2}.", inviterID, agentID, groupID);
                     reason = "You do not have permission to invite others into that group role.";
                     return (int)Constants.GenericReturnCodes.PERMISSION;
                 }
             }
 
             // In case they didn't get the IM or just closed it, offer them the invite again even if it's redundant.
-            // if (AgentHasBeenInvitedToGroup(agentID, groupID, roleID))
-            //    return (int)Constants.GenericReturnCodes.NOCHANGE;  // redundant request
-
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
@@ -871,6 +905,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                         reason = "That user is already a member of the group.";
                         return (int)Constants.GenericReturnCodes.NOCHANGE;   // redundant request
                     }
+
                     // See if they are already in that role.
                     if (IsAgentInRole(db, agentID, groupID, roleID))
                     {
@@ -913,7 +948,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;
+                }
 
                 string query =  " SELECT GroupID, RoleID, InviteID, AgentID FROM osgroupinvite" +
                                 " WHERE osgroupinvite.InviteID = ?inviteID";
@@ -922,6 +959,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?inviteID", inviteID);
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 if (results.Count == 1)
                 {
                     return this.MapGroupInviteInfoFromResult(results[0]);
@@ -949,7 +987,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 string query =  " DELETE FROM osgroupinvite " +
                                 " WHERE osgroupinvite.InviteID = ?inviteID";
@@ -978,7 +1018,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             if (agentInRoleResults.Count == 0)
             {
                 //this shouldnt happen
-                m_log.Error("[GROUPS]: IsAgentInRole: Expected at least one record");
+                m_log.Error("[Groups]: IsAgentInRole: Expected at least one record");
                 return false;
             }
             else if (agentInRoleResults[0]["isMember"] == "0")
@@ -994,7 +1034,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         public bool AgentHasOwnerRole(ISimpleDB db, GroupRequestID requestID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID)
         {
             GroupRecord groupInfo = GetGroupRecord(requestID, GroupID, null);
-            if (groupInfo == null) return false;
+
+            if (groupInfo == null)
+            {
+                return false;
+            }
 
             return IsAgentInRole(db, AgentID, GroupID, groupInfo.OwnerRoleID);
         }
@@ -1004,39 +1048,45 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             bool success = false;
 
             if (bypassChecks)
+            {
                 return true;
+            }
 
-            if (TestForPower(requestID, inviterID, GroupID, (ulong)GroupPowers.AssignMember)) 
+            if (TestForPower(requestID, inviterID, GroupID, (ulong)GroupPowers.AssignMember))
             {
                 success = true;
             }
-            else
-            if (TestForPower(requestID, inviterID, GroupID, (ulong)GroupPowers.AssignMemberLimited))
+            else if (TestForPower(requestID, inviterID, GroupID, (ulong)GroupPowers.AssignMemberLimited))
             {
                 using (ISimpleDB db = GetConnection())
                 {
                     if (db != null)
+                    {
                         if (IsAgentInRole(db, inviterID, GroupID, RoleID))
+                        {
                             success = true;
+                        }
+                    }
                 }
             }
 
             return success;
         }
 
-        public void AddAgentToGroupRole(GroupRequestID requestID, OpenMetaverse.UUID inviterID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID, OpenMetaverse.UUID RoleID,
-            bool bypassChecks)
+        public void AddAgentToGroupRole(GroupRequestID requestID, OpenMetaverse.UUID inviterID, OpenMetaverse.UUID AgentID, OpenMetaverse.UUID GroupID, OpenMetaverse.UUID RoleID, bool bypassChecks)
         {
             if (!CanAddAgentToRole(requestID, inviterID, AgentID, GroupID, RoleID, bypassChecks))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to assign new role for user {1} in group {2}.", inviterID, AgentID, GroupID);
+                m_log.WarnFormat("[Groups]: {0} No permission to assign new role for user {1} in group {2}.", inviterID, AgentID, GroupID);
                 return;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 if (! IsAgentInRole(db, AgentID, GroupID, RoleID))
                 {
@@ -1058,32 +1108,40 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             if (!this.TestForPower(requestID, requestID.AgentID, GroupID, (ulong)GroupPowers.RemoveMember))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to remove role from user {1} in group {2}", requestID.AgentID, AgentID, GroupID);
+                m_log.WarnFormat("[Groups]: {0} No permission to remove role from user {1} in group {2}", requestID.AgentID, AgentID, GroupID);
                 return;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 // Extra check needed for group owner removals - cannot remove the Owner role unless you are the user
                 GroupRecord groupRec = GetGroupRecord(requestID, GroupID, null);
-                if (groupRec == null) return;
+
+                if (groupRec == null)
+                {
+                    return;
+                }
+
                 if (RoleID == groupRec.OwnerRoleID)
                 {
                     // Is this the last owner in a group? Don't let group managers shoot themselves in the foot.
                     List<UUID> groupOwners = GetGroupMembersWithRole(requestID, GroupID, RoleID);
+
                     if (groupOwners.Count < 2)
                     {
-                        m_log.WarnFormat("[GROUPS]: {0} Cannot remove the only owner {1} in group {2}", requestID.AgentID, AgentID, GroupID);
+                        m_log.WarnFormat("[Groups]: {0} Cannot remove the only owner {1} in group {2}", requestID.AgentID, AgentID, GroupID);
                         return;
                     }
 
                     // Is the requesting agent the one being removed? Allow them to remove their own Ownership (if not the last owner).
                     if (requestID.AgentID != AgentID)
                     {
-                        m_log.WarnFormat("[GROUPS]: {0} No permission to modify group owner roles for {1} in {2}", requestID.AgentID, AgentID, GroupID);
+                        m_log.WarnFormat("[Groups]: {0} No permission to modify group owner roles for {1} in {2}", requestID.AgentID, AgentID, GroupID);
                         return;
                     }
                 }
@@ -1114,7 +1172,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return foundGroupRoles;
+                }
 
                 string query
                     =   " SELECT osrole.RoleID, osrole.GroupID, osrole.Title, osrole.Name, osrole.Description, osrole.Powers" +
@@ -1135,11 +1195,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 }
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     foundGroupRoles.Add(this.MapGroupRolesDataFromResult(result));
                 }
-
             }
 
             return foundGroupRoles;
@@ -1156,6 +1216,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             parms.Add("?agentID", agentID);
 
             List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
             if (results.Count > 0 && Int32.Parse(results[0]["agentCount"]) > 0)
             {
                 return true;
@@ -1171,14 +1232,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             //only the agent making the call can change their own group
             if (requestID.AgentID != AgentID)
             {
-                m_log.WarnFormat("[GROUPS]: User {0} No permission to change the active group for {1}", requestID.AgentID, AgentID);
+                m_log.WarnFormat("[Groups]: User {0} No permission to change the active group for {1}", requestID.AgentID, AgentID);
                 return;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return;
+                }
 
                 //test to see if the user even exists in osagent
                 if (AgentHasActiveGroup(db, AgentID))
@@ -1214,7 +1277,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;
+                }
 
                 string query
                     = " SELECT osgroup.GroupID, osgroup.Name as GroupName, osgroup.Charter, osgroup.InsigniaID, " +
@@ -1231,6 +1296,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?agentID", AgentID);
 
                 List<Dictionary<string, string>> groupResults = db.QueryWithResults(query, parms);
+
                 if (groupResults.Count == 0)
                 {
                     //no active group? no groups, etc
@@ -1240,21 +1306,14 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 UUID groupID = new UUID(groupResults[0]["GroupID"]);
                 Dictionary<string, string> powersResult = FindGroupPowersForAgent(db, groupID, AgentID);
 
-                OpenSim.Framework.GroupMembershipData foundMembership
-                    = this.MapGroupMembershipDataFromResult(groupResults[0], powersResult);
+                OpenSim.Framework.GroupMembershipData foundMembership = this.MapGroupMembershipDataFromResult(groupResults[0], powersResult);
 
                 return foundMembership;
             }
         }
 
-        private OpenSim.Framework.GroupMembershipData MapGroupMembershipDataFromResult(Dictionary<string, string> groupResult, 
-            Dictionary<string, string> powerResult)
+        private OpenSim.Framework.GroupMembershipData MapGroupMembershipDataFromResult(Dictionary<string, string> groupResult, Dictionary<string, string> powerResult)
         {
-            // osgroup.GroupID, osgroup.Name as GroupName, osgroup.Charter, osgroup.InsigniaID, " +
-            //"osgroup.FounderID, osgroup.MembershipFee, osgroup.OpenEnrollment, osgroup.ShowInList, " + 
-            //"osgroup.AllowPublish, osgroup.MaturePublish, osgroupmembership.Contribution, " + 
-            //"osgroupmembership.ListInProfile, osgroupmembership.AcceptNotices, osgroupmembership.SelectedRoleID, osrole.Title
-
             OpenSim.Framework.GroupMembershipData foundMembership = new OpenSim.Framework.GroupMembershipData();
             foundMembership.GroupID = new UUID(groupResult["GroupID"]);
             foundMembership.GroupName = groupResult["GroupName"];
@@ -1285,6 +1344,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             //make sure the agent actually has the role they want to activate
             List<GroupRolesData> roles = GetAgentGroupRoles(requestID, AgentID, GroupID);
             bool foundRole = false;
+
             foreach (GroupRolesData role in roles)
             {
                 if (role.RoleID == RoleID)
@@ -1313,7 +1373,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db != null)
+                {
                     db.QueryNoResults(query, parms);
+                }
             }
         }
 
@@ -1322,7 +1384,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             //the agent making the reuqest must be the target agent
             if (requestID.AgentID != AgentID)
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to change group info for {1}", requestID.AgentID, AgentID);
+                m_log.WarnFormat("[Groups]: {0} No permission to change group info for {1}", requestID.AgentID, AgentID);
                 return;
             }
 
@@ -1342,7 +1404,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db != null)
+                {
                     db.QueryNoResults(query, parms);
+                }
             }
         }
 
@@ -1352,7 +1416,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;
+                }
 
                 string query
                     =   " SELECT osgroup.GroupID, osgroup.Name as GroupName, osgroup.Charter, osgroup.InsigniaID, " +
@@ -1369,6 +1435,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?agentID", AgentID);
 
                 List<Dictionary<string, string>> groupResults = db.QueryWithResults(query, parms);
+
                 if (groupResults.Count == 0)
                 {
                     // no groups, etc?
@@ -1377,8 +1444,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
 
                 Dictionary<string, string> powersResult = FindGroupPowersForAgent(db, GroupID, AgentID);
 
-                OpenSim.Framework.GroupMembershipData foundMembership
-                    = this.MapGroupMembershipDataFromResult(groupResults[0], powersResult);
+                OpenSim.Framework.GroupMembershipData foundMembership = this.MapGroupMembershipDataFromResult(groupResults[0], powersResult);
 
                 return foundMembership;
             }
@@ -1398,7 +1464,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
 
             if (powersResults.Count == 0)
             {
-                m_log.Error("[GROUPS]: Could not find any matching powers for agent");
+                m_log.Error("[Groups]: Could not find any matching powers for agent");
                 return null;
             }
 
@@ -1410,7 +1476,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return 0;
+                }
 
                 string query = "SELECT COUNT(osgroup.GroupID) AS GroupCount FROM osgroup" +
                                 " JOIN osgroupmembership ON (osgroup.GroupID = osgroupmembership.GroupID) " +
@@ -1422,7 +1490,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
 
                 if (results.Count == 0)
+                {
                     return 0;
+                }
 
                 return Convert.ToUInt32(results[0]["GroupCount"]);
             }
@@ -1433,8 +1503,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return new List<OpenSim.Framework.GroupMembershipData>();
-
+                }
 
                 string query =  " SELECT osgroup.GroupID, osgroup.Name as GroupName, osgroup.Charter, osgroup.InsigniaID, osgroup.FounderID, osgroup.MembershipFee, osgroup.OpenEnrollment, osgroup.ShowInList, osgroup.AllowPublish, osgroup.MaturePublish" +
                                 " , osgroupmembership.Contribution, osgroupmembership.ListInProfile, osgroupmembership.AcceptNotices" +
@@ -1453,11 +1524,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 //map the group data first into a dict so that it'll be easy to search to fill
                 //the group powers
                 Dictionary<string, OpenSim.Framework.GroupMembershipData> membershipData = new Dictionary<string, OpenSim.Framework.GroupMembershipData>();
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     membershipData.Add(result["GroupID"], this.MapGroupMembershipDataFromResult(result, null));
                 }
-
 
                 //now, assign the group powers returned
                 query = " SELECT BIT_OR(osrole.Powers) AS GroupPowers, osgrouprolemembership.GroupID" +
@@ -1466,6 +1537,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                         " GROUP BY GroupID ";
 
                 results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     if (result.ContainsKey("GroupID") && membershipData.ContainsKey(result["GroupID"]))
@@ -1487,7 +1559,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;    // signal error
+                }
 
                 string query = " SELECT osgroupmembership.GroupID FROM osgroupmembership WHERE osgroupmembership.AgentID = ?agentID";
 
@@ -1495,6 +1569,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?agentID", AgentID);
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     groups.Add(new UUID(result["GroupID"]));
@@ -1508,14 +1583,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
         {
             if (!this.TestForPower(requestID, requestID.AgentID, groupID, (ulong)GroupPowers.SendNotices))
             {
-                m_log.WarnFormat("[GROUPS]: {0} No permission to send notices for group {1}", requestID.AgentID, groupID);
+                m_log.WarnFormat("[Groups]: {0} No permission to send notices for group {1}", requestID.AgentID, groupID);
                 return false;
             }
 
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return false;
+                }
 
                 string binBucketString = OpenMetaverse.Utils.BytesToHexString(binaryBucket, String.Empty);
 
@@ -1546,7 +1623,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return null;
+                }
 
                 string query 
                     =   " SELECT GroupID, NoticeID, Timestamp, FromName, Subject, Message, BinaryBucket" +
@@ -1557,6 +1636,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?noticeID", noticeID);
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 if (results.Count == 0)
                 {
                     return null;
@@ -1576,7 +1656,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             using (ISimpleDB db = GetConnection())
             {
                 if (db == null)
+                {
                     return foundNotices;
+                }
 
                 string query
                     = " SELECT GroupID, NoticeID, Timestamp, FromName, Subject, Message, BinaryBucket" +
@@ -1587,6 +1669,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 parms.Add("?groupID", GroupID);
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
+
                 foreach (Dictionary<string, string> result in results)
                 {
                     foundNotices.Add(this.MapGroupNoticeDataFromResult(result));
@@ -1606,6 +1689,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             data.Timestamp = uint.Parse(result["Timestamp"]);
             data.FromName = result["FromName"];
             data.Subject = result["Subject"];
+
             if ((bucketLen < 35) || (bucket[0]==0)) {
                 // no attachment data
                 data.HasAttachment = false;
@@ -1613,13 +1697,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
                 data.OwnerID = UUID.Zero;
                 data.ItemID = UUID.Zero;
                 data.Attachment = String.Empty;
-            } else {
+            }
+            else
+            {
                 data.HasAttachment = true;
                 data.AssetType = bucket[1];
                 data.OwnerID = new UUID(bucket,2);
                 data.ItemID = new UUID(bucket,18);
                 data.Attachment = OpenMetaverse.Utils.BytesToString(bucket, 34, bucketLen - 34);
             }
+
             return data;
         }
 
@@ -1634,13 +1721,17 @@ namespace OpenSim.Region.OptionalModules.Avatar.FlexiGroups
             data.noticeData.Timestamp = uint.Parse(result["Timestamp"]);
             data.noticeData.FromName = result["FromName"];
             data.noticeData.Subject = result["Subject"];
+
             if (data.Message == null)
+            {
                 data.Message = String.Empty;
+            }
 
             data.BinaryBucket = Utils.HexStringToBytes(result["BinaryBucket"], true);
 
             return data;
         }
+
         #endregion
     }
 }
