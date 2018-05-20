@@ -1,13 +1,29 @@
-/* Originally started back last year, and completely rewritten from the ground up to handle the
- * Profiles for InWorldz, LLC.
- * Modified again on 1/22/2011 by Beth Reischl to:
- * Pull a couple of DB queries from the Classifieds section that were not needed
- * Pulled a DB query from Profiles and modified another one.
- * Pulled out the queryParcelUUID from PickInfoUpdate method, this was resulting in null parcel IDs
- * being passed all the time.
- * Fixed the PickInfoUpdate and PickInfoRequest to show Username, Parcel Information, Region Name, (xyz) 
- * coords for proper teleportation
- */
+/// <summary>
+///     Copyright (c) InWorldz Halcyon Developers
+///     Copyright (c) Contributors, http://opensimulator.org/
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the OpenSimulator Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </summary>
 
 using System;
 using System.Collections;
@@ -17,10 +33,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Xml;
-using OpenMetaverse;
 using log4net;
 using Nini.Config;
 using Nwc.XmlRpc;
+using OpenMetaverse;
 using OpenSim.Framework;
 using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
@@ -31,14 +47,10 @@ namespace OpenSimProfile.Modules.OpenProfile
 {
     public class OpenProfileModule : IRegionModule
     {
-        //
         // Log module
-        //
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        //
         // Module vars
-        //
         private bool m_Enabled = true;
 
         private ConnectionFactory _connFactory;
@@ -49,7 +61,9 @@ namespace OpenSimProfile.Modules.OpenProfile
         public void Initialize(Scene scene, IConfigSource config)
         {
             if (!m_Enabled)
+            {
                 return;
+            }
 
             //TODO: At some point, strip this out of the ini file, in Search Module, 
             // we're going to recycle the Profile connection string however to make 
@@ -57,8 +71,7 @@ namespace OpenSimProfile.Modules.OpenProfile
             IConfig profileConfig = config.Configs["Startup"];
             string connstr = profileConfig.GetString("core_connection_string", String.Empty);
 
-
-            m_log.Info("[PROFILE] Profile module is activated");
+            m_log.Info("[Profile]: Profile module is activated");
 
             //TODO: Bad assumption on my part that we're enabling it and the connstr is actually
             // valid, but I'm sick of dinking with this thing  :)
@@ -71,6 +84,7 @@ namespace OpenSimProfile.Modules.OpenProfile
             _regionConnFactory = new ConnectionFactory("MySQL", storageConnStr);
 
             IMoneyModule mm = scene.RequestModuleInterface<IMoneyModule>();
+
             if (mm != null)
             {
                 _currencyString = mm.GetCurrencySymbol();
@@ -83,7 +97,9 @@ namespace OpenSimProfile.Modules.OpenProfile
         public void PostInitialize()
         {
             if (!m_Enabled)
+            {
                 return;
+            }
         }
 
         public void Close()
@@ -113,8 +129,6 @@ namespace OpenSimProfile.Modules.OpenProfile
             // need for this and wrapped it down below. This needs to be fixed.
             // This applies to any reqeusts made for general info.
 
-            //client.AddGenericPacketHandler("avatarpicksrequest", HandlePickInfoRequest);
-
             client.AddGenericPacketHandler("pickinforequest", HandlePickInfoRequest);
 
             client.OnPickInfoUpdate += PickInfoUpdate;
@@ -139,9 +153,7 @@ namespace OpenSimProfile.Modules.OpenProfile
             HandleAvatarPicksRequest(remoteClient, alist);
         }
 
-
         // Interests Handler
-
         public void HandleAvatarInterestsRequest(Object sender, List<String> args)
         {
             IClientAPI remoteClient = (IClientAPI)sender;
@@ -159,14 +171,12 @@ namespace OpenSimProfile.Modules.OpenProfile
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?avatarID", avatarID);
 
-                string query = "SELECT skillsMask, skillsText, wantToMask, wantToText, languagesText FROM users " +
-                                        "WHERE UUID=?avatarID";
+                string query = "SELECT skillsMask, skillsText, wantToMask, wantToText, languagesText FROM users " + "WHERE UUID=?avatarID";
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
 
                 foreach (Dictionary<string, string> row in results)
                 {
-
                     skillsMask = Convert.ToUInt16(row["skillsMask"]); 
                     skillsText = row["skillsText"];
                     wantToMask = Convert.ToUInt16(row["wantToMask"]);
@@ -174,21 +184,12 @@ namespace OpenSimProfile.Modules.OpenProfile
                     languagesText = row["languagesText"];
                 }
 
-                remoteClient.SendAvatarInterestsReply(avatarID,
-                    skillsMask,
-                    skillsText,
-                    wantToMask,
-                    wantToText,
-                    languagesText);
+                remoteClient.SendAvatarInterestsReply(avatarID, skillsMask, skillsText, wantToMask, wantToText, languagesText);
             }
-
         }
 
-
         // Interests Update
-
-        public void AvatarInterestsUpdate(IClientAPI remoteClient, uint querySkillsMask, string querySkillsText, uint queryWantToMask, string queryWantToText, string
-                                            queryLanguagesText)
+        public void AvatarInterestsUpdate(IClientAPI remoteClient, uint querySkillsMask, string querySkillsText, uint queryWantToMask, string queryWantToText, string queryLanguagesText)
         {
             UUID avatarID = remoteClient.AgentId;
 
@@ -202,20 +203,19 @@ namespace OpenSimProfile.Modules.OpenProfile
                 parms.Add("?wantToText", queryWantToText);
                 parms.Add("?languagesText", queryLanguagesText);
 
-                string query = "UPDATE users set skillsMask=?wantToMask, skillsText=?wantToText, wantToMask=?skillsMask, " +
-                            "wantToText=?skillsText, languagesText=?languagesText where UUID=?avatarID";
+                string query = "UPDATE users set skillsMask=?wantToMask, skillsText=?wantToText, wantToMask=?skillsMask, " + "wantToText=?skillsText, languagesText=?languagesText where UUID=?avatarID";
 
                 db.QueryNoResults(query, parms);
             }
-
         }
 
         // Classifieds Handler
-
         public void HandleAvatarClassifiedsRequest(Object sender, string method, List<String> args)
         {
             if (!(sender is IClientAPI))
+            {
                 return;
+            }
 
             IClientAPI remoteClient = (IClientAPI)sender;
 
@@ -228,8 +228,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?avatarID", avatarID);
 
-                string query = "SELECT classifieduuid, name from classifieds " +
-                                        "WHERE creatoruuid=?avatarID";
+                string query = "SELECT classifieduuid, name from classifieds " + "WHERE creatoruuid=?avatarID";
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
                 
@@ -238,10 +237,8 @@ namespace OpenSimProfile.Modules.OpenProfile
                     classifieds[new UUID(row["classifieduuid"].ToString())] = row["name"].ToString();
                 }
 
-                remoteClient.SendAvatarClassifiedReply(avatarID,
-                    classifieds);
+                remoteClient.SendAvatarClassifiedReply(avatarID, classifieds);
             }
-
         }
 
         // Classifieds Update
@@ -258,15 +255,13 @@ namespace OpenSimProfile.Modules.OpenProfile
             uint regionX = remoteClient.Scene.RegionInfo.RegionLocX;
             uint regionY = remoteClient.Scene.RegionInfo.RegionLocY;
 
-//            m_log.DebugFormat("[CLASSIFIED]: Got the RegionX Location as: {0}, and RegionY as: {1}", regionX.ToString(), regionY.ToString());
-            
             string regionName = remoteClient.Scene.RegionInfo.RegionName;
             int creationDate = Util.UnixTimeSinceEpoch();
             int expirationDate = creationDate + 604800;
 
             if (queryclassifiedPrice < MIN_CLASSIFIED_PRICE)
             {
-                m_log.ErrorFormat("[CLASSIFIED]: Got a request for invalid price I'z${0} on a classified from {1}.", queryclassifiedPrice.ToString(), remoteClient.AgentId.ToString());
+                m_log.ErrorFormat("[Classified]: Got a request for invalid price I'z${0} on a classified from {1}.", queryclassifiedPrice.ToString(), remoteClient.AgentId.ToString());
                 remoteClient.SendAgentAlertMessage("Error: The minimum price for a classified advertisement is I'z$" + MIN_CLASSIFIED_PRICE.ToString()+".", true);
                 return;
             }
@@ -274,11 +269,10 @@ namespace OpenSimProfile.Modules.OpenProfile
             // Check for hacked names that start with special characters
             if (!Char.IsLetterOrDigit(queryName, 0))
             {
-                m_log.ErrorFormat("[CLASSIFIED]: Got a hacked request from {0} for invalid name classified name: {1}", remoteClient.AgentId.ToString(), queryName);
+                m_log.ErrorFormat("[Classified]: Got a hacked request from {0} for invalid name classified name: {1}", remoteClient.AgentId.ToString(), queryName);
                 remoteClient.SendAgentAlertMessage("Error: The name of your classified must start with a letter or a number. No punctuation is allowed.", true);
                 return;
             }
-
 
             // In case of insert, original values are the new values (by default)
             int origPrice = 0;
@@ -291,13 +285,14 @@ namespace OpenSimProfile.Modules.OpenProfile
                 checkParms.Add("?classifiedID", queryclassifiedID);
 
                 List<Dictionary<string, string>> existingResults = db.QueryWithResults(existingCheck, checkParms);
+
                 if (existingResults.Count > 0)
                 {
                     string existingAuthor = existingResults[0]["creatoruuid"];
+
                     if (existingAuthor != avatarID.ToString())
                     {
-                        m_log.ErrorFormat("[CLASSIFIED]: Got a request for from {0} to modify a classified from {1}: {2}",
-                            remoteClient.AgentId.ToString(), existingAuthor, queryclassifiedID.ToString());
+                        m_log.ErrorFormat("[Classified]: Got a request for from {0} to modify a classified from {1}: {2}", remoteClient.AgentId.ToString(), existingAuthor, queryclassifiedID.ToString());
                         remoteClient.SendAgentAlertMessage("Error: You do not have permission to modify that classified ad.", true);
                         return;
                     }
@@ -309,7 +304,6 @@ namespace OpenSimProfile.Modules.OpenProfile
                 parms.Add("?category", queryCategory);
                 parms.Add("?name", queryName);
                 parms.Add("?description", queryDescription);
-                //parms.Add("?parcelID", queryParcelID);
                 parms.Add("?parentEstate", queryParentEstate);
                 parms.Add("?snapshotID", querySnapshotID);
                 parms.Add("?globalPos", queryGlobalPos);
@@ -330,7 +324,6 @@ namespace OpenSimProfile.Modules.OpenProfile
                 // then compare that to the parcels for the closest match
 
                 // explode the GlobalPos value off the bat
-
                 string origGlobPos = queryGlobalPos.ToString();
                 string tempAGlobPos = origGlobPos.Replace("<", String.Empty);
                 string tempBGlobPos = tempAGlobPos.Replace(">", String.Empty);
@@ -344,8 +337,6 @@ namespace OpenSimProfile.Modules.OpenProfile
                 uint avaXLoc = tempAvaXLoc - (256 * regionX);
                 uint avaYLoc = tempAvaYLoc - (256 * regionY);
 
-
-                //uint avatarPosX = (posGlobalX / 256) - regionX;
                 parms.Add("?avaXLoc", avaXLoc.ToString());
                 parms.Add("?avaYLoc", avaYLoc.ToString());
                 string parcelLocate = "select  uuid, MIN(ABS(UserLocationX - ?avaXLoc)) as minXValue, MIN(ABS(UserLocationY - ?avaYLoc)) as minYValue from land where RegionUUID=?regionUUID GROUP BY UserLocationX ORDER BY minXValue, minYValue LIMIT 1;";
@@ -353,6 +344,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                 using (ISimpleDB landDb = _regionConnFactory.GetConnection())
                 {
                     List<Dictionary<string, string>> parcelLocated = landDb.QueryWithResults(parcelLocate, parms);
+
                     foreach (Dictionary<string, string> row in parcelLocated)
                     {
                         ParcelID = new UUID(row["uuid"].ToString());
@@ -371,8 +363,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                     if (results.Count != 1)
                     {
                         remoteClient.SendAgentAlertMessage("Classified record is not consistent. Contact Support for assistance.", false);
-                        m_log.ErrorFormat("[CLASSIFIED]: Error, query for user {0} classified ad {1} returned {2} results.",
-                            avatarID.ToString(), queryclassifiedID.ToString(), results.Count.ToString());
+                        m_log.ErrorFormat("[Classified]: Error, query for user {0} classified ad {1} returned {2} results.", avatarID.ToString(), queryclassifiedID.ToString(), results.Count.ToString());
                         return;
                     }
 
@@ -387,7 +378,11 @@ namespace OpenSimProfile.Modules.OpenProfile
                     expirationDate = Convert.ToInt32(row["expirationdate"]);
 
                     costToApply = queryclassifiedPrice - origPrice;
-                    if (costToApply < 0) costToApply = 0;
+
+                    if (costToApply < 0)
+                    {
+                        costToApply = 0;
+                    }
                 }
                 else
                 {
@@ -399,17 +394,22 @@ namespace OpenSimProfile.Modules.OpenProfile
 
                     costToApply = queryclassifiedPrice;
                 }
+
                 EventManager.ClassifiedPaymentArgs paymentArgs = new EventManager.ClassifiedPaymentArgs(remoteClient.AgentId, queryclassifiedID, origPrice, queryclassifiedPrice, transactionDesc, true);
 
                 if (costToApply > 0)
                 {
                     // Now check whether the payment is authorized by the currency system.
                     ((Scene)remoteClient.Scene).EventManager.TriggerClassifiedPayment(remoteClient, paymentArgs);
+
                     if (!paymentArgs.mIsAuthorized)
+                    {
                         return; // already reported to user by the check above.
+                    }
                 }
 
                 string query;
+
                 if (isUpdate)
                 {
                     query = "UPDATE classifieds set creationdate=?creationDate, " + 
@@ -424,6 +424,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                             "VALUES (?classifiedID, ?avatarID, ?creationDate, ?expirationDate, ?category, ?name, ?description, ?parcelID, " +
                             "?parentEstate, ?snapshotID, ?regionName, ?globalPos, ?name, ?classifiedFlags, ?classifiedPrice)";
                 }
+
                 db.QueryNoResults(query, parms);
 
                 if (costToApply > 0)    // no refunds for lower prices
@@ -434,20 +435,16 @@ namespace OpenSimProfile.Modules.OpenProfile
                     // Errors reported by the payment request above.
                 }
             }
-
         }
 
         // Classifieds Delete
-
         public void ClassifiedDelete(UUID queryClassifiedID, IClientAPI remoteClient)
         {
-
             UUID avatarID = remoteClient.AgentId;
             UUID classifiedID = queryClassifiedID;
 
             using (ISimpleDB db = _connFactory.GetConnection())
             {
-
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?classifiedID", classifiedID);
                 parms.Add("?avatarID", avatarID);
@@ -456,17 +453,15 @@ namespace OpenSimProfile.Modules.OpenProfile
 
                 db.QueryNoResults(query, parms);
             }
-
         }
 
         // Picks Handler
-
         public void HandleAvatarPicksRequest(Object sender, List<String> args)
         {
-
-
             if (!(sender is IClientAPI))
+            {
                 return;
+            }
 
             IClientAPI remoteClient = (IClientAPI)sender;
 
@@ -479,8 +474,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?avatarID", avatarID);
 
-                string query = "SELECT pickuuid, name from userpicks " +
-                                        "WHERE creatoruuid=?avatarID";
+                string query = "SELECT pickuuid, name from userpicks " + "WHERE creatoruuid=?avatarID";
 
                 List<Dictionary<string, string>> results = db.QueryWithResults(query, parms);
 
@@ -489,19 +483,17 @@ namespace OpenSimProfile.Modules.OpenProfile
                     picksRequest[new UUID(row["pickuuid"].ToString())] = row["name"].ToString();
                 }
 
-                remoteClient.SendAvatarPicksReply(avatarID,
-                            picksRequest);
-
+                remoteClient.SendAvatarPicksReply(avatarID, picksRequest);
             }
-
         }
 
         // Picks Request
-
         public void HandlePickInfoRequest(Object sender, string method, List<String> args)
         {
             if (!(sender is IClientAPI))
+            {
                 return;
+            }
 
             IClientAPI remoteClient = (IClientAPI)sender;
 
@@ -510,7 +502,6 @@ namespace OpenSimProfile.Modules.OpenProfile
 
             using (ISimpleDB db = _connFactory.GetConnection())
             {
-
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?avatarID", avatarID);
                 parms.Add("?pickID", pickID);
@@ -531,7 +522,6 @@ namespace OpenSimProfile.Modules.OpenProfile
                 int sortOrder = new int();
                 bool enabled = new bool();
 
-
                 foreach (Dictionary<string, string> row in results)
                 {
                     topPick = Boolean.Parse(row["toppick"]);
@@ -540,32 +530,18 @@ namespace OpenSimProfile.Modules.OpenProfile
                     description = row["description"];
                     snapshotID = UUID.Parse(row["snapshotuuid"]);
                     userName = row["user"];
-                    //userName = row["simname"];
                     originalName = row["originalname"];
                     simName = row["simname"];
                     globalPos = Vector3.Parse(row["posglobal"]);
                     sortOrder = Convert.ToInt32(row["sortorder"]);
                     enabled = Boolean.Parse(row["enabled"]);
-
                 }
 
-                remoteClient.SendPickInfoReply( pickID, avatarID,
-                        topPick, parcelUUID, name, description,
-                        snapshotID, userName, originalName,
-                        simName, globalPos, sortOrder,
-                        enabled);
-                
+                remoteClient.SendPickInfoReply( pickID, avatarID, topPick, parcelUUID, name, description, snapshotID, userName, originalName, simName, globalPos, sortOrder, enabled);
             }
-
         }
 
         // Picks Update
-
-        // pulled the original method due to UUID queryParcelID always being returned as null. If this is ever fixed to where
-        // the viewer does in fact return the parcelID, then we can put this back in.
-        //public void PickInfoUpdate(IClientAPI remoteClient, UUID pickID, UUID creatorID, bool topPick, string name, string desc, 
-        //                    UUID queryParcelID, Vector3 queryGlobalPos, UUID snapshotID, int sortOrder, bool enabled)
-
         public void PickInfoUpdate(IClientAPI remoteClient, UUID pickID, UUID creatorID, bool topPick, string name, string desc,
                             Vector3 queryGlobalPos, UUID snapshotID, int sortOrder, bool enabled)
         {
@@ -577,7 +553,6 @@ namespace OpenSimProfile.Modules.OpenProfile
             UUID tempParcelUUID = UUID.Zero;
             UUID avatarID = remoteClient.AgentId;
 
-
             using (ISimpleDB db = _connFactory.GetConnection())
             {
                 //if this is an existing pick make sure the client is the owner or don't touch it
@@ -586,6 +561,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                 checkParms.Add("?pickID", pickID);
 
                 List<Dictionary<string, string>> existingResults = db.QueryWithResults(existingCheck, checkParms);
+
                 if (existingResults.Count > 0)
                 {
                     if (existingResults[0]["creatoruuid"] != avatarID.ToString())
@@ -614,8 +590,8 @@ namespace OpenSimProfile.Modules.OpenProfile
                 // we need to know if we're on a parcel or not, and if so, put it's UUID in there 
                 // viewer isn't giving it to us from what I can determine
                 // TODO: David will need to clean this up cause more arrays are not my thing  :)
-
                 string queryParcelUUID = "select UUID from land where regionUUID=?regionID AND name=?name limit 1";
+
                 using (ISimpleDB landDb = _regionConnFactory.GetConnection())
                 {
                     List<Dictionary<string, string>> simID = landDb.QueryWithResults(queryParcelUUID, parms);
@@ -631,8 +607,7 @@ namespace OpenSimProfile.Modules.OpenProfile
                 m_log.Debug("Got parcel of: " + parcelUUID.ToString());
                 parms.Add("?parcelName", name);
 
-                string queryPicksCount = "select COUNT(pickuuid) from userpicks where pickuuid=?pickID AND " +
-                            "creatoruuid=?creatorID";
+                string queryPicksCount = "select COUNT(pickuuid) from userpicks where pickuuid=?pickID AND " + "creatoruuid=?creatorID";
 
                 List<Dictionary <string, string>> countList = db.QueryWithResults(queryPicksCount, parms);
                 
@@ -654,28 +629,26 @@ namespace OpenSimProfile.Modules.OpenProfile
                             "originalname, simname, posglobal, sortorder, enabled) " +
                             "VALUES (?pickID, ?creatorID, 'false', ?parcelID, ?name, ?desc, ?snapshotID, " +
                             "?avatarName, ?parcelName, ?regionName, ?globalPos, ?sortOrder, 'true')";
-                } else
+                }
+                else
                 {
                     query = "UPDATE userpicks set toppick='false', " + 
                             " parceluuid=?parcelID, name=?name, description=?desc, snapshotuuid=?snapshotID, " +
                             "user=?avatarName, originalname=?parcelName, simname=?regionName, posglobal=?globalPos, sortorder=?sortOrder, " +
                             " enabled='true' where pickuuid=?pickID";
                 }
+
                 db.QueryNoResults(query, parms);
             }
-
         }
 
         // Picks Delete
-
         public void PickDelete(IClientAPI remoteClient, UUID queryPickID)
         {
-
             UUID avatarID = remoteClient.AgentId;
 
             using (ISimpleDB db = _connFactory.GetConnection())
             {
-
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms.Add("?pickID", queryPickID);
                 parms.Add("?avatarID", avatarID);
@@ -684,15 +657,16 @@ namespace OpenSimProfile.Modules.OpenProfile
 
                 db.QueryNoResults(query, parms);
             }
-
         }
 
         private const string LEGACY_EMPTY = "No notes currently for this avatar!";
+
         public void HandleAvatarNotesRequest(Object sender, string method, List<String> args)
         {
-
             if (!(sender is IClientAPI))
+            {
                 return;
+            }
 
             IClientAPI remoteClient = (IClientAPI)sender;
             UUID avatarID = remoteClient.AgentId;
@@ -708,14 +682,19 @@ namespace OpenSimProfile.Modules.OpenProfile
                 List<Dictionary<string, string>> notesResult = db.QueryWithResults(query, parms);
 
                 string notes = String.Empty;
+
                 if (notesResult.Count > 0)
+                {
                     notes = notesResult[0]["notes"];
+                }
+
                 if (notes == LEGACY_EMPTY)  // filter out the old text that said there was no text. ;)
+                {
                     notes = String.Empty;
+                }
 
                 remoteClient.SendAvatarNotesReply(targetAvatarID, notes);
             }
-
         }
 
         public void AvatarNotesUpdate(IClientAPI remoteClient, UUID queryTargetID, string queryNotes)
@@ -727,7 +706,9 @@ namespace OpenSimProfile.Modules.OpenProfile
 
             // filter out the old text that said there was no text. ;)
             if (notes == LEGACY_EMPTY)
+            {
                 notes = String.Empty;
+            }
 
             using (ISimpleDB db = _connFactory.GetConnection())
             {
@@ -737,13 +718,18 @@ namespace OpenSimProfile.Modules.OpenProfile
                 parms.Add("?notes", notes);
 
                 string query;
+
                 if (String.IsNullOrEmpty(notes))
+                {
                     query = "DELETE FROM usernotes WHERE useruuid=?avatarID AND targetuuid=?targetID";
+                }
                 else
+                {
                     query = "INSERT INTO usernotes(useruuid, targetuuid, notes) VALUES(?avatarID,?targetID,?notes) ON DUPLICATE KEY UPDATE notes=?notes";
+                }
+
                 db.QueryNoResults(query, parms);
             }
         }
-
     }
 }
