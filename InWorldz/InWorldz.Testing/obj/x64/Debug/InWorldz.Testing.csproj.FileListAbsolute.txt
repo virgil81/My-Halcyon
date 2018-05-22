@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.Testing.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.Testing.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Testing\obj\x64\Debug\InWorldz.Testing.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Testing\obj\x64\Debug\InWorldz.Testing.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Testing\obj\x64\Debug\InWorldz.Testing.dll
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.Testing\obj\x64\Debug\InWorldz.Testing.pdb

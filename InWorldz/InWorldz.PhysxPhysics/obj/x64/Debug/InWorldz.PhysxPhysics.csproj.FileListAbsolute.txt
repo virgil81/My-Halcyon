@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\InWorldz.PhysxPhysics.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\Physics\InWorldz.PhysxPhysics.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.PhysxPhysics\obj\x64\Debug\InWorldz.PhysxPhysics.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.PhysxPhysics\obj\x64\Debug\InWorldz.PhysxPhysics.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.PhysxPhysics\obj\x64\Debug\InWorldz.PhysxPhysics.dll
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.PhysxPhysics\obj\x64\Debug\InWorldz.PhysxPhysics.pdb

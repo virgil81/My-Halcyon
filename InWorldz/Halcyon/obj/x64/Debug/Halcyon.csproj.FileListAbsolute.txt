@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\Halcyon.exe
-C:\Users\virtu\Desktop\My-Halcyon\bin\Halcyon.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Halcyon\obj\x64\Debug\Halcyon.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Halcyon\obj\x64\Debug\Halcyon.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Halcyon\obj\x64\Debug\Halcyon.exe
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Halcyon\obj\x64\Debug\Halcyon.pdb

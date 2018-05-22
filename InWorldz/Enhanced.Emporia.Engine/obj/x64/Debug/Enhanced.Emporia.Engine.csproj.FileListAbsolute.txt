@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\Enhanced.Emporia.Engine.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\Enhanced.Emporia.Engine.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Enhanced.Emporia.Engine\obj\x64\Debug\Enhanced.Emporia.Engine.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Enhanced.Emporia.Engine\obj\x64\Debug\Enhanced.Emporia.Engine.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Enhanced.Emporia.Engine\obj\x64\Debug\Enhanced.Emporia.Engine.dll
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\Enhanced.Emporia.Engine\obj\x64\Debug\Enhanced.Emporia.Engine.pdb

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.ApplicationPlugins.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.ApplicationPlugins.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.dll
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.pdb

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.RemoteAdmin.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\InWorldz.RemoteAdmin.pdb
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.RemoteAdmin\obj\x64\Debug\InWorldz.RemoteAdmin.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.RemoteAdmin\obj\x64\Debug\InWorldz.RemoteAdmin.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.RemoteAdmin\obj\x64\Debug\InWorldz.RemoteAdmin.dll
-C:\Users\virtu\Desktop\My-Halcyon\InWorldz\InWorldz.RemoteAdmin\obj\x64\Debug\InWorldz.RemoteAdmin.pdb
