@@ -1,0 +1,20 @@
+Change the <insert password here> into a long password, preferable 8 chars or longer
+
+Then open up you favorite MySQL editor (phpMyAdmin, MySQLAdmin or another tool) and run the following commands:
+
+================================================================================================================
+
+CREATE USER 'mygrid'@'%' IDENTIFIED BY '<insert password here>';
+
+CREATE DATABASE IF NOT EXISTS `mygrid`;
+
+GRANT ALL PRIVILEGES ON `mygrid` . * TO 'mygrid'@'%';
+
+CREATE DATABASE IF NOT EXISTS `myweb`;
+
+GRAND ALL PRIVILEGES ON `myweb` . * TO 'mygrid'@'%';
+
+================================================================================================================
+
+After running the commands above be sure to make your user a superuser on your database server to ensure proper functioanlity
+with the architecture and website.
