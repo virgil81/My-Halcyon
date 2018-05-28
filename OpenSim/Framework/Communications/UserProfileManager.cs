@@ -121,8 +121,6 @@ namespace OpenSim.Framework.Communications
         /// </summary>
         private readonly Dictionary<string, CachedUserInfo> m_userInfoByName = new Dictionary<string, CachedUserInfo>();
 
-        private Dictionary<String, UUID> customUserMap = new Dictionary<string, UUID>();
-
         public const string CUSTOM_TYPE_DELETED = "DELETED";
         private UUID m_deletedUserAccount = UUID.Zero;
 
@@ -149,7 +147,6 @@ namespace OpenSim.Framework.Communications
 
                 if (UUID.TryParse(deletedStr.Trim(), out uuid))
                 {
-                    customUserMap.Add(CUSTOM_TYPE_DELETED, uuid);
                     m_deletedUserAccount = uuid;
                 }
             }
@@ -320,22 +317,20 @@ namespace OpenSim.Framework.Communications
                 return null;
             }
 
-            // Check if it's a special
-            string customType = profile.CustomType.Trim().ToUpper();
-            UUID remappedID = UUID.Zero;
-
-            if (!customUserMap.TryGetValue(customType, out remappedID))
+            // Continue on right away if it's not a deleted account
+            if (profile.CustomType.Trim().ToUpper() != CUSTOM_TYPE_DELETED)
             {
                 return profile;
             }
 
-            if (profile.ID == remappedID)
+            // Check if it's THE substitute deleted account
+            if (profile.ID == DeletedUserAccount)
             {
                 return profile; // avoid infinite recursion
             }
 
-            // Otherwise it's a special customType (DELETED) and remap the UUID to the special account.
-            return GetUserProfile(remappedID);
+            // Otherwise it's a special customType==DELETED and remap the UUID to the special account.
+            return GetUserProfile(DeletedUserAccount);
         }
 
         private UserProfileData _GetUserProfileData(UUID uuid)
