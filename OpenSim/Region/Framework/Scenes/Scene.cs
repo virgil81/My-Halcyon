@@ -510,7 +510,7 @@ namespace OpenSim.Region.Framework.Scenes
                 m_persistAfter = startupConfig.GetLong("MaximumTimeBeforePersistenceConsidered", DEFAULT_MAX_TIME_FOR_PERSISTENCE);
                 m_persistAfter *= 10000000;
 
-                m_defaultScriptEngine = startupConfig.GetString("DefaultScriptEngine", "Enhanced.GalaxyScript");
+                m_defaultScriptEngine = startupConfig.GetString("DefaultScriptEngine", "Enhanced.Emporia");
 
                 IConfig packetConfig = m_config.Configs["PacketPool"];
 
@@ -957,7 +957,7 @@ namespace OpenSim.Region.Framework.Scenes
                     ret = (VersionInfo.SoftwareName == "Halcyon") ? "1" : String.Empty;
                     break;
                 case "script_engine":
-                    ret = "GalaxyScript";  // always GalaxyScript in Halcyon
+                    ret = "Emporia";  // always Emporia in Halcyon
                     break;
                 case "iw_physics_fps":
                     ret = PhysicsScene.SimulationFPS.ToString();
