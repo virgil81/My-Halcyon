@@ -86,8 +86,8 @@ namespace OpenSim.Region.Physics.BasicPhysicsPlugin
             ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(Material)].CompileInPlace();
             //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(Meshing.HacdConvexHull)].CompileInPlace();
             //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(PhysicsProperties)].CompileInPlace();
-            //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(InWorldz.PhysxPhysics.Vehicle.DynamicsSimulationData)].CompileInPlace();
-            //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(InWorldz.PhysxPhysics.Vehicle.VehicleProperties)].CompileInPlace();
+            //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(Enhanced.PhysxPhysics.Vehicle.DynamicsSimulationData)].CompileInPlace();
+            //ProtoBuf.Meta.RuntimeTypeModel.Default[typeof(Enhanced.PhysxPhysics.Vehicle.VehicleProperties)].CompileInPlace();
 
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
