@@ -69,7 +69,7 @@ namespace OpenSim.Grid.UserServer.Modules
             if (m_core.TryGet<UserConfig>(out cfg))
             {
                 base.InitConfig(cfg);
-            }               }
+            }
         }
 
         public void RegisterHandlers(BaseHttpServer httpServer)
