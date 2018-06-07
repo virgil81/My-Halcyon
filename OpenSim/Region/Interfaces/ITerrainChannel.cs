@@ -49,7 +49,7 @@ namespace OpenSim.Region.Interfaces
         Vector3 Calculate4PointSlopeAt(float x, float y);
 
         /// <summary>
-        ///     Squash the entire heightmap into a single dimensioned array
+        /// Squash the entire heightmap into a single dimensioned array
         /// </summary>
         /// <returns></returns>
         float[] GetFloatsSerialized();

@@ -983,7 +983,7 @@ namespace OpenSim.Region.Framework.Scenes
             if (engines.Length == 0)
                 return false;
 
-            if (engines[0] == null)   // happens under Emporia if disabled
+            if (engines[0] == null)   // happens under Phlox if disabled
                 return false;
 
             return true;

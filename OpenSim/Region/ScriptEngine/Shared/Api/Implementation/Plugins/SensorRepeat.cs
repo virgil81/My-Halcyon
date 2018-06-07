@@ -221,7 +221,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api.Plugins
                     if (ts.host is ScenePresence)
                     {
                         //If it is a scenePresence, then it is a bot that is being used for scanning.
-                        // We need to set the bot parameter in the detectParams so that wcDetectedBot works properly
+                        // We need to set the bot parameter in the detectParams so that iwDetectedBot works properly
                         // so we have to have at least one detectParam object
                         DetectParams detect = new DetectParams();
                         detect.BotID = ((ScenePresence)ts.host).UUID;
@@ -249,7 +249,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api.Plugins
                             if (ts.host is ScenePresence)
                             {
                                 //If it is a scenePresence, then it is a bot that is being used for scanning.
-                                // We need to set the bot parameter in the detectParams so that wcDetectedBot works properly
+                                // We need to set the bot parameter in the detectParams so that iwDetectedBot works properly
                                 detect.BotID = ((ScenePresence)ts.host).UUID;
 
                                 if (detect.BotID == detect.Key)
@@ -272,7 +272,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api.Plugins
                         if (ts.host is ScenePresence)
                         {
                             //If it is a scenePresence, then it is a bot that is being used for scanning.
-                            // We need to set the bot parameter in the detectParams so that wcDetectedBot works properly
+                            // We need to set the bot parameter in the detectParams so that iwDetectedBot works properly
                             // so we have to have at least one detectParam object
                             DetectParams detect = new DetectParams();
                             detect.BotID = ((ScenePresence)ts.host).UUID;

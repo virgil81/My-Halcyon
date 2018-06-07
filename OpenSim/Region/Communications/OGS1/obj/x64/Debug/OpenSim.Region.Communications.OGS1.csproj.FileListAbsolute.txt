@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Communications.OGS1.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Communications.OGS1.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Communications\OGS1\obj\x64\Debug\OpenSim.Region.Communications.OGS1.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Communications\OGS1\obj\x64\Debug\OpenSim.Region.Communications.OGS1.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Communications\OGS1\obj\x64\Debug\OpenSim.Region.Communications.OGS1.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Communications\OGS1\obj\x64\Debug\OpenSim.Region.Communications.OGS1.pdb

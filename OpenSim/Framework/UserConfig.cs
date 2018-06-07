@@ -1,29 +1,29 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSim Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 using System;
 using System.IO;
@@ -31,9 +31,9 @@ using System.IO;
 namespace OpenSim.Framework
 {
     /// <summary>
-    ///     UserConfig -- For User Server Configuration
+    /// UserConfig -- For User Server Configuration
     /// </summary>
-    public class UserConfig : ConfigBase
+    public class UserConfig:ConfigBase
     {
         public string DatabaseProvider = string.Empty;
         public string DatabaseConnect = string.Empty;
@@ -42,12 +42,12 @@ namespace OpenSim.Framework
         public string ProfileServerURI = string.Empty;
         public uint DefaultX = 1000;
         public uint DefaultY = 1000;
-        public string DeletedUserAccount = String.Empty;
         public string GridRecvKey = string.Empty;
         public string GridSendKey = string.Empty;
         public uint HttpPort = ConfigSettings.DefaultUserServerHttpPort;
         public bool HttpSSL = ConfigSettings.DefaultUserServerHttpSSL;
         public uint DefaultUserLevel = 0;
+        public string DeletedUserAccount = String.Empty;
 
         public string LibraryName = String.Empty;
         public string LibraryXmlfile = String.Empty;
@@ -59,24 +59,41 @@ namespace OpenSim.Framework
 
         public Uri InventoryUrl
         {
-            get { return m_inventoryUrl; }
-            set { m_inventoryUrl = value; }
+            get
+            {
+                return m_inventoryUrl;
+            }
+            set
+            {
+                m_inventoryUrl = value;
+            }
         }
 
         private Uri m_authUrl;
-
         public Uri AuthUrl
         {
-            get { return m_authUrl; }
-            set { m_authUrl = value; }
+            get
+            {
+                return m_authUrl;
+            }
+            set
+            {
+                m_authUrl = value;
+            }
         }
 
         private Uri m_gridServerURL;
 
         public Uri GridServerURL
         {
-            get { return m_gridServerURL; }
-            set { m_gridServerURL = value; }
+            get
+            {
+                return m_gridServerURL;
+            }
+            set
+            {
+                m_gridServerURL = value;
+            }
         }
 
         public bool EnableHGLogin = true;
@@ -85,10 +102,10 @@ namespace OpenSim.Framework
         {
             // weird, but UserManagerBase needs this.
         }
-
         public UserConfig(string description, string filename)
         {
-            m_configMember = new ConfigurationMember(filename, description, loadConfigurationOptions, handleIncomingConfiguration, true);
+            m_configMember =
+                new ConfigurationMember(filename, description, loadConfigurationOptions, handleIncomingConfiguration, true);
             m_configMember.performConfigurationRetrieve();
         }
 
@@ -126,6 +143,7 @@ namespace OpenSim.Framework
                                                 "DLL for database provider", "OpenSim.Data.MySQL.dll", false);
             m_configMember.addConfigurationOption("database_connect", ConfigurationOption.ConfigurationTypes.TYPE_STRING,
                                                 "Connection String for Database", String.Empty, false);
+
             m_configMember.addConfigurationOption("http_port", ConfigurationOption.ConfigurationTypes.TYPE_UINT32,
                                                 "Http Listener port", ConfigSettings.DefaultUserServerHttpPort.ToString(), false);
             m_configMember.addConfigurationOption("http_ssl", ConfigurationOption.ConfigurationTypes.TYPE_BOOLEAN,
@@ -140,6 +158,7 @@ namespace OpenSim.Framework
                                                 "Map server URI?", String.Empty, false);
             m_configMember.addConfigurationOption("profile_server_uri", ConfigurationOption.ConfigurationTypes.TYPE_STRING,
                                                 "URI for the server and page responsible for handling web profiles?", "", true); // That's what the viewer currently defaults to and makes an excellent example.
+
             m_configMember.addConfigurationOption("enable_hg_login", ConfigurationOption.ConfigurationTypes.TYPE_BOOLEAN,
                                                 "Enable Hypergrid login support [Currently used by GridSurfer-proxied clients]? true/false", true.ToString(), false);
 
@@ -162,40 +181,40 @@ namespace OpenSim.Framework
             switch (configuration_key)
             {
                 case "default_startup_message":
-                    DefaultStartupMsg = (string)configuration_result;
+                    DefaultStartupMsg = (string) configuration_result;
                     break;
                 case "default_grid_server":
-                    GridServerURL = new Uri((string)configuration_result);
+                    GridServerURL = new Uri( (string) configuration_result );
                     break;
                 case "grid_send_key":
-                    GridSendKey = (string)configuration_result;
+                    GridSendKey = (string) configuration_result;
                     break;
                 case "grid_recv_key":
-                    GridRecvKey = (string)configuration_result;
+                    GridRecvKey = (string) configuration_result;
                     break;
                 case "default_inventory_server":
-                    InventoryUrl = new Uri((string)configuration_result);
+                    InventoryUrl = new Uri((string) configuration_result);
                     break;
                 case "default_authentication_server":
                     AuthUrl = new Uri((string)configuration_result);
                     break;
                 case "database_provider":
-                    DatabaseProvider = (string)configuration_result;
+                    DatabaseProvider = (string) configuration_result;
                     break;
                 case "database_connect":
-                    DatabaseConnect = (string)configuration_result;
+                    DatabaseConnect = (string) configuration_result;
                     break;
                 case "http_port":
-                    HttpPort = (uint)configuration_result;
+                    HttpPort = (uint) configuration_result;
                     break;
                 case "http_ssl":
-                    HttpSSL = (bool)configuration_result;
+                    HttpSSL = (bool) configuration_result;
                     break;
                 case "default_X":
-                    DefaultX = (uint)configuration_result;
+                    DefaultX = (uint) configuration_result;
                     break;
                 case "default_Y":
-                    DefaultY = (uint)configuration_result;
+                    DefaultY = (uint) configuration_result;
                     break;
                 case "deleted_user_account":
                     DeletedUserAccount = (string)configuration_result;

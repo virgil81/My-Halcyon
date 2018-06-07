@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\MOSES.FreeSwitchVoice.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\MOSES.FreeSwitchVoice.pdb
-C:\Users\virtu\Desktop\My-Halcyon\MOSES\FreeswitchVoice\obj\x64\Debug\MOSES.FreeSwitchVoice.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\MOSES\FreeswitchVoice\obj\x64\Debug\MOSES.FreeSwitchVoice.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\MOSES\FreeswitchVoice\obj\x64\Debug\MOSES.FreeSwitchVoice.dll
-C:\Users\virtu\Desktop\My-Halcyon\MOSES\FreeswitchVoice\obj\x64\Debug\MOSES.FreeSwitchVoice.pdb

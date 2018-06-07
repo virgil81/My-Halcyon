@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ClientStack.LindenUDP.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.ClientStack.LindenUDP.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\LindenUDP\obj\x64\Debug\OpenSim.Region.ClientStack.LindenUDP.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\LindenUDP\obj\x64\Debug\OpenSim.Region.ClientStack.LindenUDP.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\LindenUDP\obj\x64\Debug\OpenSim.Region.ClientStack.LindenUDP.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\ClientStack\LindenUDP\obj\x64\Debug\OpenSim.Region.ClientStack.LindenUDP.pdb

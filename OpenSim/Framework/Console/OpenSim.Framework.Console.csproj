@@ -93,7 +93,7 @@
 	  </Reference>
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Enhanced\JWT\InWorldz.JWT.csproj">
+	  <ProjectReference Include="..\..\..\InWorldz\JWT\InWorldz.JWT.csproj">
 		<Name>InWorldz.JWT</Name>
 		<Project>{D4CA6D90-0000-0000-0000-000000000000}</Project>
 		<Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Grid.GridServer.exe
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Grid.GridServer.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Grid\GridServer\obj\x64\Debug\OpenSim.Grid.GridServer.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Grid\GridServer\obj\x64\Debug\OpenSim.Grid.GridServer.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Grid\GridServer\obj\x64\Debug\OpenSim.Grid.GridServer.exe
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Grid\GridServer\obj\x64\Debug\OpenSim.Grid.GridServer.pdb

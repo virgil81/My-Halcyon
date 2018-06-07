@@ -1,5 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ScriptEngine.Shared.Script.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ScriptEngine.Shared.Script.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ScriptEngine\Shared.Script\obj\x64\Debug\OpenSim.ScriptEngine.Shared.Script.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ScriptEngine\Shared.Script\obj\x64\Debug\OpenSim.ScriptEngine.Shared.Script.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ScriptEngine\Shared.Script\obj\x64\Debug\OpenSim.ScriptEngine.Shared.Script.pdb

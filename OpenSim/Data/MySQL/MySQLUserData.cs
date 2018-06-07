@@ -1,47 +1,47 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSim Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using log4net;
 using OpenMetaverse;
 using OpenSim.Framework;
 using OpenSim.Data.SimpleDB;
+using System.Text;
 
 namespace OpenSim.Data.MySQL
 {
     /// <summary>
-    ///     A database interface class to a user profile storage system
+    /// A database interface class to a user profile storage system
     /// </summary>
     public class MySQLUserData : UserDataBase
     {
@@ -56,15 +56,15 @@ namespace OpenSim.Data.MySQL
 
         public override void Initialize()
         {
-            m_log.Info("[MySQL User Data]: " + Name + " cannot be default-initialized!");
+            m_log.Info("[MySQLUserData]: " + Name + " cannot be default-initialized!");
             throw new PluginNotInitializedException(Name);
         }
 
         /// <summary>
-        ///     Initialize User Interface
-        ///     Loads and initializes the MySQL storage plugin
-        ///     Warns and uses the obsolete mysql_connection.ini if connect string is empty.
-        ///     Checks for migration
+        /// Initialize User Interface
+        /// Loads and initializes the MySQL storage plugin
+        /// Warns and uses the obsolete mysql_connection.ini if connect string is empty.
+        /// Checks for migration
         /// </summary>
         /// <param name="connect">connect string.</param>
         public override void Initialize(string connect)
@@ -73,7 +73,7 @@ namespace OpenSim.Data.MySQL
 
             using (ISimpleDB conn = _connFactory.GetConnection())
             {
-                m_log.Info("[MySQL User Data]: Started");
+                m_log.Info("[MySQLUserData.InWorldz]: Started");
             }
         }
 
@@ -87,7 +87,6 @@ namespace OpenSim.Data.MySQL
             {
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 parms["?user_id"] = userPrefs.UserId;
-
                 // RetrieveUserPreferences tests for "0" and "1"
                 parms["?recv_ims_via_email"] = userPrefs.ReceiveIMsViaEmail ? "1" : "0";
                 parms["?listed_in_directory"] = userPrefs.ListedInDirectory ? "1" : "0";
@@ -103,7 +102,7 @@ namespace OpenSim.Data.MySQL
             }
             catch (Exception e)
             {
-                m_log.Error("[MySQL User Data]: Could not save user preferences: " + e.ToString());
+                m_log.Error("[MySQLUserData.InWorldz]: Could not save user preferences: " + e.ToString());
             }
         }
 
@@ -135,15 +134,49 @@ namespace OpenSim.Data.MySQL
             }
             catch (Exception e)
             {
-                m_log.Error("[MySQL User Data]: Could not retrieve user preferences: " + e.ToString());
+                m_log.Error("[MySQLUserData.InWorldz]: Could not retrieve user preferences: " + e.ToString());
                 return null;
             }
         }
 
+
         // see IUserDataPlugin
 
+        /*
+        public override UserInterestsData GetUserInterests(UUID avatarID)
+        {
+            MySQLSuperManager dbm = GetLockedConnection("GetUserInterests");
+
+            try
+            {
+                Dictionary<string, object> param = new Dictionary<string, object>();
+                param["?userid"] = avatarID;
+
+                IDbCommand result =
+                    dbm.Manager.Query(
+                        "Select skillsMask, skillsText, wantToMask, wantToText, languagesText from " + m_usersTableName + "where UUID = ?userid", param);
+                IDataReader reader = result.ExecuteReader();
+                UserInterestsData row = dbm.Manager.readUserInterests(reader);
+
+                reader.Dispose();
+                result.Dispose();
+                return row;
+            }
+            catch (Exception e)
+            {
+                dbm.Manager.Reconnect();
+                m_log.Error(e.ToString());
+                return null;
+            }
+            finally
+            {
+                dbm.Release();
+            }
+        }
+        */
+
         /// <summary>
-        ///     Reads a user profile from an active data reader
+        /// Reads a user profile from an active data reader
         /// </summary>
         /// <param name="reader">An active database reader</param>
         /// <returns>A user profile</returns>
@@ -154,11 +187,8 @@ namespace OpenSim.Data.MySQL
             if (reader.Read())
             {
                 UUID id;
-
                 if (!UUID.TryParse(Convert.ToString(reader["UUID"]), out id))
-                {
                     return null;
-                }
 
                 retval.ID = id;
                 retval.FirstName = (string)reader["username"];
@@ -189,27 +219,17 @@ namespace OpenSim.Data.MySQL
                 retval.UserAssetURI = (string)reader["userAssetURI"];
 
                 if (reader.IsDBNull(reader.GetOrdinal("profileAboutText")))
-                {
                     retval.AboutText = String.Empty;
-                }
                 else
-                {
                     retval.AboutText = (string)reader["profileAboutText"];
-                }
 
                 if (reader.IsDBNull(reader.GetOrdinal("profileFirstText")))
-                {
                     retval.FirstLifeAboutText = String.Empty;
-                }
                 else
-                {
                     retval.FirstLifeAboutText = (string)reader["profileFirstText"];
-                }
 
                 if (reader.IsDBNull(reader.GetOrdinal("profileImage")))
-                {
                     retval.Image = UUID.Zero;
-                }
                 else
                 {
                     UUID tmp;
@@ -218,9 +238,7 @@ namespace OpenSim.Data.MySQL
                 }
 
                 if (reader.IsDBNull(reader.GetOrdinal("profileFirstImage")))
-                {
                     retval.FirstLifeImage = UUID.Zero;
-                }
                 else
                 {
                     UUID tmp;
@@ -241,15 +259,10 @@ namespace OpenSim.Data.MySQL
 
                 retval.UserFlags = Convert.ToInt32(reader["userFlags"].ToString());
                 retval.GodLevel = Convert.ToInt32(reader["godLevel"].ToString());
-
                 if (reader.IsDBNull(reader.GetOrdinal("customType")))
-                {
                     retval.CustomType = String.Empty;
-                }
                 else
-                {
                     retval.CustomType = reader["customType"].ToString();
-                }
 
                 if (reader.IsDBNull(reader.GetOrdinal("partner")))
                 {
@@ -263,19 +276,15 @@ namespace OpenSim.Data.MySQL
                 }
 
                 if (reader.IsDBNull(reader.GetOrdinal("profileURL")))
-                {
                     retval.ProfileURL = String.Empty;
-                }
                 else
-                {
                     retval.ProfileURL = (string)reader["profileURL"];
-                }
+
             }
             else
             {
                 return null;
             }
-
             return retval;
         }
 
@@ -290,7 +299,6 @@ namespace OpenSim.Data.MySQL
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
                     string query = "SELECT * FROM " + m_usersTableName + " WHERE username = ?first AND lastname = ?second";
-
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
                     {
                         UserProfileData row = this.readUserRow(reader);
@@ -432,17 +440,10 @@ namespace OpenSim.Data.MySQL
             StringBuilder inList = new StringBuilder("(");
 
             bool first = true;
-
             foreach (UUID uuid in uuids)
             {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    inList.Append(",");
-                }
+                if (first) first = false;
+                else inList.Append(",");
 
                 inList.Append("'" + uuid.ToString() + "'");
             }
@@ -455,11 +456,7 @@ namespace OpenSim.Data.MySQL
         override public Dictionary<UUID, FriendRegionInfo> GetFriendRegionInfos(List<UUID> uuids)
         {
             Dictionary<UUID, FriendRegionInfo> infos = new Dictionary<UUID, FriendRegionInfo>();
-
-            if (uuids.Count == 0)
-            {
-                return infos;
-            }
+            if (uuids.Count == 0) return infos;
 
             try
             {
@@ -483,7 +480,7 @@ namespace OpenSim.Data.MySQL
             }
             catch (Exception e)
             {
-                m_log.Warn("[MySql]: Got exception on trying to find friends regions:", e);
+                m_log.Warn("[MYSQL]: Got exception on trying to find friends regions:", e);
                 m_log.Error(e.ToString());
             }
 
@@ -500,7 +497,6 @@ namespace OpenSim.Data.MySQL
 
             string[] querysplit;
             querysplit = query.Split(' ');
-
             if (querysplit.Length > 1 && !String.IsNullOrWhiteSpace(querysplit[1]))
             {
                 Dictionary<string, object> param = new Dictionary<string, object>();
@@ -570,12 +566,11 @@ namespace OpenSim.Data.MySQL
                     return returnlist;
                 }
             }
-
             return returnlist;
         }
 
         /// <summary>
-        ///     See IUserDataPlugin
+        /// See IUserDataPlugin
         /// </summary>
         /// <param name="uuid">User UUID</param>
         /// <returns>User profile data</returns>
@@ -604,7 +599,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Returns a user session searching by name
+        /// Returns a user session searching by name
         /// </summary>
         /// <param name="name">The account name : "Username Lastname"</param>
         /// <returns>The users session</returns>
@@ -614,7 +609,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Returns a user session by account name
+        /// Returns a user session by account name
         /// </summary>
         /// <param name="user">First part of the users account name</param>
         /// <param name="last">Second part of the users account name</param>
@@ -630,6 +625,7 @@ namespace OpenSim.Data.MySQL
         /// <param name="AgentID"></param>
         /// <param name="WebLoginKey"></param>
         /// <remarks>is it still used ?</remarks>
+
         public override void StoreWebLoginKey(UUID AgentID, UUID webLoginKey)
         {
             Dictionary<string, object> param = new Dictionary<string, object>();
@@ -654,7 +650,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Reads an agent row from a database reader
+        /// Reads an agent row from a database reader
         /// </summary>
         /// <param name="reader">An active database reader</param>
         /// <returns>A user session agent</returns>
@@ -666,12 +662,8 @@ namespace OpenSim.Data.MySQL
             {
                 // Agent IDs
                 UUID tmp;
-
                 if (!UUID.TryParse(Convert.ToString(reader["UUID"]), out tmp))
-                {
                     return null;
-                }
-
                 retval.ProfileID = tmp;
 
                 UUID.TryParse(Convert.ToString(reader["sessionID"]), out tmp);
@@ -702,12 +694,11 @@ namespace OpenSim.Data.MySQL
             {
                 return null;
             }
-
             return retval;
         }
 
         /// <summary>
-        ///     Returns an agent session by account UUID
+        /// Returns an agent session by account UUID
         /// </summary>
         /// <param name="uuid">The accounts UUID</param>
         /// <returns>The users session</returns>
@@ -735,7 +726,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Creates a new user and inserts it into the database
+        /// Creates a new user and inserts it into the database
         /// </summary>
         /// <param name="uuid">User ID</param>
         /// <param name="username">First part of the login</param>
@@ -770,14 +761,19 @@ namespace OpenSim.Data.MySQL
                                   UUID profileImage, UUID firstImage, UUID webLoginKey, int userFlags, int godLevel, string customType, UUID partner, string ProfileURL)
         {
             m_log.Debug("[MySQLManager]: Inserting profile for " + uuid.ToString());
-            string sql = "INSERT INTO users (`UUID`, `username`, `lastname`, `email`, `passwordHash`, `passwordSalt`, `homeRegion`, `homeRegionID`, ";
-            sql += "`homeLocationX`, `homeLocationY`, `homeLocationZ`, `homeLookAtX`, `homeLookAtY`, `homeLookAtZ`, `created`, ";
-            sql += "`lastLogin`, `userInventoryURI`, `userAssetURI`, ";
+            string sql =
+                "INSERT INTO users (`UUID`, `username`, `lastname`, `email`, `passwordHash`, `passwordSalt`, `homeRegion`, `homeRegionID`, ";
+            sql +=
+                "`homeLocationX`, `homeLocationY`, `homeLocationZ`, `homeLookAtX`, `homeLookAtY`, `homeLookAtZ`, `created`, ";
+            sql +=
+                "`lastLogin`, `userInventoryURI`, `userAssetURI`, ";
             sql += "`profileFirstText`, `profileImage`, `profileFirstImage`, `webLoginKey`, `userFlags`, `godLevel`, `customType`, `partner`, `profileURL`) VALUES ";
 
             sql += "(?UUID, ?username, ?lastname, ?email, ?passwordHash, ?passwordSalt, ?homeRegion, ?homeRegionID, ";
-            sql += "?homeLocationX, ?homeLocationY, ?homeLocationZ, ?homeLookAtX, ?homeLookAtY, ?homeLookAtZ, ?created, ";
-            sql += "?lastLogin, ?userInventoryURI, ?userAssetURI, ";
+            sql +=
+                "?homeLocationX, ?homeLocationY, ?homeLocationZ, ?homeLookAtX, ?homeLookAtY, ?homeLookAtZ, ?created, ";
+            sql +=
+                "?lastLogin, ?userInventoryURI, ?userAssetURI, ";
             sql += "?profileFirstText, ?profileImage, ?profileFirstImage, ?webLoginKey, ?userFlags, ?godLevel, ?customType, ?partner, ?profileURL)";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
@@ -829,13 +825,12 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Creates a new users profile
+        /// Creates a new users profile
         /// </summary>
         /// <param name="user">The user profile to create</param>
         public override void AddNewUserProfile(UserProfileData user)
         {
             UUID zero = UUID.Zero;
-
             if (user.ID == zero)
             {
                 return;
@@ -858,12 +853,13 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Creates a new agent and inserts it into the database
+        /// Creates a new agent and inserts it into the database
         /// </summary>
         /// <param name="agentdata">The agent data to be inserted</param>
         /// <returns>Success?</returns>
         public bool insertAgentRow(UserAgentData agentdata)
         {
+            // m_log.ErrorFormat("[MYSQL]: REPLACE AgentData: {0} at {1} {2}", agentdata.ProfileID, agentdata.Handle, agentdata.Position);
             string sql = String.Empty;
             sql += "REPLACE INTO ";
             sql += "agents (UUID, sessionID, secureSessionID, agentIP, agentPort, agentOnline, loginTime, logoutTime, currentRegion, currentHandle, currentPos, currentLookAt) VALUES ";
@@ -903,17 +899,14 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Creates a new agent
+        /// Creates a new agent
         /// </summary>
         /// <param name="agent">The agent to create</param>
         public override void AddNewUserAgent(UserAgentData agent)
         {
             UUID zero = UUID.Zero;
-
             if (agent.ProfileID == zero || agent.SessionID == zero)
-            {
                 return;
-            }
 
             try
             {
@@ -950,7 +943,7 @@ namespace OpenSim.Data.MySQL
                 }
                 catch (Exception e)
                 {
-                    m_log.Error("[MySQL User Data]: UpdateLoginHistory: " + e.ToString());
+                    m_log.Error("[MySQLUserData.InWorldz] UpdateLoginHistory: " + e.ToString());
                 }
             }
             else
@@ -973,13 +966,13 @@ namespace OpenSim.Data.MySQL
                 }
                 catch (Exception e)
                 {
-                    m_log.Error("[MySQL User Data]: UpdateLoginHistory: " + e.ToString());
+                    m_log.Error("[MySQLUserData.InWorldz] UpdateLoginHistory: " + e.ToString());
                 }
             }
         }
 
         /// <summary>
-        ///     Update user data into the database where User ID = uuid
+        /// Update user data into the database where User ID = uuid
         /// </summary>
         /// <param name="uuid">User ID</param>
         /// <param name="username">First part of the login</param>
@@ -1056,7 +1049,6 @@ namespace OpenSim.Data.MySQL
             parameters["?customType"] = customType == null ? String.Empty : customType;
 
             bool returnval = false;
-
             try
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
@@ -1075,11 +1067,12 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Updates a user profile stored in the DB
+        /// Updates a user profile stored in the DB
         /// </summary>
         /// <param name="user">The profile data to use to update the DB</param>
         public override bool UpdateUserProfile(UserProfileData user)
         {
+
             this.updateUserRow(user.ID, user.FirstName, user.SurName, user.Email, user.PasswordHash, user.PasswordSalt,
                               user.HomeRegion, user.HomeRegionID, user.HomeLocation.X, user.HomeLocation.Y,
                               user.HomeLocation.Z, user.HomeLookAt.X,
@@ -1089,11 +1082,29 @@ namespace OpenSim.Data.MySQL
                               user.FirstLifeAboutText, user.Image, user.FirstLifeImage, user.WebLoginKey,
                               user.UserFlags, user.GodLevel, user.CustomType, user.Partner);
 
+
             return true;
         }
 
+        /*
+        public override bool UpdateUserInterests(UserInterestsData user)
+        {
+            MySQLSuperManager dbm = GetLockedConnection("UpdateUserInterests");
+            try
+            {
+                dbm.Manager.updateUserInterests(user.ID, user.SkillsMask, user.SkillsText, user.WantToMask, user.WantToText, user.LanguagesText);
+            }
+            finally
+            {
+                dbm.Release();
+            }
+
+            return true;
+        }
+         */
+
         /// <summary>
-        ///     Performs a money transfer request between two accounts
+        /// Performs a money transfer request between two accounts
         /// </summary>
         /// <param name="from">The senders account ID</param>
         /// <param name="to">The receivers account ID</param>
@@ -1105,7 +1116,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Performs an inventory transfer request between two accounts
+        /// Performs an inventory transfer request between two accounts
         /// </summary>
         /// <remarks>TODO: Move to inventory server</remarks>
         /// <param name="from">The senders account ID</param>
@@ -1118,14 +1129,13 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Reads an avatar appearence from an active data reader
+        /// Reads an avatar appearence from an active data reader
         /// </summary>
         /// <param name="reader">An active database reader</param>
         /// <returns>An avatar appearence</returns>
         private AvatarAppearance readAppearanceRow(IDataReader reader)
         {
             AvatarAppearance appearance = null;
-
             if (reader.Read())
             {
                 appearance = new AvatarAppearance();
@@ -1147,8 +1157,8 @@ namespace OpenSim.Data.MySQL
                 // This handles the v1 style wearables list with a 1:1 relationship.  
                 appearance.SetWearable(
                     new AvatarWearable(
-                        AvatarWearable.BODY,
-                        new UUID(Convert.ToString(reader["body_item"])),
+                        AvatarWearable.BODY, 
+                        new UUID(Convert.ToString(reader["body_item"])), 
                         new UUID(Convert.ToString(reader["body_asset"]))));
                 appearance.SetWearable(
                     new AvatarWearable(
@@ -1226,14 +1236,13 @@ namespace OpenSim.Data.MySQL
                         new UUID(Convert.ToString(reader["physics_item"])),
                         new UUID(Convert.ToString(reader["physics_asset"]))));
             }
-
             return appearance;
         }
 
         /// <summary>
-        ///     Appearance
-        ///     TODO: stubs for now to get us to a compiling state gently
-        ///     override
+        /// Appearance
+        /// TODO: stubs for now to get us to a compiling state gently
+        /// override
         /// </summary>
         public override AvatarAppearance GetUserAppearance(UUID user)
         {
@@ -1245,14 +1254,13 @@ namespace OpenSim.Data.MySQL
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
                     string query = "SELECT * FROM " + m_appearanceTableName + " WHERE owner = ?owner";
-
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
                     {
                         AvatarAppearance appearance = this.readAppearanceRow(reader);
 
                         if (null == appearance)
                         {
-                            m_log.WarnFormat("[User Database]: No appearance found for user {0}", user.ToString());
+                            m_log.WarnFormat("[USER DB] No appearance found for user {0}", user.ToString());
                             return null;
                         }
 
@@ -1269,7 +1277,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Appearance
+        /// Appearance
         /// </summary>
         public override AvatarAppearance GetBotOutfit(UUID user, string outfitName)
         {
@@ -1283,21 +1291,20 @@ namespace OpenSim.Data.MySQL
                 {
                     string query = "SELECT * FROM botappearance WHERE owner = ?owner AND outfitName = ?outfitName";
                     AvatarAppearance appearance = null;
-
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
                     {
                         appearance = this.readAppearanceRow(reader);
 
                         if (null == appearance)
                         {
-                            m_log.WarnFormat("[User Database]: No appearance found for bot {0} - {1}", user.ToString(), outfitName);
+                            m_log.WarnFormat("[USER DB] No appearance found for bot {0} - {1}", user.ToString(), outfitName);
                             return null;
                         }
 
                         appearance.SetAttachments(GetBotAttachments(user, outfitName));
                     }
 
-                    // Update the last updated column
+                    //Update the last updated column
                     param.Add("?lastUsed", Util.UnixTimeSinceEpoch());
                     string sql = "UPDATE botappearance SET `lastUsed` = ?lastUsed WHERE owner = ?owner AND outfitName = ?outfitName";
                     conn.QueryNoResults(sql, param);
@@ -1313,7 +1320,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Create (or replace if existing) an avatar appearence
+        /// Create (or replace if existing) an avatar appearence
         /// </summary>
         /// <param name="appearance"></param>
         /// <returns>Succes?</returns>
@@ -1353,10 +1360,11 @@ namespace OpenSim.Data.MySQL
             }
 
             return returnval;
+
         }
 
         /// <summary>
-        ///     Create (or replace if existing) an avatar appearence
+        /// Create (or replace if existing) an avatar appearence
         /// </summary>
         /// <param name="appearance"></param>
         /// <returns>Succes?</returns>
@@ -1398,6 +1406,7 @@ namespace OpenSim.Data.MySQL
             }
 
             return returnval;
+
         }
 
         private static void CreateParametersForAppearance(AvatarAppearance appearance, Dictionary<string, object> parms)
@@ -1461,7 +1470,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Updates an avatar appearence
+        /// Updates an avatar appearence
         /// </summary>
         /// <param name="user">The user UUID</param>
         /// <param name="appearance">The avatar appearance</param>
@@ -1481,7 +1490,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Adds an outfit into the database
+        /// Adds an outfit into the database
         /// </summary>
         /// <param name="user">The user UUID</param>
         /// <param name="appearance">The avatar appearance</param>
@@ -1562,24 +1571,17 @@ namespace OpenSim.Data.MySQL
         public override void SetCachedBakedTextures(Dictionary<UUID, UUID> bakedTextures)
         {
             string sql = String.Empty;
-
-            // Replace into, as if the clothing gets reworn, we want to be able to use
-            // the newest baked texture if something was corrupted the first time around
+            //Replace into, as if the clothing gets reworn, we want to be able to use
+            //  the newest baked texture if something was corrupted the first time around
             sql += "REPLACE INTO cachedbakedtextures (cache, texture) values ";
-
-            for (int i = 1; i < bakedTextures.Count + 1; i++)
-            {
+            for(int i = 1; i < bakedTextures.Count + 1; i++)
                 sql += "(?cache" + i + ", ?texture" + i + "), ";
-            }
-
             sql = sql.Remove(sql.Length - 2);//Remove the ", "
-
             try
             {
                 Dictionary<string, object> parms = new Dictionary<string, object>();
                 int i = 1;
-
-                foreach (KeyValuePair<UUID, UUID> kvp in bakedTextures)
+                foreach(KeyValuePair<UUID, UUID> kvp in bakedTextures)
                 {
                     parms.Add("?cache" + i, kvp.Key.ToString());
                     parms.Add("?texture" + i, kvp.Value.ToString());
@@ -1608,13 +1610,11 @@ namespace OpenSim.Data.MySQL
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     string query = "SELECT cache, texture from cachedbakedtextures WHERE ";
                     int i = 0;
-
                     foreach (CachedAgentArgs arg in args)
                     {
                         query += "cache = ?uuid" + i + " OR ";
                         param["?uuid" + i++] = arg.ID;
                     }
-
                     query = query.Remove(query.Length - 4); //Remove " OR "
 
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
@@ -1640,7 +1640,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Database provider name
+        /// Database provider name
         /// </summary>
         /// <returns>Provider name</returns>
         public override string Name
@@ -1649,7 +1649,7 @@ namespace OpenSim.Data.MySQL
         }
 
         /// <summary>
-        ///     Database provider version
+        /// Database provider version
         /// </summary>
         /// <returns>provider version</returns>
         public override string Version
@@ -1668,7 +1668,6 @@ namespace OpenSim.Data.MySQL
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
                     string query = "SELECT attachpoint, item, asset from " + m_attachmentsTableName + " WHERE UUID = ?uuid";
-
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
                     {
                         while (reader.Read())
@@ -1704,7 +1703,6 @@ namespace OpenSim.Data.MySQL
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
                     string query = "SELECT attachpoint, item, asset from botattachments WHERE UUID = ?uuid AND outfitName = ?outfitName";
-
                     using (IDataReader reader = conn.QueryAndUseReader(query, param))
                     {
                         while (reader.Read())
@@ -1731,20 +1729,11 @@ namespace OpenSim.Data.MySQL
         private string GenerateAttachmentParams(int number, string outfitName)
         {
             StringBuilder parms = new StringBuilder();
-
-            if (number != 0)
-            {
-                parms.Append(",");
-            }
-
+            if (number != 0) parms.Append(",");
             parms.Append("(");
             parms.Append("?uuid" + Convert.ToSingle(number) + ",");
-
             if (outfitName != null)
-            {
                 parms.Append("?outfitName" + Convert.ToSingle(number) + ",");
-            }
-
             parms.Append("?attachpoint" + Convert.ToSingle(number) + ",");
             parms.Append("?item" + Convert.ToSingle(number) + ",");
             parms.Append("?asset" + Convert.ToSingle(number));
@@ -1776,7 +1765,6 @@ namespace OpenSim.Data.MySQL
                     sql = "insert into avatarattachments (UUID, attachpoint, item, asset) values ";
 
                     int number = 0;
-
                     foreach (AvatarAttachment attachment in attachments)
                     {
                         sql += this.GenerateAttachmentParams(number, null);
@@ -1819,7 +1807,6 @@ namespace OpenSim.Data.MySQL
                     sql = "insert into botattachments (UUID, outfitName, attachpoint, item, asset) values ";
 
                     int number = 0;
-
                     foreach (AvatarAttachment attachment in attachments)
                     {
                         sql += this.GenerateAttachmentParams(number, outfitName);

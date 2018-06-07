@@ -349,7 +349,7 @@ namespace OpenSim.Region.Physics.BasicPhysicsPlugin
 
         public override void RayCastWorld(Vector3 start, Vector3 direction, float distance, int hitAmounts, System.Action<List<ContactResult>> result)
         {
-            // Used by Emporia and BotManager
+            // Used by Phlox and BotManager
             // Only consumer of void RayCastWorld()
         }
 

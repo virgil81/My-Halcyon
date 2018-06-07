@@ -1,29 +1,29 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSimulator Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 using System;
 using System.Collections.Generic;
@@ -39,8 +39,7 @@ using OpenSim.Region.Framework.Scenes;
 namespace OpenSim.Region.OptionalModules.World.TreePopulator
 {
     /// <summary>
-    ///     Version 2.01 - Very hacky compared to the original. 
-    ///     Will fix original and release as 0.3 later.
+    /// Version 2.01 - Very hacky compared to the original. Will fix original and release as 0.3 later.
     /// </summary>
     public class TreePopulatorModule : IRegionModule
     {
@@ -78,11 +77,9 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
             m_trees = new List<UUID>();
 
             if (m_active_trees)
-            {
                 activeizeTreeze(true);
-            }
 
-            m_log.Debug("[Trees]: Initialized tree module");
+            m_log.Debug("[TREES]: Initialized tree module");
         }
 
         public void PostInitialize()
@@ -106,62 +103,52 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
         #endregion
 
         /// <summary>
-        ///     Handle a tree command from the console.
+        /// Handle a tree command from the console.
         /// </summary>
         /// <param name="module"></param>
         /// <param name="cmdparams"></param>
         public void HandleTreeConsoleCommand(string module, string[] cmdparams)
         {
             if (m_scene.ConsoleScene() != null && m_scene.ConsoleScene() != m_scene)
-            {
                 return;
-            }
 
             if (cmdparams[1] == "active")
             {
                 if (cmdparams.Length <= 2)
                 {
                     if (m_active_trees)
-                    {
-                        m_log.InfoFormat("[Trees]: Trees are currently active");
-                    }
+                        m_log.InfoFormat("[TREES]: Trees are currently active");
                     else
-                    {
-                        m_log.InfoFormat("[Trees]: Trees are currently not active");
-                    }
+                        m_log.InfoFormat("[TREES]: Trees are currently not active");
                 }
                 else if (cmdparams[2] == "true" && !m_active_trees)
                 {
-                    m_log.InfoFormat("[Trees]: Activating Trees");
+                    m_log.InfoFormat("[TREES]: Activating Trees");
                     m_active_trees = true;
                     activeizeTreeze(m_active_trees);
                 }
                 else if (cmdparams[2] == "false" && m_active_trees)
                 {
-                    m_log.InfoFormat("[Trees]: Trees no longer active, for now...");
+                    m_log.InfoFormat("[TREES]: Trees no longer active, for now...");
                     m_active_trees = false;
                     activeizeTreeze(m_active_trees);
                 }
                 else
                 {
-                    m_log.InfoFormat("[Trees]: When setting the tree module active via the console, you must specify true or false");
+                    m_log.InfoFormat("[TREES]: When setting the tree module active via the console, you must specify true or false");
                 }
             }
             else if (cmdparams[1] == "plant")
             {
-                m_log.InfoFormat("[Trees]: New tree planting");
+                m_log.InfoFormat("[TREES]: New tree planting");
                 UUID uuid = m_scene.RegionInfo.EstateSettings.EstateOwner;
-
                 if (uuid == UUID.Zero)
-                {
                     uuid = m_scene.RegionInfo.MasterAvatarAssignedUUID;
-                }
-
                 CreateTree(uuid, new Vector3(128.0f, 128.0f, 0.0f));
             }
             else
             {
-                m_log.InfoFormat("[Trees]: Unknown command");
+                m_log.InfoFormat("[TREES]: Unknown command");
             }
         }
 
@@ -190,6 +177,7 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
                     // 100 seconds to grow 1m
                     s_tree.Scale += new Vector3(0.1f, 0.1f, 0.1f);
                     s_tree.ScheduleFullUpdate(PrimUpdateFlags.FindBest);
+                    //s_tree.ScheduleTerseUpdate();
                 }
                 else
                 {
@@ -258,13 +246,13 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
                         m_trees.Remove(selectedTree.ParentGroup.UUID);
 
                         m_scene.ForEachClient(delegate(IClientAPI controller)
-                        {
-                            controller.SendKillObject(m_scene.RegionInfo.RegionHandle, selectedTree.LocalId);
-                        });
+                                                  {
+                                                      controller.SendKillObject(m_scene.RegionInfo.RegionHandle,
+                                                                                selectedTree.LocalId);
+                                                  });
 
                         break;
                     }
-
                     selectedTree.SetText(killLikelyhood.ToString(), new Vector3(1.0f, 1.0f, 1.0f), 1.0);
                 }
                 else
@@ -279,28 +267,15 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
             Vector3 position = new Vector3();
 
             position.X = s_tree.AbsolutePosition.X + (1 * (-1 * Util.RandomClass.Next(1)));
-
             if (position.X > 255)
-            {
                 position.X = 255;
-            }
-
             if (position.X < 0)
-            {
                 position.X = 0;
-            }
-
             position.Y = s_tree.AbsolutePosition.Y + (1 * (-1 * Util.RandomClass.Next(1)));
-
             if (position.Y > 255)
-            {
                 position.Y = 255;
-            }
-
             if (position.Y < 0)
-            {
                 position.Y = 0;
-            }
 
             double randX = ((Util.RandomClass.NextDouble() * 2.0) - 1.0) * (s_tree.Scale.X * 3);
             double randY = ((Util.RandomClass.NextDouble() * 2.0) - 1.0) * (s_tree.Scale.X * 3);
@@ -309,11 +284,8 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
             position.Y += (float) randY;
 
             UUID uuid = m_scene.RegionInfo.EstateSettings.EstateOwner;
-
             if (uuid == UUID.Zero)
-            {
                 uuid = m_scene.RegionInfo.MasterAvatarAssignedUUID;
-            }
 
             CreateTree(uuid, position);
         }
@@ -323,13 +295,13 @@ namespace OpenSim.Region.OptionalModules.World.TreePopulator
             position.Z = (float) m_scene.Heightmap[(int) position.X, (int) position.Y];
 
             IVegetationModule module = m_scene.RequestModuleInterface<IVegetationModule>();
-
+            
             if (null == module)
-            {
                 return;
-            }
-
-            SceneObjectGroup tree = module.AddTree(uuid, UUID.Zero, new Vector3(0.1f, 0.1f, 0.1f), Quaternion.Identity, position, Tree.Cypress1, false);
+            
+            SceneObjectGroup tree 
+                = module.AddTree(
+                    uuid, UUID.Zero, new Vector3(0.1f, 0.1f, 0.1f), Quaternion.Identity, position, Tree.Cypress1, false);
             
             m_trees.Add(tree.UUID);
             tree.ScheduleGroupForFullUpdate(PrimUpdateFlags.ForcedFullUpdate);

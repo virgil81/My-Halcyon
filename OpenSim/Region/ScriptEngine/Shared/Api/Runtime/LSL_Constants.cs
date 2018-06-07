@@ -367,42 +367,42 @@ namespace OpenSim.Region.ScriptEngine.Shared.ScriptBase
         public const int PRIM_SIT_TARGET = 41;
 
         // large out of normal range value unlikely to conflict with future LL values
-        /// \xrefitem lslconst "WC_PRIM_ALPHA" ""
-        /// <tt>[ WC_PRIM_ALPHA, integer face, float alpha ]</tt>\n\n
+        /// \xrefitem lslconst "IW_PRIM_ALPHA" ""
+        /// <tt>[ IW_PRIM_ALPHA, integer face, float alpha ]</tt>\n\n
         /// The alpha (opacity) of the specifed face.
-        public const int WC_PRIM_ALPHA = 11001;
-        /// \xrefitem lslconst "WC_PRIM_PROJECTOR" ""
-        /// <tt>[ WC_PRIM_PROJECTOR, integer enabled, string texture, float field_of_view, float focus_dist, float ambience ]</tt> \n\n
+        public const int IW_PRIM_ALPHA = 11001;
+        /// \xrefitem lslconst "IW_PRIM_PROJECTOR" ""
+        /// <tt>[ IW_PRIM_PROJECTOR, integer enabled, string texture, float field_of_view, float focus_dist, float ambience ]</tt> \n\n
         /// Get or set all the projector properties in one shot.\n
         /// See the following:
-        /// \li \ref WC_PRIM_PROJECTOR_ENABLED
-        /// \li \ref WC_PRIM_PROJECTOR_TEXTURE
-        /// \li \ref WC_PRIM_PROJECTOR_FOV
-        /// \li \ref WC_PRIM_PROJECTOR_FOCUS
-        /// \li \ref WC_PRIM_PROJECTOR_AMBIENCE
-        public const int WC_PRIM_PROJECTOR          = 11100;
-        /// \xrefitem lslconst "WC_PRIM_PROJECTOR_ENABLED" ""
-        /// <tt>[ WC_PRIM_PROJECTOR_ENABLED, integer enabled ]</tt>\n\n
+        /// \li \ref IW_PRIM_PROJECTOR_ENABLED
+        /// \li \ref IW_PRIM_PROJECTOR_TEXTURE
+        /// \li \ref IW_PRIM_PROJECTOR_FOV
+        /// \li \ref IW_PRIM_PROJECTOR_FOCUS
+        /// \li \ref IW_PRIM_PROJECTOR_AMBIENCE
+        public const int IW_PRIM_PROJECTOR          = 11100;
+        /// \xrefitem lslconst "IW_PRIM_PROJECTOR_ENABLED" ""
+        /// <tt>[ IW_PRIM_PROJECTOR_ENABLED, integer enabled ]</tt>\n\n
         /// Whether or not the projector portion of the light source is active.
-        public const int WC_PRIM_PROJECTOR_ENABLED  = 11101;
-        /// \lslconstant{WC_PRIM_PROJECTOR_TEXTURE}
-        /// <tt>[ WC_PRIM_PROJECTOR_TEXTURE, string texture ]</tt>\n\n
+        public const int IW_PRIM_PROJECTOR_ENABLED  = 11101;
+        /// \lslconstant{IW_PRIM_PROJECTOR_TEXTURE}
+        /// <tt>[ IW_PRIM_PROJECTOR_TEXTURE, string texture ]</tt>\n\n
         /// The texture the projector emits.\n
         /// \n
         /// You can use either the UUID of a texture or the name of a texture that is in the inventory of the same prim as the script.
-        public const int WC_PRIM_PROJECTOR_TEXTURE  = 11102;
-        /// \xrefitem lslconst "WC_PRIM_PROJECTOR_FOV" ""
-        /// <tt>[ WC_PRIM_PROJECTOR_FOV, float field_of_view ]</tt>\n\n
+        public const int IW_PRIM_PROJECTOR_TEXTURE  = 11102;
+        /// \xrefitem lslconst "IW_PRIM_PROJECTOR_FOV" ""
+        /// <tt>[ IW_PRIM_PROJECTOR_FOV, float field_of_view ]</tt>\n\n
         /// The field of view, in radians, the projector emits. Must be between 0.0 and 3.0 inclusive.
-        public const int WC_PRIM_PROJECTOR_FOV      = 11103;
-        /// \xrefitem lslconst "WC_PRIM_PROJECTOR_FOCUS" ""
-        /// <tt>[ WC_PRIM_PROJECTOR_FOCUS, float focus_dist ]</tt>\n\n
+        public const int IW_PRIM_PROJECTOR_FOV      = 11103;
+        /// \xrefitem lslconst "IW_PRIM_PROJECTOR_FOCUS" ""
+        /// <tt>[ IW_PRIM_PROJECTOR_FOCUS, float focus_dist ]</tt>\n\n
         /// The distance, in meters, at which the projected texture starts to blur.
-        public const int WC_PRIM_PROJECTOR_FOCUS    = 11104;
-        /// \xrefitem lslconst "WC_PRIM_PROJECTOR_AMBIENCE" ""
-        /// <tt>[ WC_PRIM_PROJECTOR_AMBIENCE, float ambience ]</tt>\n\n
+        public const int IW_PRIM_PROJECTOR_FOCUS    = 11104;
+        /// \xrefitem lslconst "IW_PRIM_PROJECTOR_AMBIENCE" ""
+        /// <tt>[ IW_PRIM_PROJECTOR_AMBIENCE, float ambience ]</tt>\n\n
         /// The amount of testure-controlled light to put on all faces with the FOV and range of the light. Cannot be negative.
-        public const int WC_PRIM_PROJECTOR_AMBIENCE = 11105;
+        public const int IW_PRIM_PROJECTOR_AMBIENCE = 11105;
 
         public const int PRIM_TEXGEN_DEFAULT = 0;
         public const int PRIM_TEXGEN_PLANAR = 1;
@@ -588,7 +588,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.ScriptBase
         public const int OBJECT_BODY_SHAPE_TYPE = 26;
         public const int OBJECT_LAST_OWNER_ID = 27;
         public const int OBJECT_CLICK_ACTION = 28;
-        public const int WC_OBJECT_SCRIPT_MEMORY_USED = 10001;
+        public const int IW_OBJECT_SCRIPT_MEMORY_USED = 10001;
 
         // Values for llGetObjectDetails(OBJECT_PATHFINDING_TYPE) above
         public const int OPT_OTHER = -1;            // Attachments, Linden trees & grass
@@ -696,7 +696,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.ScriptBase
         public const string TEXTURE_TRANSPARENT = "8dcd4a48-2d37-4909-9f78-f7a9eb4ef903";
         public const string TEXTURE_MEDIA = "8b5fec65-8d8d-9dc5-cda8-8fdf2716e361";
 
-        // llGetAgentList and wcGetAgentList scopes
+        // llGetAgentList and iwGetAgentList scopes
         public const int AGENT_LIST_PARCEL = 1;
         public const int AGENT_LIST_PARCEL_OWNER = 2;
         public const int AGENT_LIST_REGION = 4;
@@ -746,7 +746,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.ScriptBase
         public const int CONTENT_TYPE_FORM  = 7;
         public const int CONTENT_TYPE_RSS   = 8;
 
-        // wcSetWind types
+        // iwSetWind types
         public const int WIND_SPEED_DEFAULT = 0;
         public const int WIND_SPEED_FIXED = 1;
 
@@ -826,15 +826,15 @@ namespace OpenSim.Region.ScriptEngine.Shared.ScriptBase
         public const int BOT_IMAGE_UUID = 3;
         public const int BOT_PROFILE_URL = 4;
 
-        // Return codes for wcDeliverInventory and wcDeliverInventoryList
-        public const int WC_DELIVER_OK = 0;
-        public const int WC_DELIVER_BADKEY = 1;
-        public const int WC_DELIVER_MUTED = 2;
-        public const int WC_DELIVER_ITEM = 3;
-        public const int WC_DELIVER_PRIM = 4;
-        public const int WC_DELIVER_USER = 5;
-        public const int WC_DELIVER_PERM = 6;
-        public const int WC_DELIVER_NONE = 7;
+        // Return codes for iwDeliverInventory and iwDeliverInventoryList
+        public const int IW_DELIVER_OK = 0;
+        public const int IW_DELIVER_BADKEY = 1;
+        public const int IW_DELIVER_MUTED = 2;
+        public const int IW_DELIVER_ITEM = 3;
+        public const int IW_DELIVER_PRIM = 4;
+        public const int IW_DELIVER_USER = 5;
+        public const int IW_DELIVER_PERM = 6;
+        public const int IW_DELIVER_NONE = 7;
 
         // Used by llReturnObjectsByOwner
         public const int OBJECT_RETURN_PARCEL = 1;

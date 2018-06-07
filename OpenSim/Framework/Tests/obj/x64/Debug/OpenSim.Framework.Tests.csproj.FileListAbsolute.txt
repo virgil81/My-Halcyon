@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Tests.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Framework.Tests.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Tests\obj\x64\Debug\OpenSim.Framework.Tests.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Tests\obj\x64\Debug\OpenSim.Framework.Tests.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Tests\obj\x64\Debug\OpenSim.Framework.Tests.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Framework\Tests\obj\x64\Debug\OpenSim.Framework.Tests.pdb

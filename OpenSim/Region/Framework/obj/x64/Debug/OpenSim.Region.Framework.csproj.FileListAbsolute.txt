@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Framework.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Framework.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Framework\obj\x64\Debug\OpenSim.Region.Framework.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Framework\obj\x64\Debug\OpenSim.Region.Framework.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Framework\obj\x64\Debug\OpenSim.Region.Framework.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Framework\obj\x64\Debug\OpenSim.Region.Framework.pdb

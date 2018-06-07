@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.LoadRegions.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.LoadRegions.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\LoadRegions\obj\x64\Debug\OpenSim.ApplicationPlugins.LoadRegions.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\LoadRegions\obj\x64\Debug\OpenSim.ApplicationPlugins.LoadRegions.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\LoadRegions\obj\x64\Debug\OpenSim.ApplicationPlugins.LoadRegions.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\LoadRegions\obj\x64\Debug\OpenSim.ApplicationPlugins.LoadRegions.pdb

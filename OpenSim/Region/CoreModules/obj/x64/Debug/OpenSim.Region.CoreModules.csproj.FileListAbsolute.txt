@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.CoreModules.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.CoreModules.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\CoreModules\obj\x64\Debug\OpenSim.Region.CoreModules.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\CoreModules\obj\x64\Debug\OpenSim.Region.CoreModules.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\CoreModules\obj\x64\Debug\OpenSim.Region.CoreModules.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\CoreModules\obj\x64\Debug\OpenSim.Region.CoreModules.pdb

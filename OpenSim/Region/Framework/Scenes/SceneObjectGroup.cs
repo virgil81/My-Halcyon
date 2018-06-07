@@ -1044,7 +1044,7 @@ namespace OpenSim.Region.Framework.Scenes
 
         public void LoadScriptState(XmlDocument doc)
         {
-            XmlNodeList nodes = doc.GetElementsByTagName("EmporiaSavedSS");
+            XmlNodeList nodes = doc.GetElementsByTagName("PhloxSavedSS");
             if (nodes.Count > 0)
             {
                 m_savedScriptState = new Dictionary<UUID, string>();
@@ -1394,10 +1394,10 @@ namespace OpenSim.Region.Framework.Scenes
             if (states.Count > 0)
             {
                 // Now generate the necessary XML wrappings
-                writer.WriteStartElement(String.Empty, "EmporiaGroupScriptStates", String.Empty);
+                writer.WriteStartElement(String.Empty, "PhloxGroupScriptStates", String.Empty);
                 foreach (UUID itemid in states.Keys)
                 {
-                    writer.WriteStartElement(String.Empty, "EmporiaSavedSS", String.Empty);
+                    writer.WriteStartElement(String.Empty, "PhloxSavedSS", String.Empty);
                     writer.WriteAttributeString(String.Empty, "UUID", String.Empty, itemid.ToString());
                     writer.WriteRaw(states[itemid]); // Writes ScriptState element
                     writer.WriteEndElement(); // End of SavedScriptState

@@ -1,30 +1,29 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSimulator Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
-
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 using System;
 using OpenMetaverse;
 
@@ -32,13 +31,6 @@ namespace OpenSim.Framework
 {
     public class Constants
     {
-        // Default Grid Directory Constants
-        public const string DEFAULT_CRASH_DIR = "../Data/crashes";
-
-        // Default Grid Textures
-        public const string DefaultTexture = "89556747-24cb-43ed-920b-47caed15465f";
-
-        // Default Region Constants
         public const uint RegionSize = 256;
         public const byte TerrainPatchSize = 16;
         public const float OUTSIDE_REGION = (float)RegionSize;  // first invalid location (use < OUTSIDE_REGION)
@@ -63,15 +55,17 @@ namespace OpenSim.Framework
         public const int ERR_RUNTIME_PERMISSIONS = -4;
         public const int ERR_THROTTLED = -5;
 
-        // Default Groups Constants
-        public const uint MaxGroups = 500;  // maximum number of groups a user can be a member of
+        public const uint MaxGroups = 100;  // maximum number of groups a user can be a member of
         public const GroupPowers DefaultEveryonePowers = GroupPowers.AllowSetHome | GroupPowers.JoinChat | GroupPowers.AllowVoiceChat | GroupPowers.ReceiveNotices;
         public const GroupPowers OWNER_GROUP_POWERS = (GroupPowers)ulong.MaxValue;
+
+        public const string DefaultTexture = "89556747-24cb-43ed-920b-47caed15465f";
 
         // Avatar "bounce" when descending into a no-entry parcel (e.g. banned)
         public const float AVATAR_BOUNCE = 10.0f;
 
-        // Used by EstateOwnerMessage packets
+        // Summary:
+        //     Used by EstateOwnerMessage packets
         public enum EstateAccessDeltaCommands
         {
             // the 'All Estates' variants set the low bit (or second lowest,
@@ -96,7 +90,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Used by internal server implementations of LSL functions.
+        /// Used by internal server implementations of LSL functions.
         /// </summary>
         public enum GenericReturnCodes : uint
         {
@@ -109,5 +103,6 @@ namespace OpenSim.Framework
             MUTED = 6,      // operation not permitted due to muting
             NOTFOUND = 7,   // the target does not exist
         }
+
     }
 }

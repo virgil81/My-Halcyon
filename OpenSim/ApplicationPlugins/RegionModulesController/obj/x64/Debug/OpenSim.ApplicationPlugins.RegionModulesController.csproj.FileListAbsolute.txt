@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.RegionModulesController.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.RegionModulesController.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\RegionModulesController\obj\x64\Debug\OpenSim.ApplicationPlugins.RegionModulesController.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\RegionModulesController\obj\x64\Debug\OpenSim.ApplicationPlugins.RegionModulesController.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\RegionModulesController\obj\x64\Debug\OpenSim.ApplicationPlugins.RegionModulesController.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\RegionModulesController\obj\x64\Debug\OpenSim.ApplicationPlugins.RegionModulesController.pdb

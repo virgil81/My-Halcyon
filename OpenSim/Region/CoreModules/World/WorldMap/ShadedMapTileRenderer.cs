@@ -36,19 +36,22 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 {
     public class ShadedMapTileRenderer : IMapTileTerrainRenderer
     {
-        private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog m_log =
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Scene m_scene;
+        //private IConfigSource m_config; // not used currently
 
         public void Initialize(Scene scene, IConfigSource config)
         {
             m_scene = scene;
+            // m_config = config; // not used currently
         }
 
         public void TerrainToBitmap(DirectBitmap mapbmp)
         {
             int tc = Environment.TickCount;
-            m_log.Info("[Map Tile]: Generating Maptile Step 1: Terrain (Shaded)");
+            m_log.Info("[MAPTILE]: Generating Maptile Step 1: Terrain (Shaded)");
 
             double[,] hm = m_scene.Heightmap.GetDoubles();
             bool ShadowDebugContinue = true;
@@ -57,22 +60,15 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 
             float low = 255;
             float high = 0;
-
             for (int x = 0; x < 256; x++)
             {
                 for (int y = 0; y < 256; y++)
                 {
                     float hmval = (float)hm[x, y];
-
                     if (hmval < low)
-                    {
                         low = hmval;
-                    }
-
                     if (hmval > high)
-                    {
                         high = hmval;
-                    }
                 }
             }
 
@@ -90,18 +86,15 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
                     if (heightvalue > waterHeight)
                     {
                         // scale height value
+                        // No, that doesn't scale it:
+                        // heightvalue = low + mid * (heightvalue - low) / mid; => low + (heightvalue - low) * mid / mid = low + (heightvalue - low) * 1 = low + heightvalue - low = heightvalue
+
                         if (Single.IsInfinity(heightvalue) || Single.IsNaN(heightvalue))
-                        {
                             heightvalue = 0;
-                        }
                         else if (heightvalue > 255f)
-                        {
                             heightvalue = 255f;
-                        }
                         else if (heightvalue < 0f)
-                        {
                             heightvalue = 0f;
-                        }
 
                         Color color = Color.FromArgb((int)heightvalue, 100, (int)heightvalue);
 
@@ -109,10 +102,10 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 
                         try
                         {
-                            /// <summary>
-                            ///     X
-                            ///     Shade the terrain for shadows
-                            /// </summary>
+                            //X
+                            // .
+                            //
+                            // Shade the terrain for shadows
                             if (x < 255 && yr < 255)
                             {
                                 float hfvalue = (float)hm[x, y];
@@ -122,16 +115,11 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
                                 {
                                     hfvaluecompare = (float)hm[x + 1, y + 1]; // light from north-east => look at land height there
                                 }
-
                                 if (Single.IsInfinity(hfvalue) || Single.IsNaN(hfvalue))
-                                {
                                     hfvalue = 0f;
-                                }
 
                                 if (Single.IsInfinity(hfvaluecompare) || Single.IsNaN(hfvaluecompare))
-                                {
                                     hfvaluecompare = 0f;
-                                }
 
                                 float hfdiff = hfvalue - hfvaluecompare;  // => positive if NE is lower, negative if here is lower
 
@@ -141,34 +129,34 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 
                                 try
                                 {
+                                    // hfdiffi = Math.Abs((int)((hfdiff * 4) + (hfdiff * 0.5))) + 1;
                                     hfdiffi = Math.Abs((int)(hfdiff * 4.5f)) + 1;
-
                                     if (hfdiff % 1f != 0)
                                     {
+                                        // hfdiffi = hfdiffi + Math.Abs((int)(((hfdiff % 1) * 0.5f) * 10f) - 1);
                                         hfdiffi = hfdiffi + Math.Abs((int)((hfdiff % 1f) * 5f) - 1);
                                     }
 
                                     hfdiffihighlight = Math.Abs((int)((hfdiff * highlightfactor) * 4.5f)) + 1;
-
                                     if (hfdiff % 1f != 0)
                                     {
+                                        // hfdiffi = hfdiffi + Math.Abs((int)(((hfdiff % 1) * 0.5f) * 10f) - 1);
                                         hfdiffihighlight = hfdiffihighlight + Math.Abs((int)(((hfdiff * highlightfactor) % 1f) * 5f) - 1);
                                     }
                                 }
                                 catch (OverflowException)
                                 {
-                                    m_log.Debug("[Map Tile]: Shadow failed at value: " + hfdiff.ToString());
+                                    m_log.Debug("[MAPTILE]: Shadow failed at value: " + hfdiff.ToString());
                                     ShadowDebugContinue = false;
                                 }
 
                                 if (hfdiff > 0.3f)
                                 {
-                                    /// <summary>
-                                    ///     NE is lower than here
-                                    ///     We have to desaturate and lighten the land at the same
-                                    ///     time we use floats, colors use bytes, so shrink our space
-                                    ///     down to 0-255
-                                    /// </summary>
+                                    // NE is lower than here
+                                    // We have to desaturate and lighten the land at the same time
+                                    // we use floats, colors use bytes, so shrink are space down to
+                                    // 0-255
+
                                     if (ShadowDebugContinue)
                                     {
                                         int r = color.R;
@@ -181,12 +169,11 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
                                 }
                                 else if (hfdiff < -0.3f)
                                 {
-                                    /// <summary>
-                                    ///     Here is lower then NE:
-                                    ///     We have to desaturate and blacken the land at the same
-                                    ///     time we use floats, colors use bytes, so shrink our space 
-                                    ///     down to 0-255
-                                    /// </summary>
+                                    // here is lower than NE:
+                                    // We have to desaturate and blacken the land at the same time
+                                    // we use floats, colors use bytes, so shrink are space down to
+                                    // 0-255
+
                                     if (ShadowDebugContinue)
                                     {
                                         if ((x - 1 > 0) && (yr + 1 < 256))
@@ -209,10 +196,9 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
                         {
                             if (!terraincorruptedwarningsaid)
                             {
-                                m_log.WarnFormat("[Map Image]: Your terrain is corrupted in region {0}, it might take a few minutes to generate the map image depending on the corruption level", m_scene.RegionInfo.RegionName);
+                                m_log.WarnFormat("[MAPIMAGE]: Your terrain is corrupted in region {0}, it might take a few minutes to generate the map image depending on the corruption level", m_scene.RegionInfo.RegionName);
                                 terraincorruptedwarningsaid = true;
                             }
-
                             color = Color.Black;
                             mapbmp.Bitmap.SetPixel(x, yr, color);
                         }
@@ -223,19 +209,12 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 
                         // Y flip the cordinates
                         heightvalue = waterHeight - heightvalue;
-
                         if (Single.IsInfinity(heightvalue) || Single.IsNaN(heightvalue))
-                        {
                             heightvalue = 0f;
-                        }
                         else if (heightvalue > 19f)
-                        {
                             heightvalue = 19f;
-                        }
                         else if (heightvalue < 0f)
-                        {
                             heightvalue = 0f;
-                        }
 
                         heightvalue = 100f - (heightvalue * 100f) / 19f;
 
@@ -248,18 +227,16 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
                         {
                             if (!terraincorruptedwarningsaid)
                             {
-                                m_log.WarnFormat("[Map Image]: Your terrain is corrupted in region {0}, it might take a few minutes to generate the map image depending on the corruption level", m_scene.RegionInfo.RegionName);
+                                m_log.WarnFormat("[MAPIMAGE]: Your terrain is corrupted in region {0}, it might take a few minutes to generate the map image depending on the corruption level", m_scene.RegionInfo.RegionName);
                                 terraincorruptedwarningsaid = true;
                             }
-
                             Color black = Color.Black;
                             mapbmp.Bitmap.SetPixel(x, (256 - y) - 1, black);
                         }
                     }
                 }
             }
-
-            m_log.Info("[Map Tile]: Generating Maptile Step 1: Done in " + (Environment.TickCount - tc) + " ms");
+            m_log.Info("[MAPTILE]: Generating Maptile Step 1: Done in " + (Environment.TickCount - tc) + " ms");
         }
     }
 }

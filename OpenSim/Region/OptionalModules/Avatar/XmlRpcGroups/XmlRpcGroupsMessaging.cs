@@ -1,46 +1,52 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSimulator Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+
 using log4net;
 using Nini.Config;
+
 using OpenMetaverse;
 using OpenMetaverse.StructuredData;
+
 using OpenSim.Framework;
 using OpenSim.Region.CoreModules.Capabilities;
 using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 
+
 namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 {
     public class XmlRpcGroupsMessaging : ISharedRegionModule
     {
+
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<Scene> m_sceneList = new List<Scene>();
@@ -52,6 +58,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         // TODO: Move this off to the xmlrpc server
         public Dictionary<Guid, List<Guid>> m_agentsInGroupSession = new Dictionary<Guid, List<Guid>>();
         public Dictionary<Guid, List<Guid>> m_agentsDroppedSession = new Dictionary<Guid, List<Guid>>();
+
 
         // Config Options
         private bool m_groupMessagingEnabled = false;
@@ -89,37 +96,32 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                     return;
                 }
 
-                m_log.Info("[Groups Messaging]: Initializing XmlRpcGroupsMessaging");
+                m_log.Info("[GROUPS-MESSAGING]: Initializing XmlRpcGroupsMessaging");
 
                 m_debugEnabled = groupsConfig.GetBoolean("XmlRpcDebugEnabled", true);
             }
 
-            m_log.Info("[Groups Messaging]: XmlRpcGroupsMessaging starting up");
+            m_log.Info("[GROUPS-MESSAGING]: XmlRpcGroupsMessaging starting up");
+
         }
 
         public void AddRegion(Scene scene)
         {
             // NoOp
         }
-
         public void RegionLoaded(Scene scene)
         {
             if (!m_groupMessagingEnabled)
-            {
                 return;
-            }
 
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
             m_groupsModule = scene.RequestModuleInterface<IGroupsModule>();
 
             // No groups module, no groups messaging
             if (m_groupsModule == null)
             {
-                m_log.Error("[Groups Messaging]: Could not get IGroupsModule, XmlRpcGroupsMessaging is now disabled.");
+                m_log.Error("[GROUPS-MESSAGING]: Could not get IGroupsModule, XmlRpcGroupsMessaging is now disabled.");
                 Close();
                 m_groupMessagingEnabled = false;
                 return;
@@ -130,29 +132,26 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             // No message transfer module, no groups messaging
             if (m_msgTransferModule == null)
             {
-                m_log.Error("[Groups Messaging]: Could not get MessageTransferModule");
+                m_log.Error("[GROUPS-MESSAGING]: Could not get MessageTransferModule");
                 Close();
                 m_groupMessagingEnabled = false;
                 return;
             }
 
+
             m_sceneList.Add(scene);
 
             scene.EventManager.OnNewClient += OnNewClient;
             scene.EventManager.OnIncomingInstantMessage += OnGridInstantMessage;
+
         }
 
         public void RemoveRegion(Scene scene)
         {
             if (!m_groupMessagingEnabled)
-            {
                 return;
-            }
 
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
             m_sceneList.Remove(scene);
         }
@@ -160,14 +159,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         public void Close()
         {
             if (!m_groupMessagingEnabled)
-            {
                 return;
-            }
 
-            if (m_debugEnabled)
-            {
-                m_log.Debug("[Groups Messaging]: Shutting down XmlRpcGroupsMessaging module.");
-            }
+            if (m_debugEnabled) m_log.Debug("[GROUPS-MESSAGING]: Shutting down XmlRpcGroupsMessaging module.");
 
             foreach (Scene scene in m_sceneList)
             {
@@ -206,10 +200,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         private void OnNewClient(IClientAPI client)
         {
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: OnInstantMessage registered for {0}", client.Name);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: OnInstantMessage registered for {0}", client.Name);
 
             client.OnInstantMessage += OnInstantMessage;
         }
@@ -221,9 +212,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             //
             // Any other message type will not be delivered to a client by the 
             // Instant Message Module
+
+
             if (m_debugEnabled)
             {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
+                m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
                 DebugGridInstantMessage(msg);
             }
@@ -240,10 +233,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         private void ProcessMessageFromGroupSession(GridInstantMessage msg)
         {
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: Session message from {0} going to agent {1}", msg.fromAgentName, msg.toAgentID);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Session message from {0} going to agent {1}", msg.fromAgentName, msg.toAgentID);
 
             switch (msg.dialog)
             {
@@ -265,13 +255,11 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
                         UUID toAgentID = new UUID(msg.toAgentID);
                         IClientAPI activeClient = GetActiveClient(toAgentID);
-
                         if (activeClient != null)
                         {
                             UUID groupID = new UUID(msg.fromAgentID);
 
                             GroupRecord groupInfo = m_groupsModule.GetGroupRecord(groupID);
-
                             if (groupInfo != null)
                             {
                                 if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Sending chatterbox invite instant message");
@@ -292,7 +280,8 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                                     , 1
                                     , new UUID(msg.imSessionID)
                                     , msg.fromGroup
-                                    , Utils.StringToBytes(groupInfo.GroupName));
+                                    , Utils.StringToBytes(groupInfo.GroupName)
+                                    );
 
                                 eq.ChatterBoxSessionAgentListUpdates(
                                     new UUID(groupID)
@@ -301,7 +290,8 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                                     , false //canVoiceChat
                                     , false //isModerator
                                     , false //text mute
-                                    , msg.dialog);
+                                    , msg.dialog
+                                    );
 
                                 ((Scene)activeClient.Scene).EventManager.TriggerOnChatToClient(msg.message,
                                     UUID.Parse(msg.fromAgentID.ToString()), UUID.Parse(msg.toAgentID.ToString()),
@@ -315,26 +305,21 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                         // User hasn't dropped, so they're in the session, 
                         // maybe we should deliver it.
                         IClientAPI client = GetActiveClient(new UUID(msg.toAgentID));
-
                         if (client != null)
                         {
                             // Deliver locally, directly
-                            if (m_debugEnabled)
-                            {
-                                m_log.DebugFormat("[Groups Messaging]: Delivering to {0} locally", client.Name);
-                            }
-
+                            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Delivering to {0} locally", client.Name);
                             client.SendInstantMessage(msg);
                         }
                         else
                         {
-                            m_log.WarnFormat("[Groups Messaging]: Received a message over the grid for a client that isn't here: {0}", msg.toAgentID);
+                            m_log.WarnFormat("[GROUPS-MESSAGING]: Received a message over the grid for a client that isn't here: {0}", msg.toAgentID);
                         }
                     }
                     break;
 
                 default:
-                    m_log.WarnFormat("[Groups Messaging]: I don't know how to proccess a {0} message.", ((InstantMessageDialog)msg.dialog).ToString());
+                    m_log.WarnFormat("[GROUPS-MESSAGING]: I don't know how to proccess a {0} message.", ((InstantMessageDialog)msg.dialog).ToString());
                     break;
             }
         }
@@ -356,11 +341,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                 // If not in dropped list, add
                 if (!m_agentsDroppedSession[sessionID].Contains(agentID))
                 {
-                    if (m_debugEnabled)
-                    {
-                        m_log.DebugFormat("[Groups Messaging]: Dropped {1} from session {0}", sessionID, agentID);
-                    }
-
+                    if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Dropped {1} from session {0}", sessionID, agentID);
                     m_agentsDroppedSession[sessionID].Add(agentID);
                 }
             }
@@ -380,11 +361,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             // If nessesary, add to in session list
             if (!m_agentsInGroupSession[sessionID].Contains(agentID))
             {
-                if (m_debugEnabled)
-                {
-                    m_log.DebugFormat("[Groups Messaging]: Added {1} to session {0}", sessionID, agentID);
-                }
-
+                if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Added {1} to session {0}", sessionID, agentID);
                 m_agentsInGroupSession[sessionID].Add(agentID);
             }
         }
@@ -393,11 +370,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         {
             if (!m_agentsInGroupSession.ContainsKey(sessionID))
             {
-                if (m_debugEnabled)
-                {
-                    m_log.DebugFormat("[Groups Messaging]: Creating session tracking for : {0}", sessionID);
-                }
-
+                if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Creating session tracking for : {0}", sessionID);
                 m_agentsInGroupSession.Add(sessionID, new List<Guid>());
                 m_agentsDroppedSession.Add(sessionID, new List<Guid>());
             }
@@ -407,7 +380,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         {
             if (m_debugEnabled)
             {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
+                m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
                 DebugGridInstantMessage(im);
             }
@@ -418,13 +391,9 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                 UUID groupID = new UUID(im.toAgentID);
 
                 GroupRecord groupInfo = m_groupsModule.GetGroupRecord(groupID);
-
                 if (groupInfo != null)
                 {
-                    if (m_debugEnabled)
-                    {
-                        m_log.DebugFormat("[Groups Messaging]: Start Group Session for {0}", groupInfo.GroupName);
-                    }
+                    if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Start Group Session for {0}", groupInfo.GroupName);
 
                     AddAgentToGroupSession(im.fromAgentID, im.imSessionID);
 
@@ -438,7 +407,8 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                         , false //canVoiceChat
                         , false //isModerator
                         , false //text mute
-                        , im.dialog);
+                        , im.dialog
+                        );
                 }
             }
 
@@ -447,10 +417,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             {
                 UUID groupID = new UUID(im.toAgentID);
 
-                if (m_debugEnabled)
-                {
-                    m_log.DebugFormat("[Groups Messaging]: Send message to session for group {0} with session ID {1}", groupID, im.imSessionID.ToString());
-                }
+                if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Send message to session for group {0} with session ID {1}", groupID, im.imSessionID.ToString());
 
                 SendMessageToGroup(remoteClient, im, groupID);
             }
@@ -460,34 +427,23 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         private void SendMessageToGroup(IClientAPI remoteClient, GridInstantMessage im, UUID groupID)
         {
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
             List<UUID> muters;
             IMuteListModule m_muteListModule = m_sceneList[0].RequestModuleInterface<IMuteListModule>();
-
             if (m_muteListModule != null)
-            {
                 muters = m_muteListModule.GetInverseMuteList(remoteClient.AgentId);
-            }
             else
-            {
                 muters = new List<UUID>();
-            }
 
             foreach (GroupMembersData member in m_groupsModule.GroupMembersRequest(null, null, UUID.Zero, groupID))
             {
                 if (m_agentsDroppedSession[im.imSessionID].Contains(member.AgentID.Guid))
-                {  
-                    // Don't deliver messages to people who have dropped this session
+                {   // Don't deliver messages to people who have dropped this session
                     continue;
                 }
-
                 if (muters.Contains(member.AgentID))
-                {
-                    // Don't deliver messages to people who have the sender muted.
+                {   // Don't deliver messages to people who have the sender muted.
                     continue;
                 }
 
@@ -511,25 +467,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                 msg.toAgentID = member.AgentID.Guid;
 
                 IClientAPI client = GetActiveClient(member.AgentID);
-
                 if (client == null)
                 {
                     // If they're not local, forward across the grid
-                    if (m_debugEnabled)
-                    {
-                        m_log.DebugFormat("[Groups Messaging]: Delivering to {0} via Grid", member.AgentID);
-                    }
-
+                    if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Delivering to {0} via Grid", member.AgentID);
                     m_msgTransferModule.SendInstantMessage(msg, delegate(bool success) { });
                 }
                 else
                 {
                     // Deliver locally, directly
-                    if (m_debugEnabled)
-                    {
-                        m_log.DebugFormat("[Groups Messaging]: Passing to ProcessMessageFromGroupSession to deliver to {0} locally", client.Name);
-                    }
-
+                    if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: Passing to ProcessMessageFromGroupSession to deliver to {0} locally", client.Name);
                     ProcessMessageFromGroupSession(msg);
                 }
             }
@@ -537,10 +484,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         void ChatterBoxSessionStartReplyViaCaps(IClientAPI remoteClient, string groupName, UUID groupID)
         {
-            if (m_debugEnabled)
-            {
-                m_log.DebugFormat("[Groups Messaging]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
-            }
+            if (m_debugEnabled) m_log.DebugFormat("[GROUPS-MESSAGING]: {0} called", System.Reflection.MethodBase.GetCurrentMethod().Name);
 
             OSDMap moderatedMap = new OSDMap(4);
             moderatedMap.Add("voice", OSD.FromBoolean(false));
@@ -570,22 +514,22 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             // Don't log any normal IMs (privacy!)
             if (m_debugEnabled && im.dialog != (byte)InstantMessageDialog.MessageFromAgent)
             {
-                m_log.WarnFormat("[Groups Messaging]: IM: fromGroup({0})", im.fromGroup ? "True" : "False");
-                m_log.WarnFormat("[Groups Messaging]: IM: Dialog({0})", ((InstantMessageDialog)im.dialog).ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: fromAgentID({0})", im.fromAgentID.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: fromAgentName({0})", im.fromAgentName.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: imSessionID({0})", im.imSessionID.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: message({0})", im.message.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: offline({0})", im.offline.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: toAgentID({0})", im.toAgentID.ToString());
-                m_log.WarnFormat("[Groups Messaging]: IM: binaryBucket({0})", OpenMetaverse.Utils.BytesToHexString(im.binaryBucket, "BinaryBucket"));
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: fromGroup({0})", im.fromGroup ? "True" : "False");
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: Dialog({0})", ((InstantMessageDialog)im.dialog).ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: fromAgentID({0})", im.fromAgentID.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: fromAgentName({0})", im.fromAgentName.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: imSessionID({0})", im.imSessionID.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: message({0})", im.message.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: offline({0})", im.offline.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: toAgentID({0})", im.toAgentID.ToString());
+                m_log.WarnFormat("[GROUPS-MESSAGING]: IM: binaryBucket({0})", OpenMetaverse.Utils.BytesToHexString(im.binaryBucket, "BinaryBucket"));
             }
         }
 
         #region Client Tools
 
         /// <summary>
-        ///     Try to find an active IClientAPI reference for agentID giving preference to root connections
+        /// Try to find an active IClientAPI reference for agentID giving preference to root connections
         /// </summary>
         private IClientAPI GetActiveClient(UUID agentID)
         {
@@ -594,10 +538,10 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             // Try root avatar first
             foreach (Scene scene in m_sceneList)
             {
-                if (scene.Entities.ContainsKey(agentID) && scene.Entities[agentID] is ScenePresence)
+                if (scene.Entities.ContainsKey(agentID) &&
+                    scene.Entities[agentID] is ScenePresence)
                 {
                     ScenePresence user = (ScenePresence)scene.Entities[agentID];
-
                     if (!user.IsChildAgent)
                     {
                         return user.ControllingClient;

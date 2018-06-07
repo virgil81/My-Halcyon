@@ -37,13 +37,13 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
 {
     public class MapSearchModule : IRegionModule
     {
-        private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog m_log =
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         Scene m_scene = null; // only need one for communication with GridService
         List<Scene> m_scenes = new List<Scene>();
 
         #region IRegionModule Members
-
         public void Initialize(Scene scene, IConfigSource source)
         {
             if (m_scene == null)
@@ -92,25 +92,18 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
             
             // try to fetch from GridServer
             List<RegionInfo> regionInfos = m_scene.SceneGridService.RequestNamedRegions(mapName, 20);
-
             if (regionInfos == null)
             {
-                m_log.Warn("[Map Search Module]: RequestNamedRegions returned null. Old gridserver?");
-
+                m_log.Warn("[MAPSEARCHMODULE]: RequestNamedRegions returned null. Old gridserver?");
                 // service wasn't available; maybe still an old GridServer. Try the old API, though it will return only one region
                 regionInfos = new List<RegionInfo>();
                 RegionInfo info = m_scene.SceneGridService.RequestClosestRegion(mapName);
-
-                if (info != null)
-                {
-                    regionInfos.Add(info);
-                }
+                if (info != null) regionInfos.Add(info);
             }
 
             List<MapBlockData> blocks = new List<MapBlockData>();
 
             MapBlockData data;
-
             if (regionInfos.Count > 0)
             {
                 foreach (RegionInfo info in regionInfos)
@@ -153,11 +146,8 @@ namespace OpenSim.Region.CoreModules.World.WorldMap
             foreach (Scene s in m_scenes)
             {
                 if (client.Scene.RegionInfo.RegionHandle == s.RegionInfo.RegionHandle)
-                {
                     return s;
-                }
             }
-
             return m_scene;
         }
     }

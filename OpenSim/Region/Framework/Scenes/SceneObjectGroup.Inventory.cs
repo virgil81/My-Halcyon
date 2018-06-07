@@ -368,11 +368,11 @@ namespace OpenSim.Region.Framework.Scenes
                     String.Empty, String.Empty);
 
             xmldoc.AppendChild(xmlnode);
-            XmlElement rootElement = xmldoc.CreateElement(String.Empty, "EmporiaScriptData", String.Empty);
+            XmlElement rootElement = xmldoc.CreateElement(String.Empty, "PhloxScriptData", String.Empty);
             
             xmldoc.AppendChild(rootElement);
 
-            XmlElement wrapper = xmldoc.CreateElement(String.Empty, "EmporiaSS",
+            XmlElement wrapper = xmldoc.CreateElement(String.Empty, "PhloxSS",
                     String.Empty);
             
             rootElement.AppendChild(wrapper);
@@ -413,7 +413,7 @@ namespace OpenSim.Region.Framework.Scenes
                 return;
             }
 
-            XmlNodeList rootL = doc.GetElementsByTagName("EmporiaScriptData");
+            XmlNodeList rootL = doc.GetElementsByTagName("PhloxScriptData");
             if (rootL.Count == 1)
             {
                 XmlNode rootNode = rootL[0];
@@ -427,7 +427,7 @@ namespace OpenSim.Region.Framework.Scenes
 
                         switch (part.Name)
                         {
-                            case "EmporiaSS":
+                            case "PhloxSS":
                                 foreach (XmlNode st in nodeL)
                                 {
                                     string id = st.Attributes.GetNamedItem("UUID").Value;

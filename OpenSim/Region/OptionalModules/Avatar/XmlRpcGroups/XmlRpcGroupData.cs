@@ -1,45 +1,53 @@
-/// <summary>
-///     Copyright (c) InWorldz Halcyon Developers
-///     Copyright (c) Contributors, http://opensimulator.org/
-/// 
-///     Redistribution and use in source and binary forms, with or without
-///     modification, are permitted provided that the following conditions are met:
-///         * Redistributions of source code must retain the above copyright
-///         notice, this list of conditions and the following disclaimer.
-///         * Redistributions in binary form must reproduce the above copyright
-///         notice, this list of conditions and the following disclaimer in the
-///         documentation and/or other materials provided with the distribution.
-///         * Neither the name of the OpenSimulator Project nor the
-///         names of its contributors may be used to endorse or promote products
-///         derived from this software without specific prior written permission.
-/// 
-///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
-///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
-///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
+/*
+ * Copyright (c) InWorldz Halcyon Developers
+ * Copyright (c) Contributors, http://opensimulator.org/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the OpenSim Project nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using log4net;
+//using System.Text;
+
 using Nwc.XmlRpc;
+
+using log4net;
+// using Nini.Config;
+
 using OpenMetaverse;
 using OpenMetaverse.StructuredData;
+
 using OpenSim.Framework;
+//using OpenSim.Region.Framework.Interfaces;
 
 namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 {
     public class XmlRpcGroupDataProvider : IGroupDataProvider
     {
-        private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog m_log =
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private string m_serviceURL = String.Empty;
 
@@ -63,9 +71,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         }
 
         /// <summary>
-        ///     Create a Group, including Everyone and Owners Role, 
-        ///     place FounderID in both groups, select Owner as selected role, 
-        ///     and newly created group as agent's active role.
+        /// Create a Group, including Everyone and Owners Role, place FounderID in both groups, select Owner as selected role, and newly created group as agent's active role.
         /// </summary>
         public UUID CreateGroup(GroupRequestID requestID, string name, string charter, bool showInList, UUID insigniaID, 
                                 int membershipFee, bool openEnrollment, bool allowPublish, 
@@ -85,6 +91,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             param["AllowPublish"] = allowPublish == true ? 1 : 0;
             param["MaturePublish"] = maturePublish == true ? 1 : 0;
             param["FounderID"] = founderID.ToString();
+            //param["EveryonePowers"] = ((ulong)m_DefaultEveryonePowers).ToString();
             param["OwnerRoleID"] = OwnerRoleID.ToString();
 
             GroupPowers OwnerPowers = Constants.OWNER_GROUP_POWERS;
@@ -95,6 +102,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             if (respData.Contains("error"))
             {
                 // UUID is not nullable
+
                 return UUID.Zero;
             }
 
@@ -118,7 +126,8 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             XmlRpcCall(requestID, "groups.updateGroup", param);
         }
 
-        public void AddGroupRole(GroupRequestID requestID, UUID groupID, UUID roleID, string name, string description, string title, ulong powers)
+        public void AddGroupRole(GroupRequestID requestID, UUID groupID, UUID roleID, string name, string description, 
+                                 string title, ulong powers)
         {
             Hashtable param = new Hashtable();
             param["GroupID"] = groupID.ToString();
@@ -140,27 +149,24 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             XmlRpcCall(requestID, "groups.removeRoleFromGroup", param);
         }
 
-        public void UpdateGroupRole(GroupRequestID requestID, UUID groupID, UUID roleID, string name, string description, string title, ulong powers)
+        public void UpdateGroupRole(GroupRequestID requestID, UUID groupID, UUID roleID, string name, string description, 
+                                    string title, ulong powers)
         {
             Hashtable param = new Hashtable();
             param["GroupID"] = groupID.ToString();
             param["RoleID"] = roleID.ToString();
-
             if (name != null)
             {
                 param["Name"] = name;
             }
-
             if (description != null)
             {
                 param["Description"] = description;
             }
-
             if (title != null)
             {
                 param["Title"] = title;
             }
-
             param["Powers"] = powers.ToString();
 
             XmlRpcCall(requestID, "groups.updateGroupRole", param);
@@ -169,12 +175,10 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         public GroupRecord GetGroupRecord(GroupRequestID requestID, UUID GroupID, string GroupName)
         {
             Hashtable param = new Hashtable();
-
             if (GroupID != UUID.Zero)
             {
                 param["GroupID"] = GroupID.ToString();
             }
-
             if (!String.IsNullOrEmpty(GroupName))
             {
                 param["Name"] = GroupName.ToString();
@@ -188,6 +192,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             }
 
             return GroupProfileHashtableToGroupRecord(respData);
+
         }
 
         public GroupProfileData GetMemberGroupProfile(GroupRequestID requestID, UUID GroupID, UUID AgentID)
@@ -210,6 +215,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             MemberGroupProfile.PowersMask = MemberInfo.GroupPowers;
 
             return MemberGroupProfile;
+
         }
 
         private GroupProfileData GroupProfileHashtableToGroupProfileData(Hashtable groupProfile)
@@ -240,15 +246,14 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         private GroupRecord GroupProfileHashtableToGroupRecord(Hashtable groupProfile)
         {
+
             GroupRecord group = new GroupRecord();
             group.GroupID = UUID.Parse((string)groupProfile["GroupID"]);
             group.GroupName = groupProfile["Name"].ToString();
-
             if (groupProfile.ContainsKey("Charter"))
             {
                 group.Charter = (string)groupProfile["Charter"];
             }
-
             group.ShowInList = ((string)groupProfile["ShowInList"]) == "1";
             group.GroupPicture = UUID.Parse((string)groupProfile["InsigniaID"]);
             group.MembershipFee = int.Parse((string)groupProfile["MembershipFee"]);
@@ -289,6 +294,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             param["ListInProfile"] = ListInProfile ? "1" : "0";
 
             XmlRpcCall(requestID, "groups.setAgentGroupInfo", param);
+
         }
 
         public void AddAgentToGroupInvite(GroupRequestID requestID, UUID inviterID, UUID inviteID, UUID groupID, UUID roleID, UUID agentID)
@@ -301,6 +307,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             param["GroupID"] = groupID.ToString();
 
             XmlRpcCall(requestID, "groups.addAgentToGroupInvite", param);
+
         }
 
         public GroupInviteInfo GetAgentToGroupInvite(GroupRequestID requestID, UUID inviteID)
@@ -372,6 +379,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             XmlRpcCall(requestID, "groups.removeAgentFromGroupRole", param);
         }
 
+
         public List<DirGroupsReplyData> FindGroups(GroupRequestID requestID, string search)
         {
             Hashtable param = new Hashtable();
@@ -384,13 +392,13 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             if (!respData.Contains("error"))
             {
                 Hashtable results = (Hashtable)respData["results"];
-
                 foreach (Hashtable groupFind in results.Values)
                 {
                     DirGroupsReplyData data = new DirGroupsReplyData();
                     data.groupID = new UUID((string)groupFind["GroupID"]); ;
                     data.groupName = (string)groupFind["Name"];
                     data.members = int.Parse((string)groupFind["Members"]);
+                    // data.searchOrder = order;
 
                     findings.Add(data);
                 }
@@ -431,6 +439,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
             return HashTableToGroupMembershipData(respData);
         }
+
 
         public List<GroupMembershipData> GetAgentGroupMemberships(GroupRequestID requestID, UUID AgentID)
         {
@@ -480,6 +489,8 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             }
 
             return Roles;
+
+
         }
 
         public List<GroupRolesData> GetGroupRoles(GroupRequestID requestID, UUID GroupID)
@@ -510,6 +521,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             }
 
             return Roles;
+
         }
 
         private static GroupMembershipData HashTableToGroupMembershipData(Hashtable respData)
@@ -525,18 +537,17 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             data.GroupPowers = ulong.Parse((string)respData["GroupPowers"]);
 
             // Is this group the agent's active group
+
             data.GroupID = new UUID((string)respData["GroupID"]);
 
             UUID ActiveGroup = new UUID((string)respData["ActiveGroupID"]);
             data.Active = data.GroupID.Equals(ActiveGroup);
 
             data.AllowPublish = ((string)respData["AllowPublish"] == "1");
-
             if (respData.ContainsKey("Charter"))
             {
                 data.Charter = (string)respData["Charter"];
             }
-
             data.FounderID = new UUID((string)respData["FounderID"]);
             data.GroupID = new UUID((string)respData["GroupID"]);
             data.GroupName = (string)respData["GroupName"];
@@ -578,6 +589,7 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             }
 
             return members;
+
         }
 
         public List<GroupRoleMembersData> GetGroupRoleMembers(GroupRequestID requestID, UUID GroupID)
@@ -601,7 +613,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                     members.Add(data);
                 }
             }
-
             return members;
         }
 
@@ -629,16 +640,16 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                     values.Add(data);
                 }
             }
-
             return values;
-        }
 
+        }
         public GroupNoticeInfo GetGroupNotice(GroupRequestID requestID, UUID noticeID)
         {
             Hashtable param = new Hashtable();
             param["NoticeID"] = noticeID.ToString();
 
             Hashtable respData = XmlRpcCall(requestID, "groups.getGroupNotice", param);
+
 
             if (respData.Contains("error"))
             {
@@ -663,7 +674,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
             return data;
         }
-
         public void AddGroupNotice(GroupRequestID requestID, UUID groupID, UUID noticeID, string fromName, string subject, string message, byte[] binaryBucket)
         {
             string binBucket = OpenMetaverse.Utils.BytesToHexString(binaryBucket, String.Empty);
@@ -686,7 +696,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             {
                 requestID = new GroupRequestID();
             }
-
             param.Add("RequestingAgentID", requestID.AgentID.ToString());
             param.Add("RequestingAgentUserService", requestID.UserServiceURL);
             param.Add("RequestingSessionID", requestID.SessionID.ToString());
@@ -701,17 +710,25 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             {
                 XmlRpcRequest req;
 
+/*
+                if (!m_disableKeepAlive)
+                    req = new XmlRpcRequest(function, parameters);
+                else
+                    // This seems to solve a major problem on some windows servers
+                    req = new NoKeepAliveXmlRpcRequest(function, parameters);
+*/
                 req = new XmlRpcRequest(function, parameters); 
                 resp = req.Send(Util.XmlRpcRequestURI(m_serviceURL, function), 10000);
             }
             catch (Exception e)
             {
-                m_log.ErrorFormat("[XmlRpc Group Data]: An error has occured while attempting to access the XmlRpcGroups server method: {0}", function);
-                m_log.ErrorFormat("[XmlRpc Group Data]: {0} ", e.ToString());
+                m_log.ErrorFormat("[XMLRPCGROUPDATA]: An error has occured while attempting to access the XmlRpcGroups server method: {0}", function);
+                m_log.ErrorFormat("[XMLRPCGROUPDATA]: {0} ", e.ToString());
 
+                                
                 foreach (string key in param.Keys)
                 {
-                    m_log.WarnFormat("[XmlRpc Group Data]: {0} :: {1}", key, param[key].ToString());
+                    m_log.WarnFormat("[XMLRPCGROUPDATA]: {0} :: {1}", key, param[key].ToString());
                 }
 
                 Hashtable respData = new Hashtable();
@@ -722,7 +739,6 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
             if (resp.Value is Hashtable)
             {
                 Hashtable respData = (Hashtable)resp.Value;
-
                 if (respData.Contains("error") && !respData.Contains("succeed"))
                 {
                     LogRespDataToConsoleError(respData);
@@ -731,21 +747,21 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
                 return respData;
             }
 
-            m_log.ErrorFormat("[XmlRpc Group Data]: The XmlRpc server returned a {1} instead of a hashtable for {0}", function, resp.Value.GetType().ToString());
+            m_log.ErrorFormat("[XMLRPCGROUPDATA]: The XmlRpc server returned a {1} instead of a hashtable for {0}", function, resp.Value.GetType().ToString());
 
             if (resp.Value is ArrayList)
             {
                 ArrayList al = (ArrayList)resp.Value;
-                m_log.ErrorFormat("[XmlRpc Group Data]: Contains {0} elements", al.Count);
+                m_log.ErrorFormat("[XMLRPCGROUPDATA]: Contains {0} elements", al.Count);
 
                 foreach (object o in al)
                 {
-                    m_log.ErrorFormat("[XmlRpc Group Data]: {0} :: {1}", o.GetType().ToString(), o.ToString());
+                    m_log.ErrorFormat("[XMLRPCGROUPDATA]: {0} :: {1}", o.GetType().ToString(), o.ToString());
                 }
             }
             else
             {
-                m_log.ErrorFormat("[XmlRpc Group Data]: Function returned: {0}", resp.Value.ToString());
+                m_log.ErrorFormat("[XMLRPCGROUPDATA]: Function returned: {0}", resp.Value.ToString());
             }
 
             Hashtable error = new Hashtable();
@@ -755,20 +771,21 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
 
         private void LogRespDataToConsoleError(Hashtable respData)
         {
-            m_log.Error("[XmlRpc Group Data]: Error:");
+            m_log.Error("[XMLRPCGROUPDATA]: Error:");
 
             foreach (string key in respData.Keys)
             {
-                m_log.ErrorFormat("[XmlRpc Group Data]: Key: {0}", key);
+                m_log.ErrorFormat("[XMLRPCGROUPDATA]: Key: {0}", key);
 
                 string[] lines = respData[key].ToString().Split(new char[] { '\n' });
-
                 foreach (string line in lines)
                 {
-                    m_log.ErrorFormat("[XmlRpc Group Data]: {0}", line);
+                    m_log.ErrorFormat("[XMLRPCGROUPDATA]: {0}", line);
                 }
+
             }
         }
+
     }
 
     public class GroupNoticeInfo
@@ -779,3 +796,62 @@ namespace OpenSim.Region.OptionalModules.Avatar.XmlRpcGroups
         public byte[] BinaryBucket = new byte[0];
     }
 }
+/*
+namespace Nwc.XmlRpc
+{
+    using System;
+    using System.Collections;
+    using System.IO;
+    using System.Xml;
+    using System.Net;
+    using System.Text;
+    using System.Reflection;
+
+    /// <summary>Class supporting the request side of an XML-RPC transaction.</summary>
+    public class NoKeepAliveXmlRpcRequest : XmlRpcRequest
+    {
+        private Encoding _encoding = new ASCIIEncoding();
+        private XmlRpcRequestSerializer _serializer = new XmlRpcRequestSerializer();
+        private XmlRpcResponseDeserializer _deserializer = new XmlRpcResponseDeserializer();
+
+        /// <summary>Instantiate an <c>XmlRpcRequest</c> for a specified method and parameters.</summary>
+        /// <param name="methodName"><c>String</c> designating the <i>object.method</i> on the server the request
+        /// should be directed to.</param>
+        /// <param name="parameters"><c>ArrayList</c> of XML-RPC type parameters to invoke the request with.</param>
+        public NoKeepAliveXmlRpcRequest(String methodName, IList parameters)
+        {
+            MethodName = methodName;
+            _params = parameters;
+        }
+
+        /// <summary>Send the request to the server.</summary>
+        /// <param name="url"><c>String</c> The url of the XML-RPC server.</param>
+        /// <returns><c>XmlRpcResponse</c> The response generated.</returns>
+        public XmlRpcResponse Send(String url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            if (request == null)
+                throw new XmlRpcException(XmlRpcErrorCodes.TRANSPORT_ERROR,
+                              XmlRpcErrorCodes.TRANSPORT_ERROR_MSG + ": Could not create request with " + url);
+            request.Method = "POST";
+            request.ContentType = "text/xml";
+            request.AllowWriteStreamBuffering = true;
+            request.KeepAlive = false;
+
+            Stream stream = request.GetRequestStream();
+            XmlTextWriter xml = new XmlTextWriter(stream, _encoding);
+            _serializer.Serialize(xml, this);
+            xml.Flush();
+            xml.Close();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader input = new StreamReader(response.GetResponseStream());
+
+            XmlRpcResponse resp = (XmlRpcResponse)_deserializer.Deserialize(input);
+            input.Close();
+            response.Close();
+            return resp;
+        }
+    }
+}
+*/

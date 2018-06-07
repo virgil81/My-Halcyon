@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Physics.ConvexDecompositionDotNet.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.Region.Physics.ConvexDecompositionDotNet.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\ConvexDecompositionDotNet\obj\x64\Debug\OpenSim.Region.Physics.ConvexDecompositionDotNet.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\ConvexDecompositionDotNet\obj\x64\Debug\OpenSim.Region.Physics.ConvexDecompositionDotNet.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\ConvexDecompositionDotNet\obj\x64\Debug\OpenSim.Region.Physics.ConvexDecompositionDotNet.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\Region\Physics\ConvexDecompositionDotNet\obj\x64\Debug\OpenSim.Region.Physics.ConvexDecompositionDotNet.pdb

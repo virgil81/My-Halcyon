@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.CreateCommsManager.dll
-C:\Users\virtu\Desktop\My-Halcyon\bin\OpenSim.ApplicationPlugins.CreateCommsManager.pdb
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\CreateCommsManager\obj\x64\Debug\OpenSim.ApplicationPlugins.CreateCommsManager.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\CreateCommsManager\obj\x64\Debug\OpenSim.ApplicationPlugins.CreateCommsManager.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\CreateCommsManager\obj\x64\Debug\OpenSim.ApplicationPlugins.CreateCommsManager.dll
-C:\Users\virtu\Desktop\My-Halcyon\OpenSim\ApplicationPlugins\CreateCommsManager\obj\x64\Debug\OpenSim.ApplicationPlugins.CreateCommsManager.pdb

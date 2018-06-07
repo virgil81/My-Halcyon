@@ -1195,7 +1195,7 @@ namespace OpenSim.Region.Framework.Scenes
                 return ret;
 
             IScriptModule engine = engines[0];
-            if (engine == null)   // happens under Emporia if disabled
+            if (engine == null)   // happens under Phlox if disabled
                 return ret;
 
             List<TaskInventoryItem> items;
@@ -1235,7 +1235,7 @@ namespace OpenSim.Region.Framework.Scenes
                 return ret;
 
             IScriptModule engine = engines[0];
-            if (engine == null)     // happens under Emporia if disabled
+            if (engine == null)     // happens under Phlox if disabled
                 return ret;
 
             List<TaskInventoryItem> items;
@@ -1274,7 +1274,7 @@ namespace OpenSim.Region.Framework.Scenes
                 return new Tuple<Dictionary<UUID, byte[]>, Dictionary<UUID, byte[]>>(new Dictionary<UUID, byte[]>(), new Dictionary<UUID, byte[]>());
 
             IScriptModule engine = engines[0];
-            if (engine == null)    // happens under Emporia if disabled
+            if (engine == null)    // happens under Phlox if disabled
                 return new Tuple<Dictionary<UUID, byte[]>, Dictionary<UUID, byte[]>>(new Dictionary<UUID, byte[]>(), new Dictionary<UUID, byte[]>());
 
             List<TaskInventoryItem> items;
