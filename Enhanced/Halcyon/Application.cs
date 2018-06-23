@@ -48,14 +48,14 @@ namespace OpenSim
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         
         /// <summary>
-        /// Save Crashes in the bin/crashes folder.  Configurable with m_crashDir
+        /// Save Crashes in the Data/Crashes folder.  Configurable with m_crashDir
         /// </summary>
-        public static bool m_saveCrashDumps = false;
+        public static bool m_saveCrashDumps = true;
 
         /// <summary>
-        /// Directory to save crash reports to.  Relative to bin/
+        /// Directory to save crash reports to.  Relative to Data/Crashes/
         /// </summary>
-        public static string m_crashDir = "crashes";
+        public static string m_crashDir = Constants.DEFAULT_CRASH_DIR;
 
         /// <summary>
         /// Instance of the OpenSim class.  This could be OpenSim or OpenSimBackground depending on the configuration

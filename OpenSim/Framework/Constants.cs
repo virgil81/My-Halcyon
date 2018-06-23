@@ -31,6 +31,20 @@ namespace OpenSim.Framework
 {
     public class Constants
     {
+        /// <summary>
+        ///     Configuration Constants
+        /// </summary>
+        public const string DefaultTexture = "89556747-24cb-43ed-920b-47caed15465f";
+        public const string DEFAULT_CONFIG_DIR = "Config";
+        public const string DEFAULT_CRASH_DIR = "Data/Crashes";
+        public const string DEFAULT_LOG_DIR = "Data/logs";
+        public const string DEFAULT_DATA_DIR = "Data/data";
+        public const string DEFAULT_ASSETS_DIR = "assets";
+        public const string DEFAULT_INVENTORY_DIR = "inventory";
+
+        /// <summary>
+        ///     Region specific constnats
+        /// </summary>
         public const uint RegionSize = 256;
         public const byte TerrainPatchSize = 16;
         public const float OUTSIDE_REGION = (float)RegionSize;  // first invalid location (use < OUTSIDE_REGION)
@@ -42,34 +56,45 @@ namespace OpenSim.Framework
         public const float REGION_VALID_Y = 128.0f;
         public const float REGION_VALID_Z = 128.0f;
 
-        // LSL constants (must match LSLConstants.cs from the script engine)
+        /// <summary>
+        ///     LSL Constants (must match LSLConstants.cs from the script engine)
+        /// </summary>
         public const int LINK_SET = -1;
         public const int LINK_ROOT = 1;
         public const int LINK_ALL_OTHERS = -2;
         public const int LINK_ALL_CHILDREN = -3;
         public const int LINK_THIS = -4;
-        // Returned by llReturnObjectsByOwner and llReturnObjectsByID
+
+        /// <summary>
+        ///     Returned by llReturnObjectsByOwner and llReturnObjectsbyID
+        /// </summary>
         public const int ERR_GENERIC = -1;
         public const int ERR_PARCEL_PERMISSIONS = -2;
         public const int ERR_MALFORMED_PARAMS = -3;
         public const int ERR_RUNTIME_PERMISSIONS = -4;
         public const int ERR_THROTTLED = -5;
 
-        public const uint MaxGroups = 100;  // maximum number of groups a user can be a member of
+        /// <summary>
+        ///     Groups constants
+        /// </summary>
+        public const uint MaxGroups = 500;  // maximum number of groups a user can be a member of
         public const GroupPowers DefaultEveryonePowers = GroupPowers.AllowSetHome | GroupPowers.JoinChat | GroupPowers.AllowVoiceChat | GroupPowers.ReceiveNotices;
         public const GroupPowers OWNER_GROUP_POWERS = (GroupPowers)ulong.MaxValue;
 
-        public const string DefaultTexture = "89556747-24cb-43ed-920b-47caed15465f";
-
-        // Avatar "bounce" when descending into a no-entry parcel (e.g. banned)
+        /// <summary>
+        /// Avatar "bounce" when descending into a no-entry parcel (e.g. banned)
+        /// </summary>
         public const float AVATAR_BOUNCE = 10.0f;
 
-        // Summary:
-        //     Used by EstateOwnerMessage packets
+        /// <summary>
+        ///     Used by EstateOwnerMessage packets
+        /// </summary>
         public enum EstateAccessDeltaCommands
         {
-            // the 'All Estates' variants set the low bit (or second lowest,
-            // accept either) always bit 0 in testing.
+            /// <summary>
+            ///     The 'All Estates' variants set the low bit (or second lowest,
+            ///     accept either) always bit 0 in testing.
+            /// </summary>
             AddUserAsAllowed = 4,
             RemoveUserAsAllowed = 8,
             AddGroupAsAllowed = 16,
@@ -90,7 +115,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        /// Used by internal server implementations of LSL functions.
+        ///     Used by internal server implementations of LSL functions.
         /// </summary>
         public enum GenericReturnCodes : uint
         {
@@ -103,6 +128,5 @@ namespace OpenSim.Framework
             MUTED = 6,      // operation not permitted due to muting
             NOTFOUND = 7,   // the target does not exist
         }
-
     }
 }
