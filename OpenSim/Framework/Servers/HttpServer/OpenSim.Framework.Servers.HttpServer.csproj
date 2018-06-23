@@ -34,7 +34,7 @@
 	  <DebugSymbols>True</DebugSymbols>
 	  <FileAlignment>4096</FileAlignment>
 	  <Optimize>False</Optimize>
-	  <OutputPath>..\..\..\Release\bin\</OutputPath>
+	  <OutputPath>..\..\..\..\Release\bin\</OutputPath>
 	  <RegisterForComInterop>False</RegisterForComInterop>
 	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
 	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -54,7 +54,7 @@
 	  <DebugSymbols>False</DebugSymbols>
 	  <FileAlignment>4096</FileAlignment>
 	  <Optimize>True</Optimize>
-	  <OutputPath>..\..\..\Release\bin\</OutputPath>
+	  <OutputPath>..\..\..\..\Release\bin\</OutputPath>
 	  <RegisterForComInterop>False</RegisterForComInterop>
 	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
 	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -66,17 +66,17 @@
 	<ItemGroup>
 	  <Reference Include="LibreMetaverse.StructuredData" >
 		  <Name>LibreMetaverse.StructuredData</Name>
-		<HintPath>..\..\..\Release\bin\LibreMetaverse.StructuredData.dll</HintPath>
+		<HintPath>..\..\..\..\Release\bin\LibreMetaverse.StructuredData.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="LibreMetaverse.Types" >
 		  <Name>LibreMetaverse.Types</Name>
-		<HintPath>..\..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
+		<HintPath>..\..\..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="log4net" >
 		  <Name>log4net</Name>
-		<HintPath>..\..\..\Release\bin\log4net.dll</HintPath>
+		<HintPath>..\..\..\..\Release\bin\log4net.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="SmartThreadPool" >
@@ -97,7 +97,7 @@
 	  </Reference>
 	  <Reference Include="XmlRpcCS" >
 		  <Name>XmlRpcCS</Name>
-		<HintPath>..\..\..\Release\bin\XmlRpcCS.dll</HintPath>
+		<HintPath>..\..\..\..\Release\bin\XmlRpcCS.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	</ItemGroup>

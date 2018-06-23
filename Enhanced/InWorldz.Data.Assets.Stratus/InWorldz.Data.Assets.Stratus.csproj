@@ -39,7 +39,7 @@
     <DebugSymbols>True</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <Optimize>False</Optimize>
-    <OutputPath>..\Release\bin\</OutputPath>
+    <OutputPath>..\..\Release\bin\</OutputPath>
     <RegisterForComInterop>False</RegisterForComInterop>
     <RemoveIntegerChecks>False</RemoveIntegerChecks>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -61,7 +61,7 @@
     <DebugSymbols>False</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <Optimize>True</Optimize>
-    <OutputPath>..\Release\bin\</OutputPath>
+    <OutputPath>..\..\Release\bin\</OutputPath>
     <RegisterForComInterop>False</RegisterForComInterop>
     <RemoveIntegerChecks>False</RemoveIntegerChecks>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -74,52 +74,52 @@
   <ItemGroup>
     <Reference Include="C5">
       <Name>C5</Name>
-      <HintPath>..\Release\bin\C5.dll</HintPath>
+      <HintPath>..\..\Release\bin\C5.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="KellermanSoftware.Compare-NET-Objects">
       <Name>KellermanSoftware.Compare-NET-Objects</Name>
-      <HintPath>..\Release\bin\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+      <HintPath>..\..\Release\bin\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LibreMetaverse">
       <Name>LibreMetaverse</Name>
-      <HintPath>..\Release\bin\LibreMetaverse.dll</HintPath>
+      <HintPath>..\..\Release\bin\LibreMetaverse.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LibreMetaverse.Types">
       <Name>LibreMetaverse.Types</Name>
-      <HintPath>..\Release\bin\LibreMetaverse.Types.dll</HintPath>
+      <HintPath>..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="log4net">
       <Name>log4net</Name>
-      <HintPath>..\Release\bin\log4net.dll</HintPath>
+      <HintPath>..\..\Release\bin\log4net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nini">
       <Name>Nini</Name>
-      <HintPath>..\Release\bin\Nini.dll</HintPath>
+      <HintPath>..\..\Release\bin\Nini.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\Release\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\Release\bin\nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="openstacknet">
       <Name>openstacknet</Name>
-      <HintPath>..\Release\bin\openstacknet.dll</HintPath>
+      <HintPath>..\..\Release\bin\openstacknet.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="protobuf-net">
       <Name>protobuf-net</Name>
-      <HintPath>..\Release\bin\protobuf-net.dll</HintPath>
+      <HintPath>..\..\Release\bin\protobuf-net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SimpleRESTServices">
       <Name>SimpleRESTServices</Name>
-      <HintPath>..\Release\bin\SimpleRESTServices.dll</HintPath>
+      <HintPath>..\..\Release\bin\SimpleRESTServices.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SmartThreadPool">
@@ -152,7 +152,7 @@
     </Reference>
     <Reference Include="Tools">
       <Name>Tools</Name>
-      <HintPath>..\Release\bin\Tools.dll</HintPath>
+      <HintPath>..\..\Release\bin\Tools.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

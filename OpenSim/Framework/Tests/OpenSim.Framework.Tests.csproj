@@ -39,7 +39,7 @@
     <DebugSymbols>True</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\Release\bin\</OutputPath>
+    <OutputPath>..\..\..\Release\bin\</OutputPath>
     <RegisterForComInterop>False</RegisterForComInterop>
     <RemoveIntegerChecks>False</RemoveIntegerChecks>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -61,7 +61,7 @@
     <DebugSymbols>False</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\Release\bin\</OutputPath>
+    <OutputPath>..\..\..\Release\bin\</OutputPath>
     <RegisterForComInterop>False</RegisterForComInterop>
     <RemoveIntegerChecks>False</RemoveIntegerChecks>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -74,52 +74,52 @@
   <ItemGroup>
     <Reference Include="BclExtras35">
       <Name>BclExtras35</Name>
-      <HintPath>..\..\Release\bin\BclExtras35.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\BclExtras35.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="C5">
       <Name>C5</Name>
-      <HintPath>..\..\Release\bin\C5.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\C5.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LibreMetaverse">
       <Name>LibreMetaverse</Name>
-      <HintPath>..\..\Release\bin\LibreMetaverse.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\LibreMetaverse.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LibreMetaverse.StructuredData">
       <Name>LibreMetaverse.StructuredData</Name>
-      <HintPath>..\..\Release\bin\LibreMetaverse.StructuredData.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\LibreMetaverse.StructuredData.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="LibreMetaverse.Types">
       <Name>LibreMetaverse.Types</Name>
-      <HintPath>..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="log4net">
       <Name>log4net</Name>
-      <HintPath>..\..\Release\bin\log4net.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\log4net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Addins">
       <Name>Mono.Addins</Name>
-      <HintPath>..\..\Release\bin\Mono.Addins.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\Mono.Addins.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nini">
       <Name>Nini</Name>
-      <HintPath>..\..\Release\bin\Nini.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\Nini.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\Release\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\nunit.framework.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="protobuf-net">
       <Name>protobuf-net</Name>
-      <HintPath>..\..\Release\bin\protobuf-net.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\protobuf-net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -144,7 +144,7 @@
     </Reference>
     <Reference Include="XmlRpcCS">
       <Name>XmlRpcCS</Name>
-      <HintPath>..\..\Release\bin\XmlRpcCS.dll</HintPath>
+      <HintPath>..\..\..\Release\bin\XmlRpcCS.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
