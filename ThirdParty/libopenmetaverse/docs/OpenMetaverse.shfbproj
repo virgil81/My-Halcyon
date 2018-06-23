@@ -26,12 +26,12 @@
     <Preliminary>False</Preliminary>
     <PresentationStyle>Prototype</PresentationStyle>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\bin\OpenMetaverse.dll" />
-      <DocumentationSource sourceFile="..\bin\OpenMetaverse.StructuredData.dll" />
-      <DocumentationSource sourceFile="..\bin\OpenMetaverse.StructuredData.xml" />
-      <DocumentationSource sourceFile="..\bin\OpenMetaverse.xml" />
-      <DocumentationSource sourceFile="..\bin\OpenMetaverseTypes.dll" />
-      <DocumentationSource sourceFile="..\bin\OpenMetaverseTypes.xml" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverse.dll" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverse.StructuredData.dll" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverse.StructuredData.xml" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverse.xml" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverseTypes.dll" />
+      <DocumentationSource sourceFile="Release\bin\OpenMetaverseTypes.xml" />
     </DocumentationSources>
     <FrameworkVersion>.NET Framework 3.5</FrameworkVersion>
     <ApiFilter>

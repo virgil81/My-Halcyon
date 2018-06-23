@@ -1175,7 +1175,7 @@ namespace OpenMetaverse.StructuredData
 
     public partial class OSDParser
     {
-        const string LLSD_BINARY_HEADER = "<? llsd/binary ?>";
+        const string LLSD_BINARY_HEADER = "<? llsdRelease/binary ?>";
         const string LLSD_XML_HEADER = "<llsd>";
         const string LLSD_XML_ALT_HEADER = "<?xml";
         const string LLSD_XML_ALT2_HEADER = "<? llsd/xml ?>";

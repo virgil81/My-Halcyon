@@ -61,8 +61,8 @@ default: all
 all: OpenJPEG
 
 dist: OpenJPEG
-	install -d ../bin
-	cp $(SHAREDLIB) ../bin/
+	install -d Release/bin
+	cp $(SHAREDLIB) Release/bin/
 
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
@@ -79,8 +79,8 @@ $(SHAREDLIB): $(MODULES) $(CPPMODULES)
 	$(CC) $(ARCHFLAGS) -s -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(CPPMODULES) $(LIBRARIES)
 
 install: OpenJPEG
-	install -d ../bin
-	cp $(SHAREDLIB) ../bin/
+	install -d Release/bin
+	cp $(SHAREDLIB) Release/bin/
 
 clean:
 	rm -rf core dist/ u2dtmp* $(MODULES) $(CPPMODULES) $(SHAREDLIB) $(LIBNAME)

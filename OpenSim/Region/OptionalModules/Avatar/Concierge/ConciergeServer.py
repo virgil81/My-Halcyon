@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usrRelease/bin/env python
 # -*- encoding: utf-8 -*-
 # 
 # Copyright (c) Contributors, http://opensimulator.org/

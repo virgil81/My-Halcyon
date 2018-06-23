@@ -53,8 +53,8 @@ namespace OpenMetaverse.StructuredData
         private const int int32Length = 4;
         private const int doubleLength = 8;
 
-        private const string llsdBinaryHead = "<? llsd/binary ?>";
-        private const string llsdBinaryHead2 = "<?llsd/binary?>";
+        private const string llsdBinaryHead = "<? llsdRelease/binary ?>";
+        private const string llsdBinaryHead2 = "<?llsdRelease/binary?>";
         private const byte undefBinaryValue = (byte)'!';
         private const byte trueBinaryValue = (byte)'1';
         private const byte falseBinaryValue = (byte)'0';

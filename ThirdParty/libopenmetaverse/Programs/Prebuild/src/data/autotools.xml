@@ -5,7 +5,7 @@
 				xmlns:dnpb="http://dnpb.sourceforge.net/schemas/prebuild-1.7.xsd"
 				exclude-result-prefixes="dnpb"
 				>
-	<xsl:template match="/"><xsl:text disable-output-escaping="yes">#!/bin/sh
+	<xsl:template match="/"><xsl:text disable-output-escaping="yes">#!Release/bin/sh
 # Run this to generate all the initial makefiles, etc.
 # Ripped off from Mono, which ripped off from GNOME macros version
 
@@ -22,8 +22,8 @@ if [ -n "$MONO_PATH" ]; then
 		if [ -n "{i}" -a -d "${i}/share/aclocal" ]; then
 			ACLOCAL_FLAGS="-I ${i}/share/aclocal $ACLOCAL_FLAGS"
 		fi
-		if [ -n "{i}" -a -d "${i}/bin" ]; then
-			PATH="${i}/bin:$PATH"
+		if [ -n "{i}" -a -d "${i}Release/bin" ]; then
+			PATH="${i}Release/bin:$PATH"
 		fi
 	done
 	export PATH
@@ -529,7 +529,7 @@ Libs: -r:${libdir}/@PROJECT_NAME@.dll
 				exclude-result-prefixes="dnpb"
 				>
 	<xsl:param name="solutionName" />
-	<xsl:template match="/"><xsl:text disable-output-escaping="yes">#!/bin/sh
+	<xsl:template match="/"><xsl:text disable-output-escaping="yes">#!Release/bin/sh
 # Run this to generate all the initial makefiles, etc.
 # Ripped off from Mono, which ripped off from GNOME macros version
 
@@ -546,8 +546,8 @@ if [ -n "$MONO_PATH" ]; then
 		if [ -n "{i}" -a -d "${i}/share/aclocal" ]; then
 			ACLOCAL_FLAGS="-I ${i}/share/aclocal $ACLOCAL_FLAGS"
 		fi
-		if [ -n "{i}" -a -d "${i}/bin" ]; then
-			PATH="${i}/bin:$PATH"
+		if [ -n "{i}" -a -d "${i}Release/bin" ]; then
+			PATH="${i}Release/bin:$PATH"
 		fi
 	done
 	export PATH
@@ -657,7 +657,7 @@ autoconf || { echo "**Error**: autoconf failed."; exit 1; }
 </xsl:text>
 <xsl:for-each select="/dnpb:Prebuild/dnpb:Solution[@name=$solutionName]/dnpb:Project">
 echo Running <xsl:value-of select="@name" />/autogen.sh ...
-(cd $srcdir/<xsl:value-of select="@name" /> ; NOCONFIGURE=1  /bin/sh ./autogen.sh "$@")
+(cd $srcdir/<xsl:value-of select="@name" /> ; NOCONFIGURE=1  Release/bin/sh ./autogen.sh "$@")
 echo Done running <xsl:value-of select="@name" />/autogen.sh ...
 </xsl:for-each>
 <xsl:text disable-output-escaping="yes">
@@ -763,7 +763,7 @@ echo "==="
 	<xsl:param name="solutionName" />
 	<xsl:param name="monoPath" />
 	<xsl:variable name="lcProjectName"><xsl:value-of select="translate($projectName, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/></xsl:variable>
-<xsl:template match="/"><xsl:for-each select="//dnpb:Solution[@name=$solutionName]/dnpb:Project[@name=$projectName]">#! /bin/sh
+<xsl:template match="/"><xsl:for-each select="//dnpb:Solution[@name=$solutionName]/dnpb:Project[@name=$projectName]">#! Release/bin/sh
 
 PACKAGE=<xsl:value-of select="$assemblyName" />
 prefix=@prefix@

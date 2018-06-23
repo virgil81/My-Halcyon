@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usrRelease/bin/env python
 import sys
 import os
 import shutil

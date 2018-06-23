@@ -435,8 +435,8 @@ namespace OpenMetaverse.Tests
             String testSD = @"<?xml version='1.0' encoding='UTF-8'?>
             <llsd>
                 <array>
-                    <binary encoding='base64'>cmFuZG9t</binary>
-                    <binary>dGhlIHF1aWNrIGJyb3duIGZveA==</binary>
+                    <binary encoding='base64'>cmFuZG9t<Release/binary>
+                    <binary>dGhlIHF1aWNrIGJyb3duIGZveA==<Release/binary>
                     <binary/>
                 </array>
             </llsd>";

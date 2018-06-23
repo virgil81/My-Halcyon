@@ -357,7 +357,7 @@ namespace OpenSim.Region.CoreModules.Capabilities
             byte[] resultbytes = Utils.UIntToBytes(val);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(resultbytes);
-            return String.Format("<binary encoding=\"base64\">{0}</binary>",Convert.ToBase64String(resultbytes));
+            return String.Format("<binary encoding=\"base64\">{0}<Release/binary>",Convert.ToBase64String(resultbytes));
         }
     }
 }

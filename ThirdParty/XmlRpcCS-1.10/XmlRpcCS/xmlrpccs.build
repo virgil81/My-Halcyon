@@ -5,7 +5,7 @@ info.
 -->
 <project name="XmlRpcCS" default="all">
     <property name="debug" value="true"/>
-    <property name="nunit.bin" value="c:\csharp\nunit\bin"/>
+    <property name="nunit.bin" value="c:\csharp\nunitRelease\bin"/>
     <property name="classdoc.dir" value="docs\classes"/>
 
     <target name="methods" depends="library">

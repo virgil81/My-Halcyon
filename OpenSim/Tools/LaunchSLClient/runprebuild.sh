@@ -1,5 +1,5 @@
-#!/bin/sh
+#!Release/bin/sh
 
-mono ../../../bin/Prebuild.exe /target nant
-mono ../../../bin/Prebuild.exe /target monodev
-mono ../../../bin/Prebuild.exe /target vs2005
+mono ../../Release/bin/Prebuild.exe /target nant
+mono ../../Release/bin/Prebuild.exe /target monodev
+mono ../../Release/bin/Prebuild.exe /target vs2005

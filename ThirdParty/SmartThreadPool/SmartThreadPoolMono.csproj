@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>.\bin\Debug\</OutputPath>
+    <OutputPath>.Release\bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;_MONO</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>.\bin\Release\</OutputPath>
+    <OutputPath>.Release\bin\Release\</OutputPath>
     <DefineConstants>TRACE;_MONO</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

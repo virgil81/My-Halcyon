@@ -21,7 +21,7 @@ StrCmp $R0 0 +3
 SectionSetFlags SEC01 17 ; locks first section, ie forced to install
 
 ; get release version information
-File /oname=omvdll.dll "..\bin\OpenMetaverse.dll"
+File /oname=omvdll.dll "Release\bin\OpenMetaverse.dll"
 GetDLLVersion "$TEMP\omvdll.dll" $R0 $R1
 IntOp $R2 $R0 >> 16
 IntOp $R2 $R2 & 0x0000FFFF ; $R2 now contains major version
@@ -109,27 +109,27 @@ ShowUnInstDetails show
 
 ; required base system!
 Section "!Base Libraries" SEC01
-  SetOutPath "$INSTDIR\bin"
+  SetOutPath "$INSTDIRRelease\bin"
   CreateDirectory "$SMPROGRAMS\OpenMetaverse\libomv"
   SetOverwrite ifnewer
-  File "..\bin\log4net.dll"
-  File "..\bin\openjpeg-dotnet.dll"
-  File "..\bin\openjpeg-dotnet-x86_64.dll"
-  File "..\bin\OpenMetaverse.dll"
-  File "..\bin\OpenMetaverse.GUI.dll"
-  File "..\bin\OpenMetaverse.StructuredData.dll"
-  File "..\bin\OpenMetaverse.Utilities.dll"
-  File "..\bin\OpenMetaverseTypes.dll"
-  File "..\bin\OpenMetaverse.dll.config"
-  File "..\bin\OpenMetaverse.Rendering.Simple.dll"
-  File "..\bin\OpenMetaverse.Rendering.Meshmerizer.dll"
+  File "Release\bin\log4net.dll"
+  File "Release\bin\openjpeg-dotnet.dll"
+  File "Release\bin\openjpeg-dotnet-x86_64.dll"
+  File "Release\bin\OpenMetaverse.dll"
+  File "Release\bin\OpenMetaverse.GUI.dll"
+  File "Release\bin\OpenMetaverse.StructuredData.dll"
+  File "Release\bin\OpenMetaverse.Utilities.dll"
+  File "Release\bin\OpenMetaverseTypes.dll"
+  File "Release\bin\OpenMetaverse.dll.config"
+  File "Release\bin\OpenMetaverse.Rendering.Simple.dll"
+  File "Release\bin\OpenMetaverse.Rendering.Meshmerizer.dll"
   File "..\README.txt"
   File "..\License.txt"
-  File "..\bin\XMLRPC.dll"
-  File "..\bin\zlib.net.dll"
+  File "Release\bin\XMLRPC.dll"
+  File "Release\bin\zlib.net.dll"
   
-  SetOutPath "$INSTDIR\bin\openmetaverse_data"
-  File /r "..\bin\openmetaverse_data\*.*"
+  SetOutPath "$INSTDIRRelease\bin\openmetaverse_data"
+  File /r "Release\bin\openmetaverse_data\*.*"
 SectionEnd
 
 Section "API Documentation" SEC02
@@ -138,32 +138,32 @@ Section "API Documentation" SEC02
   File "trunk\OpenMetaverse.chm"
   File "..\README.txt"
   CreateShortCut "$SMPROGRAMS\OpenMetaverse\libomv\README.lnk" "$INSTDIR\docs\README.txt"
-  SetOutPath "$INSTDIR\bin"
-  File "..\bin\*.XML"
+  SetOutPath "$INSTDIRRelease\bin"
+  File "Release\bin\*.XML"
   CreateShortCut "$SMPROGRAMS\OpenMetaverse\libomv\API Documentation.lnk" "$INSTDIR\docs\OpenMetaverse.chm"
-  CreateShortCut "$SMPROGRAMS\OpenMetaverse\libomv\Library and Examples.lnk" $INSTDIR\bin"
+  CreateShortCut "$SMPROGRAMS\OpenMetaverse\libomv\Library and Examples.lnk" $INSTDIRRelease\bin"
 SectionEnd
 
 Section "Example Applications" SEC03
-  SetOutPath "$INSTDIR\bin"
-;  File "..\bin\*.exe"
-   File "..\bin\Dashboard.exe"
-   File "..\bin\GridAccountant.exe"
-   File "..\bin\GridImageUpload.exe"
-   File "..\bin\GridProxyApp.exe"
-   File "..\bin\GridProxy.dll"
-   File "..\bin\groupmanager.exe"
-   File "..\bin\TestClient.exe"
+  SetOutPath "$INSTDIRRelease\bin"
+;  File "Release\bin\*.exe"
+   File "Release\bin\Dashboard.exe"
+   File "Release\bin\GridAccountant.exe"
+   File "Release\bin\GridImageUpload.exe"
+   File "Release\bin\GridProxyApp.exe"
+   File "Release\bin\GridProxy.dll"
+   File "Release\bin\groupmanager.exe"
+   File "Release\bin\TestClient.exe"
    ; PrimWorkShop/AvatarPreview
-   File "..\bin\PrimWorkshop.exe"
-   File "..\bin\AvatarPreview.exe"
-   File "..\bin\GlacialList.dll"
-   File "..\bin\Tao.OpenGL.dll"
-   File "..\bin\Tao.Platform.Windows.dll"
-   File "..\bin\ICSharpCode.SharpZipLib.dll"
-   File "..\bin\WinGridProxy.exe"
-   File "..\bin\WinGridProxy.exe.config"
-   File "..\bin\Be.Windows.Forms.HexBox.dll"
+   File "Release\bin\PrimWorkshop.exe"
+   File "Release\bin\AvatarPreview.exe"
+   File "Release\bin\GlacialList.dll"
+   File "Release\bin\Tao.OpenGL.dll"
+   File "Release\bin\Tao.Platform.Windows.dll"
+   File "Release\bin\ICSharpCode.SharpZipLib.dll"
+   File "Release\bin\WinGridProxy.exe"
+   File "Release\bin\WinGridProxy.exe.config"
+   File "Release\bin\Be.Windows.Forms.HexBox.dll"
 SectionEnd
 
 Section -AdditionalIcons
@@ -208,11 +208,11 @@ Section Uninstall
   Delete "$INSTDIR\docs\*"
   RMDir "$INSTDIR\docs"
 
-  Delete "$INSTDIR\bin\openmetaverse_data\*"
-  RMDir "$INSTDIR\bin\openmetaverse_data"
+  Delete "$INSTDIRRelease\bin\openmetaverse_data\*"
+  RMDir "$INSTDIRRelease\bin\openmetaverse_data"
 
-  Delete "$INSTDIR\bin\*"
-  RMDir "$INSTDIR\bin"
+  Delete "$INSTDIRRelease\bin\*"
+  RMDir "$INSTDIRRelease\bin"
 
   Delete "$SMPROGRAMS\OpenMetaverse\Uninstall.lnk"
   Delete "$SMPROGRAMS\OpenMetaverse\libomv Website.lnk"

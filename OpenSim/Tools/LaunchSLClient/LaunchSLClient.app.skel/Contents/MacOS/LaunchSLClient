@@ -1,4 +1,4 @@
-#!/bin/sh
+#!Release/bin/sh
 
 PWD=`pwd`
 

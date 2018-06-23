@@ -14,7 +14,7 @@
 	  <DefaultTargetSchema>IE50</DefaultTargetSchema>
 	  <DelaySign>false</DelaySign>
 	  <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-	  <OutputPath>../../../../bin/</OutputPath>
+	  <OutputPath>../../../Release/bin/</OutputPath>
 	  <OutputType>Library</OutputType>
 	  <AppDesignerFolder></AppDesignerFolder>
 	  <RootNamespace>OpenSim.Region.Physics.ConvexDecompositionDotNet</RootNamespace>
@@ -34,7 +34,7 @@
 	  <DebugSymbols>True</DebugSymbols>
 	  <FileAlignment>4096</FileAlignment>
 	  <Optimize>False</Optimize>
-	  <OutputPath>..\..\..\..\bin\</OutputPath>
+	  <OutputPath>..\..\..\Release\bin\</OutputPath>
 	  <RegisterForComInterop>False</RegisterForComInterop>
 	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
 	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -54,7 +54,7 @@
 	  <DebugSymbols>False</DebugSymbols>
 	  <FileAlignment>4096</FileAlignment>
 	  <Optimize>True</Optimize>
-	  <OutputPath>..\..\..\..\bin\</OutputPath>
+	  <OutputPath>..\..\..\Release\bin\</OutputPath>
 	  <RegisterForComInterop>False</RegisterForComInterop>
 	  <RemoveIntegerChecks>False</RemoveIntegerChecks>
 	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -66,27 +66,27 @@
 	<ItemGroup>
 	  <Reference Include="C5" >
 		  <Name>C5</Name>
-		<HintPath>..\..\..\..\bin\C5.dll</HintPath>
+		<HintPath>..\..\..\Release\bin\C5.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="LibreMetaverse.Types" >
 		  <Name>LibreMetaverse.Types</Name>
-		<HintPath>..\..\..\..\bin\LibreMetaverse.Types.dll</HintPath>
+		<HintPath>..\..\..\Release\bin\LibreMetaverse.Types.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="log4net" >
 		  <Name>log4net</Name>
-		<HintPath>..\..\..\..\bin\log4net.dll</HintPath>
+		<HintPath>..\..\..\Release\bin\log4net.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="Nini" >
 		  <Name>Nini</Name>
-		<HintPath>..\..\..\..\bin\Nini.dll</HintPath>
+		<HintPath>..\..\..\Release\bin\Nini.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="nunit.framework" >
 		  <Name>nunit.framework</Name>
-		<HintPath>..\..\..\..\bin\nunit.framework.dll</HintPath>
+		<HintPath>..\..\..\Release\bin\nunit.framework.dll</HintPath>
 		<Private>False</Private>
 	  </Reference>
 	  <Reference Include="System" >

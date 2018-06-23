@@ -1,3 +1,3 @@
-#!/bin/sh
+#!Release/bin/sh
 
 cp lib/* bin/

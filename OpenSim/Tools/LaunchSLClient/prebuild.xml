@@ -10,7 +10,7 @@
         <WarningLevel>4</WarningLevel>
         <WarningsAsErrors>false</WarningsAsErrors>
         <SuppressWarnings></SuppressWarnings>
-        <OutputPath>../../../bin</OutputPath>
+        <OutputPath>../../Release/bin</OutputPath>
         <DebugInformation>true</DebugInformation>
         <IncrementalBuild>true</IncrementalBuild>
         <NoStdLib>false</NoStdLib>
@@ -25,7 +25,7 @@
         <WarningLevel>4</WarningLevel>
         <WarningsAsErrors>false</WarningsAsErrors>
         <SuppressWarnings></SuppressWarnings>
-        <OutputPath>../../../bin</OutputPath>
+        <OutputPath>../../Release/bin</OutputPath>
         <DebugInformation>false</DebugInformation>
         <IncrementalBuild>true</IncrementalBuild>
         <NoStdLib>false</NoStdLib>
@@ -35,16 +35,16 @@
     <Project name="LaunchSLClient" path="LaunchSLClient" type="Exe">
       <Configuration name="Debug">
         <Options>
-          <OutputPath>../../../../bin/</OutputPath>
+          <OutputPath>../../../Release/bin/</OutputPath>
         </Options>
       </Configuration>
       <Configuration name="Release">
         <Options>
-          <OutputPath>../../../../bin/</OutputPath>
+          <OutputPath>../../../Release/bin/</OutputPath>
         </Options>
       </Configuration>
 
-      <ReferencePath>../../../../bin/</ReferencePath>
+      <ReferencePath>../../../Release/bin/</ReferencePath>
       <Reference name="System" localCopy="false"/>
       <Reference name="System.IO" localCopy="false"/>
       <Reference name="System.Collections" localCopy="false"/>

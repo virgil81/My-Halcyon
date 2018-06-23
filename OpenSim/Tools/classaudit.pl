@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usrRelease/bin/perl
 #
 # Audit tool for OpenSim class and namespace definitions.
 #

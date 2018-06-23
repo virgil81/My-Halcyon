@@ -7,7 +7,7 @@ Visual C# 2008 Express Edition and performing a build all.
 
 Or execute 'msbuild C5.sln' from the command line in this directory.
 
-This will build C5 in file C5/bin/Release/C5.dll 
+This will build C5 in file C5Release/bin/Release/C5.dll 
 
 Building all in the C5.sln solution will also build these projects:
 
@@ -61,8 +61,8 @@ Steps to build and run unit tests:
 
  * Build the project called "nunit".  
 
- * Start NUnit, select File > Open > nunit/bin/Debug/nunit.dll, or
-   simply double-click nunit/bin/Debug/nunit.dll
+ * Start NUnit, select File > Open > nunitRelease/bin/Debug/nunit.dll, or
+   simply double-click nunitRelease/bin/Debug/nunit.dll
 
  * Press Run in the NUnit user interface
 
@@ -73,7 +73,7 @@ Note 1: The Release builds of C5 use randomized hashing for
 efficiency, whereas the Debug builds use deterministic hashing to
 simplify testing.  This means that approximately 13 hashtable test
 cases will fail (harmlessly) when C5 is built and tested in Release
-mode, using File > Open > nunit/bin/Release/nunit.dll
+mode, using File > Open > nunitRelease/bin/Release/nunit.dll
 
 Note 2: C5 version 1.1.0 includes the test case
 support.itemops.EqualityComparers.SeqequalityComparerViaBuilder4 which

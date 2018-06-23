@@ -35,12 +35,12 @@ namespace OpenSim.Framework
         ///     Configuration Constants
         /// </summary>
         public const string DefaultTexture = "89556747-24cb-43ed-920b-47caed15465f";
-        public const string DEFAULT_CONFIG_DIR = "Config";
-        public const string DEFAULT_CRASH_DIR = "Data/Crashes";
-        public const string DEFAULT_LOG_DIR = "Data/logs";
-        public const string DEFAULT_DATA_DIR = "Data/data";
-        public const string DEFAULT_ASSETS_DIR = "assets";
-        public const string DEFAULT_INVENTORY_DIR = "inventory";
+        public const string DEFAULT_CONFIG_DIR = "../Config";
+        public const string DEFAULT_CRASH_DIR = "../Data/Crashes";
+        public const string DEFAULT_LOG_DIR = "../Data/logs";
+        public const string DEFAULT_DATA_DIR = "../Data/data";
+        public const string DEFAULT_ASSETS_DIR = "../Data/assets";
+        public const string DEFAULT_INVENTORY_DIR = "../Data/inventory";
 
         /// <summary>
         ///     Region specific constnats
