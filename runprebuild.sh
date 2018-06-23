@@ -1,3 +1,3 @@
-#!Release/bin/sh
+#!bin/sh
 
-cp lib/* bin/
+cp lib/* Release/bin/

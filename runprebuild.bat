@@ -1,1 +1,1 @@
-@copy /Y lib\*.* bin\
+@copy /Y lib\*.* Release\bin\
