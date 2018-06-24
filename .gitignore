@@ -219,7 +219,7 @@ bin/ScriptEngines/Emporia/states/script_states.db3
 bin/assets/AssetSets.xml.loaded
 
 # Other files that need to be created per-installation
-bin/Halcyon.ini
+Config/Halcyon.ini
 bin/aperture.cfg
 bin/GridServer_Config.xml
 bin/MessagingServer_Config.xml
