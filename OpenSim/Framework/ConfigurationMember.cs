@@ -1,29 +1,29 @@
-/*
- * Copyright (c) InWorldz Halcyon Developers
- * Copyright (c) Contributors, http://opensimulator.org/
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the OpenSim Project nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <summary>
+///     Copyright (c) InWorldz Halcyon Developers
+///     Copyright (c) Contributors, http://opensimulator.org/
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the OpenSimulator Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </summary>
 
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace OpenSim.Framework
         private IGenericConfig configurationPlugin = null;
 
         /// <summary>
-        /// This is the default configuration DLL loaded
+        ///     This is the default configuration DLL loaded
         /// </summary>
         private string configurationPluginFilename = "OpenSim.Framework.Configuration.XML.dll";
 
@@ -119,7 +119,7 @@ namespace OpenSim.Framework
             else
             {
                 m_log.Info(
-                    "[CONFIG]: Required fields for adding a configuration option is invalid. Will not add this option (" +
+                    "[Config]: Required fields for adding a configuration option is invalid. Will not add this option (" +
                     option.configurationKey + ")");
             }
         }
@@ -159,45 +159,45 @@ namespace OpenSim.Framework
         public void performConfigurationRetrieve()
         {
             if (cE > 1)
-                m_log.Error("[CONFIG]: READING CONFIGURATION COUT: " + cE.ToString());
-
+            {
+                m_log.Error("[Config]: READING CONFIGURATION COUT: " + cE.ToString());
+            }
 
             configurationPlugin = LoadConfigDll(configurationPluginFilename);
             configurationOptions.Clear();
+
             if (loadFunction == null)
             {
-                m_log.Error("[CONFIG]: Load Function for '" + configurationDescription +
-                            "' is null. Refusing to run configuration.");
+                m_log.Error("[Config]: Load Function for '" + configurationDescription + "' is null. Refusing to run configuration.");
                 return;
             }
 
             if (resultFunction == null)
             {
-                m_log.Error("[CONFIG]: Result Function for '" + configurationDescription +
-                            "' is null. Refusing to run configuration.");
+                m_log.Error("[Config]: Result Function for '" + configurationDescription + "' is null. Refusing to run configuration.");
                 return;
             }
 
-            //m_log.Debug("[CONFIG]: Calling Configuration Load Function...");
             loadFunction();
 
             if (configurationOptions.Count <= 0)
             {
-                m_log.Error("[CONFIG]: No configuration options were specified for '" + configurationOptions +
-                            "'. Refusing to continue configuration.");
+                m_log.Error("[Config]: No configuration options were specified for '" + configurationOptions + "'. Refusing to continue configuration.");
                 return;
             }
 
             bool useFile = true;
+
             if (configurationPlugin == null)
             {
-                m_log.Error("[CONFIG]: Configuration Plugin NOT LOADED!");
+                m_log.Error("[Config]: Configuration Plugin NOT LOADED!");
                 return;
             }
 
             if (!String.IsNullOrWhiteSpace(configurationFilename))
             {
                 configurationPlugin.SetFileName(configurationFilename);
+
                 try
                 {
                     configurationPlugin.LoadData();
@@ -205,10 +205,7 @@ namespace OpenSim.Framework
                 }
                 catch (XmlException e)
                 {
-                    m_log.WarnFormat("[CONFIG]: Not using {0}: {1}",
-                            configurationFilename,
-                            e.Message.ToString());
-                    //m_log.Error("Error loading " + configurationFilename + ": " + e.ToString());
+                    m_log.WarnFormat("[Config]: Not using {0}: {1}", configurationFilename, e.Message.ToString());
                     useFile = false;
                 }
             }
@@ -216,11 +213,11 @@ namespace OpenSim.Framework
             {
                 if (configurationFromXMLNode != null)
                 {
-                    m_log.Info("[CONFIG]: Loading from XML Node, will not save to the file");
+                    m_log.Info("[Config]: Loading from XML Node, will not save to the file");
                     configurationPlugin.LoadDataFromString(configurationFromXMLNode.OuterXml);
                 }
 
-                m_log.Info("[CONFIG]: XML Configuration Filename is not valid; will not save to the file.");
+                m_log.Info("[Config]: XML Configuration Filename is not valid; will not save to the file.");
                 useFile = false;
             }
 
@@ -230,10 +227,12 @@ namespace OpenSim.Framework
                 object return_result = null;
                 string errorMessage = String.Empty;
                 bool ignoreNextFromConfig = false;
+
                 while (convertSuccess == false)
                 {
                     string console_result = String.Empty;
                     string attribute = null;
+
                     if (useFile || configurationFromXMLNode != null)
                     {
                         if (!ignoreNextFromConfig)
@@ -290,16 +289,17 @@ namespace OpenSim.Framework
                         // Using a second $ to be an escape character was experimented with, but that would require modifying the write process to re-apply the escape character.  Over-all escapes seem too fragile, and the below code handles it cleanly.  If the admin wants to use a value that collides with an environment variable, then the admin can make sure to unset it first.
                         var env_var_key = console_result.Substring(1);
                         var env_var_value = Environment.GetEnvironmentVariable(env_var_key);
+
                         if (env_var_value != null)
                         {
                             // Log the use of an environment variable just in case someone didn't expect it.
-                            m_log.Info($"[CONFIG]: Parameter [{configOption.configurationKey}] started with '$'. Value replaced with environment variable '{env_var_key}' value '{env_var_value}'.");
+                            m_log.Info($"[Config]: Parameter [{configOption.configurationKey}] started with '$'. Value replaced with environment variable '{env_var_key}' value '{env_var_value}'.");
                             console_result = env_var_value;
                         }
                         else
                         {
                             // Unless there is no such variable, in which case just move on with the original and let the user know that happened.
-                            m_log.Warn($"[CONFIG]: Parameter [{configOption.configurationKey}] started with '$', however there was no environment variable found with the name '{env_var_key}'.");
+                            m_log.Warn($"[Config]: Parameter [{configOption.configurationKey}] started with '$', however there was no environment variable found with the name '{env_var_key}'.");
                         }
                     }
 
@@ -472,7 +472,7 @@ namespace OpenSim.Framework
                         if (!resultFunction(configOption.configurationKey, return_result))
                         {
                             m_log.Info(
-                                "[CONFIG]: The handler for the last configuration option denied that input, please try again.");
+                                "[Config]: The handler for the last configuration option denied that input, please try again.");
                             convertSuccess = false;
                             ignoreNextFromConfig = true;
                         }
@@ -482,7 +482,7 @@ namespace OpenSim.Framework
                         if (configOption.configurationUseDefaultNoPrompt)
                         {
                             m_log.Error(string.Format(
-                                            "[CONFIG]: [{3}]:[{1}] is not valid default for parameter [{0}].\nThe configuration result must be parsable to {2}.\n",
+                                            "[Config]: [{3}]:[{1}] is not valid default for parameter [{0}].\nThe configuration result must be parsable to {2}.\n",
                                             configOption.configurationKey, console_result, errorMessage,
                                             configurationFilename));
                             convertSuccess = true;
@@ -490,7 +490,7 @@ namespace OpenSim.Framework
                         else
                         {
                             m_log.Warn(string.Format(
-                                           "[CONFIG]: [{3}]:[{1}] is not a valid value [{0}].\nThe configuration result must be parsable to {2}.\n",
+                                           "[Config]: [{3}]:[{1}] is not a valid value [{0}].\nThe configuration result must be parsable to {2}.\n",
                                            configOption.configurationKey, console_result, errorMessage,
                                            configurationFilename));
                             ignoreNextFromConfig = true;

@@ -1,29 +1,29 @@
-/*
- * Copyright (c) InWorldz Halcyon Developers
- * Copyright (c) Contributors, http://opensimulator.org/
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the OpenSimulator Project nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <summary>
+///     Copyright (c) InWorldz Halcyon Developers
+///     Copyright (c) Contributors, http://opensimulator.org/
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the OpenSimulator Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </summary>
 
 using System;
 using System.IO;
@@ -48,8 +48,7 @@ namespace OpenSim
         {
         }
 
-        public OpenSimConfigSource LoadConfigSettings(IConfigSource configSource, out ConfigSettings configSettings,
-                                                      out NetworkServersInfo networkInfo)
+        public OpenSimConfigSource LoadConfigSettings(IConfigSource configSource, out ConfigSettings configSettings, out NetworkServersInfo networkInfo)
         {
             m_configSettings = configSettings = new ConfigSettings();
             m_networkServersInfo = networkInfo = new NetworkServersInfo();
@@ -57,7 +56,7 @@ namespace OpenSim
 
             IConfig startupConfig = configSource.Configs["Startup"];
 
-            //old style or new style settings?
+            // old style or new style settings?
             string iniFileName = startupConfig.GetString("inifile", "Halcyon.ini");
             ApplicationBase.iniFilePath = Path.Combine(Util.configDir(), iniFileName);
 
@@ -65,41 +64,39 @@ namespace OpenSim
             string masterfilePath = Path.Combine(Util.configDir(), masterFileName);
 
             string iniDirName = startupConfig.GetString("inidirectory", "config");
-            //string iniDirPath = Path.Combine(Util.configDir(), iniDirName);
 
             m_config = new OpenSimConfigSource();
             m_config.Source = new IniConfigSource();
             m_config.Source.Merge(DefaultConfig());
 
-            m_log.Info("[CONFIG] Reading configuration settings");
+            m_log.Info("[Config]: Reading configuration settings");
 
             Uri configUri;
             
             String xmlPath = Path.Combine(Util.configDir(), "Halcyon.xml");
 
-            //check for master .INI file (name passed in command line, no default), or XML over http
+            // check for master .INI file (name passed in command line, no default), or XML over http
             if (!String.IsNullOrEmpty(masterFileName)) // If a master file name is given ...
             {
-                m_log.InfoFormat("[CONFIG] Reading config master file {0}", masterfilePath);
+                m_log.InfoFormat("[Config]: Reading config master file {0}", masterfilePath);
 
-                bool isMasterUri = Uri.TryCreate(masterFileName, UriKind.Absolute, out configUri) &&
-                                   configUri.Scheme == Uri.UriSchemeHttp;
+                bool isMasterUri = Uri.TryCreate(masterFileName, UriKind.Absolute, out configUri) && configUri.Scheme == Uri.UriSchemeHttp;
 
                 if (!ReadConfig(masterFileName, masterfilePath, m_config, isMasterUri))
                 {
-                    m_log.FatalFormat("[CONFIG] Could not open master config file {0}", masterfilePath);
+                    m_log.FatalFormat("[Config]: Could not open master config file {0}", masterfilePath);
                 }
             }
 
             if (Directory.Exists(iniDirName))
             {
-                m_log.InfoFormat("Searching folder: {0} , for config ini files", iniDirName);
+                m_log.InfoFormat("[Config]: Searching folder: {0} , for config ini files", iniDirName);
                 string[] fileEntries = Directory.GetFiles(iniDirName);
+
                 foreach (string filePath in fileEntries)
                 {
                     if (Path.GetExtension(filePath).ToLower() == ".ini")
                     {
-                        // m_log.InfoFormat("reading ini file < {0} > from config dir", filePath);
                         ReadConfig(Path.GetFileName(filePath), filePath, m_config, false);
                     }
                 }
@@ -107,8 +104,7 @@ namespace OpenSim
 
             // Check for .INI file (either default or name passed on command
             // line) or XML config source over http
-            bool isIniUri = Uri.TryCreate(iniFileName, UriKind.Absolute, out configUri) &&
-                            configUri.Scheme == Uri.UriSchemeHttp;
+            bool isIniUri = Uri.TryCreate(iniFileName, UriKind.Absolute, out configUri) && configUri.Scheme == Uri.UriSchemeHttp;
             iniFileExists = ReadConfig(iniFileName, ApplicationBase.iniFilePath, m_config, isIniUri);
 
             if (!iniFileExists)
@@ -118,7 +114,7 @@ namespace OpenSim
                 {
                     ApplicationBase.iniFilePath = xmlPath;
 
-                    m_log.InfoFormat("Reading XML configuration from {0}", Path.GetFullPath(xmlPath));
+                    m_log.InfoFormat("[Config]: Reading XML configuration from {0}", Path.GetFullPath(xmlPath));
                     iniFileExists = true;
 
                     m_config.Source = new XmlConfigSource();
@@ -130,16 +126,22 @@ namespace OpenSim
 
             if (!iniFileExists)
             {
-                m_log.FatalFormat("[CONFIG] Could not load any configuration");
+                m_log.FatalFormat("[Config]: Could not load any configuration");
+
                 if (!isIniUri)
-                    m_log.FatalFormat("[CONFIG] Tried to load {0}, ", Path.GetFullPath(ApplicationBase.iniFilePath));
+                {
+                    m_log.FatalFormat("[Config]: Tried to load {0}, ", Path.GetFullPath(ApplicationBase.iniFilePath));
+                }
                 else
-                    m_log.FatalFormat("[CONFIG] Tried to load from URI {0}, ", iniFileName);
-                m_log.FatalFormat("[CONFIG] and XML source {0}", Path.GetFullPath(xmlPath));
+                {
+                    m_log.FatalFormat("[Config]: Tried to load from URI {0}, ", iniFileName);
+                }
+
+                m_log.FatalFormat("[Config]: and XML source {0}", Path.GetFullPath(xmlPath));
 
                 string sampleName = Path.GetFileNameWithoutExtension(ApplicationBase.iniFilePath) + ".sample.ini";
 
-                m_log.FatalFormat("[CONFIG] Did you copy the {0} file to {1}?", sampleName, ApplicationBase.iniFilePath);
+                m_log.FatalFormat("[Config]: Did you copy the {0} file to {1}?", sampleName, ApplicationBase.iniFilePath);
                 Environment.Exit(1);
             }
 
@@ -149,7 +151,8 @@ namespace OpenSim
         }
 
         /// <summary>
-        /// Provide same ini loader functionality for standard ini and master ini - file system or XML over http
+        ///     Provide same ini loader functionality for 
+        ///     standard ini and master ini - file system or XML over http
         /// </summary>
         /// <param name="iniName">The name of the ini to load</param>
         /// <param name="iniPath">Full path to the ini</param>
@@ -162,7 +165,7 @@ namespace OpenSim
 
             if (!isUri && File.Exists(iniPath))
             {
-                m_log.InfoFormat("[CONFIG] Reading configuration file {0}", Path.GetFullPath(iniPath));
+                m_log.InfoFormat("[CONFIG]: Reading configuration file {0}", Path.GetFullPath(iniPath));
 
                 // From reading Nini's code, it seems that later merged keys replace earlier ones.                
                 m_config.Source.Merge(new IniConfigSource(iniPath));
@@ -172,7 +175,7 @@ namespace OpenSim
             {
                 if (isUri)
                 {
-                    m_log.InfoFormat("[CONFIG] {0} is a http:// URI, fetching ...", iniName);
+                    m_log.InfoFormat("[Config]: {0} is a http:// URI, fetching ...", iniName);
 
                     // The ini file path is a http URI
                     // Try to read it
@@ -183,31 +186,34 @@ namespace OpenSim
                         m_config.Source.Merge(cs);
 
                         success = true;
-                        m_log.InfoFormat("[CONFIG] Loaded config from {0}", iniName);
+                        m_log.InfoFormat("[Config]: Loaded config from {0}", iniName);
                     }
                     catch (Exception e)
                     {
-                        m_log.FatalFormat("[CONFIG] Exception reading config from URI {0}\n" + e.ToString(), iniName);
+                        m_log.FatalFormat("[Config]: Exception reading config from URI {0}\n" + e.ToString(), iniName);
                         Environment.Exit(1);
                     }
                 }
             }
+
             return success;
         }
 
         /// <summary>
-        /// Setup a default config values in case they aren't present in the ini file
+        ///     Setup a default config values in case 
+        ///     they aren't present in the ini file
         /// </summary>
         /// <returns></returns>
         public static IConfigSource DefaultConfig()
         {
             IConfigSource defaultConfig = new IniConfigSource();
-
             {
                 IConfig config = defaultConfig.Configs["Startup"];
 
                 if (null == config)
+                {
                     config = defaultConfig.AddConfig("Startup");
+                }
 
                 config.Set("region_info_source", "filesystem");
 
@@ -225,6 +231,7 @@ namespace OpenSim
                 config.Set("DefaultScriptEngine", "XEngine");
                 config.Set("asset_database", "default");
                 config.Set("clientstack_plugin", "OpenSim.Region.ClientStack.LindenUDP.dll");
+                
                 // life doesn't really work without this
                 config.Set("EventQueue", true);
             }
@@ -233,7 +240,9 @@ namespace OpenSim
                 IConfig config = defaultConfig.Configs["StandAlone"];
 
                 if (null == config)
+                {
                     config = defaultConfig.AddConfig("StandAlone");
+                }
 
                 config.Set("accounts_authenticate", true);
                 config.Set("welcome_message", "Welcome to Halcyon");
@@ -253,7 +262,9 @@ namespace OpenSim
                 IConfig config = defaultConfig.Configs["Network"];
 
                 if (null == config)
+                {
                     config = defaultConfig.AddConfig("Network");
+                }
 
                 config.Set("default_location_x", 1000);
                 config.Set("default_location_y", 1000);
@@ -277,6 +288,7 @@ namespace OpenSim
         {
             IConfig startupConfig = m_config.Source.Configs["Startup"];
             IConfig inventoryConfig = m_config.Source.Configs["Inventory"];
+
             if (startupConfig != null)
             {
                 m_configSettings.Standalone = !startupConfig.GetBoolean("gridmode", false);
@@ -287,6 +299,7 @@ namespace OpenSim
                 m_configSettings.See_into_region_from_neighbor = startupConfig.GetBoolean("see_into_this_sim_from_neighbor", true);
 
                 m_configSettings.StorageDll = startupConfig.GetString("storage_plugin");
+
                 if (m_configSettings.StorageDll == "OpenSim.DataStore.MonoSqlite.dll")
                 {
                     m_configSettings.StorageDll = "OpenSim.Data.SQLite.dll";
@@ -294,19 +307,15 @@ namespace OpenSim
                     Thread.Sleep(3000);
                 }
 
-                m_configSettings.StorageConnectionString 
-                    = startupConfig.GetString("storage_connection_string");
-                m_configSettings.EstateConnectionString 
-                    = startupConfig.GetString("estate_connection_string", m_configSettings.StorageConnectionString);
-                m_configSettings.AssetStorage 
-                    = startupConfig.GetString("asset_database");
-                m_configSettings.AssetCache 
-                    = startupConfig.GetString("AssetCache", "OpenSim.Framework.Communications.Cache.AssetCache");
-                m_configSettings.ClientstackDll 
-                    = startupConfig.GetString("clientstack_plugin", "OpenSim.Region.ClientStack.LindenUDP.dll");
+                m_configSettings.StorageConnectionString = startupConfig.GetString("storage_connection_string");
+                m_configSettings.EstateConnectionString = startupConfig.GetString("estate_connection_string", m_configSettings.StorageConnectionString);
+                m_configSettings.AssetStorage = startupConfig.GetString("asset_database");
+                m_configSettings.AssetCache = startupConfig.GetString("AssetCache", "OpenSim.Framework.Communications.Cache.AssetCache");
+                m_configSettings.ClientstackDll = startupConfig.GetString("clientstack_plugin", "OpenSim.Region.ClientStack.LindenUDP.dll");
             }
 
             IConfig standaloneConfig = m_config.Source.Configs["StandAlone"];
+
             if (standaloneConfig != null)
             {
                 m_configSettings.StandaloneAuthenticate = standaloneConfig.GetBoolean("accounts_authenticate", true);
@@ -334,7 +343,7 @@ namespace OpenSim
             }
             else
             {
-                m_log.Warn("[INVENTORY] New style inventory configuration information not found");
+                m_log.Warn("[Inventory]: New style inventory configuration information not found");
             }
 
             m_configSettings.CoreConnectionString = startupConfig.GetString("core_connection_string");
