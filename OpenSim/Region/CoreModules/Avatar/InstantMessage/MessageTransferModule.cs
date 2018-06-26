@@ -127,7 +127,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                             return; // recipient has sender muted.
             }
 
-            //m_log.DebugFormat("[INSTANT MESSAGE]: Attempting delivery of IM from {0} to {1}", im.fromAgentName, toAgentID.ToString());
+            m_log.DebugFormat("[INSTANT MESSAGE]: Attempting delivery of IM from {0} to {1}", im.fromAgentName, toAgentID.ToString());
 
             // Try root avatar only first
             foreach (Scene scene in m_Scenes)
@@ -135,12 +135,13 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 if (scene.Entities.ContainsKey(toAgentID) &&
                         scene.Entities[toAgentID] is ScenePresence)
                 {
-                    //m_log.DebugFormat("[INSTANT MESSAGE]: Looking for {0} in {1}", toAgentID.ToString(), scene.RegionInfo.RegionName);
+                    m_log.DebugFormat("[INSTANT MESSAGE]: Looking for {0} in {1}", toAgentID.ToString(), scene.RegionInfo.RegionName);
+                   
                     // Local message
                     ScenePresence user = (ScenePresence) scene.Entities[toAgentID];
                     if (!user.IsChildAgent)
                     {
-                        //m_log.DebugFormat("[INSTANT MESSAGE]: Delivering to client");
+                        m_log.DebugFormat("[INSTANT MESSAGE]: Delivering to client");
                         user.ControllingClient.SendInstantMessage(im);
 
                         // Message sent
@@ -153,8 +154,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
             // try child avatar second
             foreach (Scene scene in m_Scenes)
             {
-//                m_log.DebugFormat(
-//                    "[INSTANT MESSAGE]: Looking for child of {0} in {1}", toAgentID, scene.RegionInfo.RegionName);
+                m_log.DebugFormat("[INSTANT MESSAGE]: Looking for child of {0} in {1}", toAgentID, scene.RegionInfo.RegionName);
 
                 if (scene.Entities.ContainsKey(toAgentID) &&
                         scene.Entities[toAgentID] is ScenePresence)
@@ -162,7 +162,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     // Local message
                     ScenePresence user = (ScenePresence) scene.Entities[toAgentID];
 
-                    //m_log.DebugFormat("[INSTANT MESSAGE]: Delivering to client");
+                    m_log.DebugFormat("[INSTANT MESSAGE]: Delivering to client");
                     user.ControllingClient.SendInstantMessage(im);
 
                     // Message sent
@@ -173,7 +173,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
 
             if (m_Gridmode)
             {
-                //m_log.DebugFormat("[INSTANT MESSAGE]: Delivering via grid");
+                m_log.DebugFormat("[INSTANT MESSAGE]: Delivering via grid");
                 // Still here, try send via Grid
                 SendGridInstantMessageViaXMLRPC(im, result);
                 return;
@@ -190,7 +190,6 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
 
             // If this event has handlers, then the IM will be considered
             // delivered. This will suppress the error message.
-            //
             if (handlerUndeliveredMessage != null)
             {
                 handlerUndeliveredMessage(im);
@@ -241,8 +240,8 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 float pos_z = 0;
                 //m_log.Info("Processing IM");
 
-
                 Hashtable requestData = (Hashtable)request.Params[0];
+              
                 // Check if it's got all the data
                 if (requestData.ContainsKey("from_agent_id")
                         && requestData.ContainsKey("to_agent_id") && requestData.ContainsKey("im_session_id")
@@ -293,6 +292,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                         fromGroup = true;
 
                     string requestData2 = (string)requestData["offline"];
+
                     if (String.IsNullOrEmpty(requestData2))
                     {
                         offline = 0;
@@ -330,6 +330,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     catch (OverflowException)
                     {
                     }
+
                     try
                     {
                         pos_y = (uint)Convert.ToDouble((string)requestData["position_y"]);
@@ -343,6 +344,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     catch (OverflowException)
                     {
                     }
+
                     try
                     {
                         pos_z = (uint)Convert.ToDouble((string)requestData["position_z"]);
@@ -360,6 +362,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     Position = new Vector3(pos_x, pos_y, pos_z);
 
                     string requestData3 = (string)requestData["binary_bucket"];
+
                     if (string.IsNullOrEmpty(requestData3))
                     {
                         binaryBucket = new byte[0];
@@ -385,15 +388,12 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     gim.Position = Position;
                     gim.binaryBucket = binaryBucket;
 
-
                     // Trigger the Instant message in the scene.
                     foreach (Scene scene in m_Scenes)
                     {
-                        if (scene.Entities.ContainsKey(toAgentID) &&
-                                scene.Entities[toAgentID] is ScenePresence)
+                        if (scene.Entities.ContainsKey(toAgentID) && scene.Entities[toAgentID] is ScenePresence)
                         {
-                            ScenePresence user =
-                                    (ScenePresence)scene.Entities[toAgentID];
+                            ScenePresence user = (ScenePresence)scene.Entities[toAgentID];
 
                             if (!user.IsChildAgent)
                             {
@@ -402,6 +402,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                             }
                         }
                     }
+
                     if (!successful)
                     {
                         // If the message can't be delivered to an agent, it
@@ -410,7 +411,6 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                         // unhandled IM event to give the groups module
                         // a chance to pick it up. We raise that in a random
                         // scene, since the groups module is shared.
-                        //
                         m_Scenes[0].EventManager.TriggerUnhandledInstantMessage(gim);
                     }
                 }
@@ -421,10 +421,11 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 successful = false;
             }
 
-            //Send response back to region calling if it was successful
+            // Send response back to region calling if it was successful
             // calling region uses this to know when to look up a user's location again.
             XmlRpcResponse resp = new XmlRpcResponse();
             Hashtable respdata = new Hashtable();
+
             if (successful)
                 respdata["success"] = "TRUE";
             else
@@ -443,8 +444,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
         {
             try
             {
-                GridInstantMessageDelegate icon =
-                        (GridInstantMessageDelegate)iar.AsyncState;
+                GridInstantMessageDelegate icon = (GridInstantMessageDelegate)iar.AsyncState;
                 icon.EndInvoke(iar);
             }
             catch (System.Net.Sockets.SocketException e)
@@ -456,7 +456,6 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 m_log.ErrorFormat("[INSTANT MESSAGE]: Sending instant message failed {0}", e);
             }
         }
-
 
         protected virtual void SendGridInstantMessageViaXMLRPC(GridInstantMessage im, MessageResultNotification result)
         {
@@ -477,8 +476,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
         /// Pass in 0 the first time this method is called.  It will be called recursively with the last 
         /// regionhandle tried
         /// </param>
-        protected virtual void SendGridInstantMessageViaXMLRPCAsync(GridInstantMessage im, MessageResultNotification result,
-            ulong prevRegionHandle, int tries)
+        protected virtual void SendGridInstantMessageViaXMLRPCAsync(GridInstantMessage im, MessageResultNotification result, ulong prevRegionHandle, int tries)
         {
             UserAgentData upd = null;
             bool lookupAgent = false;
@@ -506,6 +504,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     if (prevRegionHandle == upd.Handle)
                     {
                         lookupAgent = true;
+
                         if (m_DebugLevel >= 2)
                             m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} tries={1} in region map, same region, requires lookup", prevRegionHandle, tries);
                     }
@@ -524,6 +523,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 else
                 {
                     lookupAgent = true;
+
                     if (m_DebugLevel >= 2)
                         m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} tries={1} not in region map, requires lookup", prevRegionHandle, tries);
                 }
@@ -539,11 +539,11 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 {
                     // check if we've tried this before..
                     // This is one way to end the recursive loop
-                    //
                     if (upd.Handle == prevRegionHandle)
                     {
                         if (m_DebugLevel >= 1)
                             m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} still, tries={1}", upd.Handle, tries);
+
                         HandleUndeliveredMessage(im, result);
                         return;
                     }
@@ -566,16 +566,19 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 if (upd.AgentOnline)
                 {
                     RegionInfo reginfo = m_Scenes[0].SceneGridService.RequestNeighbouringRegionInfo(upd.Handle);
+
                     if (reginfo != null)
                     {
                         if (m_DebugLevel >= 2)
                             m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} now, sending grid IM", upd.Handle);
+
                         Hashtable msgdata = ConvertGridInstantMessageToXMLRPC(im);
+                      
                         // Not actually used anymore, left in for compatibility
                         // Remove at next interface change
-                        //
                         msgdata["region_handle"] = 0;
                         bool imresult = doIMSending(reginfo, msgdata);
+
                         if (imresult)
                         {
                             // IM delivery successful, so store the Agent's location in our local cache.
@@ -584,16 +587,19 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                                 if (m_UserRegionMap.ContainsKey(toAgentID))
                                 {
                                     m_UserRegionMap[toAgentID] = upd.Handle;
+
                                     if (m_DebugLevel >= 1)
                                         m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} success, updating map", upd.Handle);
                                 }
                                 else
                                 {
                                     m_UserRegionMap.Add(toAgentID, upd.Handle);
+
                                     if (m_DebugLevel >= 1)
                                         m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} success, adding to map", upd.Handle);
                                 }
                             }
+
                             result(true);
                         }
                         else
@@ -607,6 +613,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                             // This is recursive!!!!!
                             if (m_DebugLevel >= 2)
                                 m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} failed, retrying recursively", upd.Handle);
+
                             SendGridInstantMessageViaXMLRPCAsync(im, result, upd.Handle, ++tries);
                         }
                     }
@@ -614,6 +621,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                     {
                         if (m_DebugLevel >= 2)
                             m_log.WarnFormat("[GRID INSTANT MESSAGE]: Unable to find region {0}, will retry", upd.Handle);
+
                         SendGridInstantMessageViaXMLRPCAsync(im, result, upd.Handle, ++tries);
                     }
                 }
@@ -621,6 +629,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 {
                     if (m_DebugLevel >= 1)
                         m_log.ErrorFormat("[GRID INSTANT MESSAGE]: region={0} user offline.", upd.Handle);
+
                     HandleUndeliveredMessage(im, result);
                 }
             }
@@ -628,6 +637,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
             {
                 if (m_DebugLevel >= 1)
                     m_log.WarnFormat("[GRID INSTANT MESSAGE]: Unable to find user {0}", toAgentID);
+
                 HandleUndeliveredMessage(im, result);
             }
         }
@@ -680,30 +690,6 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
         }
 
         /// <summary>
-        /// Get ulong region handle for region by it's Region UUID.
-        /// We use region handles over grid comms because there's all sorts of free and cool caching.
-        /// </summary>
-        /// <param name="regionID">UUID of region to get the region handle for</param>
-        /// <returns></returns>
-//        private virtual ulong getLocalRegionHandleFromUUID(UUID regionID)
-//        {
-//            ulong returnhandle = 0;
-//
-//            lock (m_Scenes)
-//            {
-//                foreach (Scene sn in m_Scenes)
-//                {
-//                    if (sn.RegionInfo.RegionID == regionID)
-//                    {
-//                        returnhandle = sn.RegionInfo.RegionHandle;
-//                        break;
-//                    }
-//                }
-//            }
-//            return returnhandle;
-//        }
-
-        /// <summary>
         /// Takes a GridInstantMessage and converts it into a Hashtable for XMLRPC
         /// </summary>
         /// <param name="msg">The GridInstantMessage object</param>
@@ -712,6 +698,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
         {
             Hashtable gim = new Hashtable();
             gim["from_agent_id"] = msg.fromAgentID.ToString();
+           
             // Kept for compatibility
             gim["from_agent_session"] = UUID.Zero.ToString();
             gim["to_agent_id"] = msg.toAgentID.ToString();
@@ -726,6 +713,7 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
                 gim["from_group"] = "TRUE";
             else
                 gim["from_group"] = "FALSE";
+
             byte[] offlinedata = new byte[1]; offlinedata[0] = msg.offline;
             gim["offline"] = Convert.ToBase64String(offlinedata, Base64FormattingOptions.None);
             gim["parent_estate_id"] = msg.ParentEstateID.ToString();
@@ -736,6 +724,5 @@ namespace OpenSim.Region.CoreModules.Avatar.InstantMessage
             gim["binary_bucket"] = Convert.ToBase64String(msg.binaryBucket,Base64FormattingOptions.None);
             return gim;
         }
-
     }
 }

@@ -147,12 +147,12 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
         {
             if (user != null) // Local (root agent or child agent)
             {
-//                m_log.WarnFormat("[INVENTORY_OFFER]: Relaying IM {0} locally to {1}", im.dialog, im.toAgentID);
+                m_log.WarnFormat("[INVENTORY_OFFER]: Relaying IM {0} locally to {1}", im.dialog, im.toAgentID);
                 user.ControllingClient.SendInstantMessage(im);
             }
             else
             {
-//                m_log.WarnFormat("[INVENTORY_OFFER]: Relaying IM {0} remotely to {1}", im.dialog, im.toAgentID);
+                m_log.WarnFormat("[INVENTORY_OFFER]: Relaying IM {0} remotely to {1}", im.dialog, im.toAgentID);
                 if (m_TransferModule == null)
                     m_TransferModule = scene.RequestModuleInterface<IMessageTransferModule>();
 
@@ -224,7 +224,7 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
                 }
                 copyID = item.ID;
             }
-//            m_log.InfoFormat("[AGENT INVENTORY]: Offering {0} {1} to user {2} inventory as {3}", isFolder ? "folder" : "item", destID, toAgentID, copyID);
+            m_log.InfoFormat("[AGENT INVENTORY]: Offering {0} {1} to user {2} inventory as {3}", isFolder ? "folder" : "item", destID, toAgentID, copyID);
 
             // Update the asset type and destination ID into the outgoing IM.
             im.binaryBucket = new byte[17];
@@ -507,27 +507,27 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
             }
             else if (im.dialog == (byte)InstantMessageDialog.InventoryAccepted)
             {
-                //                m_log.Warn("[INVENTORY TRANSFER]: InventoryAccepted");
+                // m_log.Warn("[INVENTORY TRANSFER]: InventoryAccepted");
                 GridInventoryOfferAcceptDecline(im);
             }
             else if (im.dialog == (byte)InstantMessageDialog.InventoryDeclined)
             {
-                //                m_log.Warn("[INVENTORY TRANSFER]: InventoryDeclined");
+                // m_log.Warn("[INVENTORY TRANSFER]: InventoryDeclined");
                 GridInventoryOfferAcceptDecline(im);
             }
             else if (im.dialog == (byte)InstantMessageDialog.TaskInventoryOffered)
             {
-                //                m_log.Info("[INVENTORY TRANSFER]: TaskInventoryOffered");
+                // m_log.Info("[INVENTORY TRANSFER]: TaskInventoryOffered");
                 GridInventoryOffer(im);
             }
             else if (im.dialog == (byte)InstantMessageDialog.TaskInventoryAccepted)
             {
-                //                m_log.Info("[INVENTORY TRANSFER]: TaskInventoryAccepted");
+                // m_log.Info("[INVENTORY TRANSFER]: TaskInventoryAccepted");
                 GridInventoryOfferAcceptDecline(im);
             }
             else if (im.dialog == (byte)InstantMessageDialog.TaskInventoryDeclined)
             {
-                //                m_log.Info("[INVENTORY TRANSFER]: TaskInventoryDeclined");
+                // m_log.Info("[INVENTORY TRANSFER]: TaskInventoryDeclined");
                 GridInventoryOfferAcceptDecline(im);
             }
         }
@@ -556,8 +556,6 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
                 // Since we can get here two ways, we need to scan
                 // the scenes here. This is somewhat more expensive
                 // but helps avoid a nasty bug
-                //
-
                 foreach (Scene s in m_Scenelist)
                 {
                     ScenePresence presence;
@@ -574,7 +572,6 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
                         //
                         // If the agent is totally unknown, then what
                         // are we even doing here??
-                        //
                         if (s == scene)
                         {
                             //m_log.Debug("[INVTRANSFERMOD]: s == scene. Returning true in " + scene.RegionInfo.RegionName);
@@ -593,7 +590,6 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
 
             // The agent is left in current Scene, so we must be
             // going to another instance
-            //
             lock (m_AgentRegions)
             {
                 if (m_AgentRegions[agentID] == scene)
@@ -605,7 +601,6 @@ namespace OpenSim.Region.CoreModules.Avatar.Inventory.Transfer
             }
 
             // Another region has claimed the agent
-            //
             //m_log.Debug("[INVTRANSFERMOD]: last resort. Returning false in " + scene.RegionInfo.RegionName);
             return false;
         }
