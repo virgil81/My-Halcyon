@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using Nini.Config;
-using InWorldz.Testing;
+using Enhanced.Testing;
 using Enhanced.Emporia.Types;
 using Nini.Ini;
 using OpenMetaverse;

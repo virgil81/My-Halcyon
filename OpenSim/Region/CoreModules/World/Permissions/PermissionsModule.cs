@@ -29,7 +29,7 @@
  */
 
 // Modified to apply friend edit permissions
-// (c) 2009 Inworldz LLC
+// (c) 2009 InWorldz LLC
 //
 
 /*

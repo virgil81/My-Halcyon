@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.VivoxVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.VivoxVoice.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.VivoxVoice\obj\x64\Debug\Enhanced.VivoxVoice.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.VivoxVoice\obj\x64\Debug\Enhanced.VivoxVoice.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.VivoxVoice\obj\x64\Debug\Enhanced.VivoxVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.VivoxVoice\obj\x64\Debug\Enhanced.VivoxVoice.pdb

@@ -50,7 +50,7 @@ namespace OpenSim.Region.Physics.Manager.Vehicle
         MouselookBank       = 0x100,
         CameraDecoupled     = 0x200,
 
-        // Inworldz extensions
+        // Enhanced extensions
         ReactToCurrents     = 0x10000,
         ReactToWind         = 0x20000,
         LimitMotorDown      = 0x40000,

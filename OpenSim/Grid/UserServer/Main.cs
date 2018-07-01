@@ -77,7 +77,7 @@ namespace OpenSim.Grid.UserServer
         protected UserServerCommandModule m_consoleCommandModule;
         protected UserServerEventDispatchModule m_eventDispatcher;
 
-        protected InWorldz.RemoteAdmin.RemoteAdmin m_radmin;
+        protected Enhanced.RemoteAdmin.RemoteAdmin m_radmin;
 
         protected JWTAuthenticator m_jwtAuthenticator;
 
@@ -303,7 +303,7 @@ namespace OpenSim.Grid.UserServer
             }
 
 
-            m_radmin = new InWorldz.RemoteAdmin.RemoteAdmin(Cfg.SSLPublicCertFile);
+            m_radmin = new Enhanced.RemoteAdmin.RemoteAdmin(Cfg.SSLPublicCertFile);
             m_radmin.AddCommand("UserService", "Shutdown", UserServerShutdownHandler);
             m_radmin.AddHandler(m_httpServer);
         }

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.Region.Data.Thoosa.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.Region.Data.Thoosa.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Region.Data.Thoosa\obj\x64\Debug\InWorldz.Region.Data.Thoosa.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Region.Data.Thoosa\obj\x64\Debug\InWorldz.Region.Data.Thoosa.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Region.Data.Thoosa\obj\x64\Debug\InWorldz.Region.Data.Thoosa.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Region.Data.Thoosa\obj\x64\Debug\InWorldz.Region.Data.Thoosa.pdb

@@ -31,10 +31,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Reflection;
 using OpenSim.Framework;
 using log4net;
-using System.Reflection;
 using OpenSim.Framework.AssetLoader.Filesystem;
 
 namespace InWorldz.Whip.Client
@@ -400,6 +399,8 @@ namespace InWorldz.Whip.Client
         {
             get { return "InWorldz WHIP Asset Client"; }
         }
+
+        public RemoteServer ReadWhipServer { get => _readWhipServer; set => _readWhipServer = value; }
 
         public void Initialize()
         {

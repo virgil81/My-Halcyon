@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2009 Inworldz LLC
+ * Copyright(C) 2009 InWorldz LLC
  * Initial Revision:  2009-12-14 David C. Daeschler
  */
 using System;

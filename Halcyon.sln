@@ -2,13 +2,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halcyon", "Enhanced\Halcyon\Halcyon.csproj", "{E586BF1E-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.ApplicationPlugins", "Enhanced\InWorldz.ApplicationPlugins\InWorldz.ApplicationPlugins.csproj", "{8C26FC85-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.ApplicationPlugins", "Enhanced\Enhanced.ApplicationPlugins\Enhanced.ApplicationPlugins.csproj", "{8C26FC85-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.Arbiter", "Enhanced\InWorldz.Arbiter\InWorldz.Arbiter.csproj", "{E1C1E370-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Arbiter", "Enhanced\Enhanced.Arbiter\Enhanced.Arbiter.csproj", "{E1C1E370-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.Data.Assets.Stratus", "Enhanced\InWorldz.Data.Assets.Stratus\InWorldz.Data.Assets.Stratus.csproj", "{6C18EAD6-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Data.Assets.Stratus", "Enhanced\Enhanced.Data.Assets.Stratus\Enhanced.Data.Assets.Stratus.csproj", "{6C18EAD6-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.Data.Inventory.Cassandra", "Enhanced\InWorldz.Data.Inventory.Cassandra\InWorldz.Data.Inventory.Cassandra.csproj", "{62DC97F5-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Data.Inventory.Cassandra", "Enhanced\Enhanced.Data.Inventory.Cassandra\Enhanced.Data.Inventory.Cassandra.csproj", "{62DC97F5-0000-0000-0000-000000000000}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.JWT", "Enhanced\JWT\InWorldz.JWT.csproj", "{D4CA6D90-0000-0000-0000-000000000000}"
 EndProject
@@ -16,13 +16,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Emporia.Engine", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.PhysxPhysics", "Enhanced\Enhanced.PhysxPhysics\Enhanced.PhysxPhysics.csproj", "{B1A7EE12-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.Region.Data.Thoosa", "Enhanced\InWorldz.Region.Data.Thoosa\InWorldz.Region.Data.Thoosa.csproj", "{154ACBDF-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Region.Data.Thoosa", "Enhanced\Enhanced.Region.Data.Thoosa\Enhanced.Region.Data.Thoosa.csproj", "{154ACBDF-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.RemoteAdmin", "Enhanced\InWorldz.RemoteAdmin\InWorldz.RemoteAdmin.csproj", "{11DB5C08-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.RemoteAdmin", "Enhanced\Enhanced.RemoteAdmin\Enhanced.RemoteAdmin.csproj", "{11DB5C08-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.Testing", "Enhanced\InWorldz.Testing\InWorldz.Testing.csproj", "{C58F0EA3-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Testing", "Enhanced\Enhanced.Testing\Enhanced.Testing.csproj", "{C58F0EA3-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.VivoxVoice", "Enhanced\InWorldz.VivoxVoice\InWorldz.VivoxVoice.csproj", "{127DBEDD-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.VivoxVoice", "Enhanced\Enhanced.VivoxVoice\Enhanced.VivoxVoice.csproj", "{127DBEDD-0000-0000-0000-000000000000}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.FreeSwitchVoice", "Enhanced\FreeswitchVoice\Enhanced.FreeSwitchVoice.csproj", "{69378D9D-0000-0000-0000-000000000000}"
 EndProject

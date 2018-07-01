@@ -56,7 +56,7 @@ namespace OpenSim.Region.FrameworkTests
         [SetUp]
         public void Setup()
         {
-            mockScene = InWorldz.Testing.SceneHelper.CreateScene(9000, 1000, 1000);
+            mockScene = Enhanced.Testing.SceneHelper.CreateScene(9000, 1000, 1000);
             srm = mockScene.SurroundingRegions;
             srm.OnNeighborStateChange += srm_OnNeighborStateChange;
         }
@@ -77,7 +77,7 @@ namespace OpenSim.Region.FrameworkTests
         [TearDown]
         public void TearDown()
         {
-            InWorldz.Testing.SceneHelper.TearDownScene(mockScene);
+            Enhanced.Testing.SceneHelper.TearDownScene(mockScene);
         }
 
         public static void SendCreateRegionMessage(uint xloc, uint yloc, ushort receiverServerPort, ushort regionServerport)

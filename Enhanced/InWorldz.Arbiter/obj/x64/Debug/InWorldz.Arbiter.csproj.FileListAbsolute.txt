@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.Arbiter.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.Arbiter.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Arbiter\obj\x64\Debug\InWorldz.Arbiter.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Arbiter\obj\x64\Debug\InWorldz.Arbiter.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Arbiter\obj\x64\Debug\InWorldz.Arbiter.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.Arbiter\obj\x64\Debug\InWorldz.Arbiter.pdb

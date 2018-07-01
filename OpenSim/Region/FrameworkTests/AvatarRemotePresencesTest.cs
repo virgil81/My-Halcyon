@@ -35,7 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenSim.Region.Framework.Scenes;
-using InWorldz.Testing;
+using Enhanced.Testing;
 using OpenSim.Framework;
 using System.Threading;
 using OpenSim.Region.Framework.Interfaces;
@@ -57,7 +57,7 @@ namespace OpenSim.Region.FrameworkTests
         public void Setup()
         {
             mockScene = SceneHelper.CreateScene(REGION_PORT_BASE, 1000, 1000);
-            mockScene.RegisterModuleInterface<IEventQueue>(new InWorldz.Testing.MockEventQueue());
+            mockScene.RegisterModuleInterface<IEventQueue>(new Enhanced.Testing.MockEventQueue());
 
             neighbor1left = SceneHelper.CreateScene(REGION_PORT_BASE+1, 999, 1000);
             neighbor2left = SceneHelper.CreateScene(REGION_PORT_BASE+2, 998, 1000);

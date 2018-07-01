@@ -65,7 +65,7 @@ namespace OpenSim.Grid.MessagingServer
 
         private ManualResetEvent Terminating = new ManualResetEvent(false);
 
-        private InWorldz.RemoteAdmin.RemoteAdmin m_radmin;
+        private Enhanced.RemoteAdmin.RemoteAdmin m_radmin;
 
         public static void Main(string[] args)
         {
@@ -155,7 +155,7 @@ namespace OpenSim.Grid.MessagingServer
                 m_httpServer.AddStreamHandler(new XmlRpcStreamHandler("POST", Util.XmlRpcRequestPrefix("region_startup"), m_regionModule.RegionStartup));
                 m_httpServer.AddStreamHandler(new XmlRpcStreamHandler("POST", Util.XmlRpcRequestPrefix("region_shutdown"), m_regionModule.RegionShutdown));
 
-                m_radmin = new InWorldz.RemoteAdmin.RemoteAdmin(Cfg.SSLPublicCertFile);
+                m_radmin = new Enhanced.RemoteAdmin.RemoteAdmin(Cfg.SSLPublicCertFile);
                 m_radmin.AddCommand("MessagingService", "Shutdown", MessagingServerShutdownHandler);
                 m_radmin.AddHandler(m_httpServer);
 

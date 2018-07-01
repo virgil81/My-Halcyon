@@ -1,5 +1,5 @@
 /*
- * Copyright(C) 2010 Inworldz LLC
+ * Copyright(C) 2010 InWorldz LLC
  * Initial Revision:  2010-05-30 David C. Daeschler
  */
 

@@ -35,7 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenSim.Region.Framework.Scenes;
-using InWorldz.Testing;
+using Enhanced.Testing;
 using OpenSim.Framework;
 using System.Threading;
 using OpenSim.Region.Framework.Interfaces;

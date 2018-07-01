@@ -51,7 +51,7 @@ namespace OpenSim.Grid.GridServer
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected GridConfig m_config;
-        private InWorldz.RemoteAdmin.RemoteAdmin m_radmin;
+        private Enhanced.RemoteAdmin.RemoteAdmin m_radmin;
 
         public GridConfig Config
         {
@@ -87,7 +87,7 @@ namespace OpenSim.Grid.GridServer
 
             m_httpServer.Start();
 
-            m_radmin = new InWorldz.RemoteAdmin.RemoteAdmin(m_config.SSLPublicCertFile);
+            m_radmin = new Enhanced.RemoteAdmin.RemoteAdmin(m_config.SSLPublicCertFile);
             m_radmin.AddCommand("GridService", "Shutdown", GridServerShutdownHandler);
             m_radmin.AddHandler(m_httpServer);
 
