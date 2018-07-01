@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Interfaces.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Interfaces.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Interfaces\obj\x64\Debug\OpenSim.Region.Interfaces.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Interfaces\obj\x64\Debug\OpenSim.Region.Interfaces.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Interfaces\obj\x64\Debug\OpenSim.Region.Interfaces.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Interfaces\obj\x64\Debug\OpenSim.Region.Interfaces.pdb

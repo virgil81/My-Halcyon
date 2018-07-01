@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.ApplicationPlugins.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\InWorldz.ApplicationPlugins.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\InWorldz.ApplicationPlugins\obj\x64\Debug\InWorldz.ApplicationPlugins.pdb

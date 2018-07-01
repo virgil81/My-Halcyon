@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Terrain\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Terrain\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\CoreModules\World\Terrain\DefaultEffects\obj\x64\Debug\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\CoreModules\World\Terrain\DefaultEffects\obj\x64\Debug\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\CoreModules\World\Terrain\DefaultEffects\obj\x64\Debug\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\CoreModules\World\Terrain\DefaultEffects\obj\x64\Debug\OpenSim.Region.CoreModules.World.Terrain.DefaultEffects.pdb

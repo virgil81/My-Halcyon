@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Physics\Enhanced.PhysxPhysics.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Physics\Enhanced.PhysxPhysics.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.PhysxPhysics\obj\x64\Debug\Enhanced.PhysxPhysics.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.PhysxPhysics\obj\x64\Debug\Enhanced.PhysxPhysics.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.PhysxPhysics\obj\x64\Debug\Enhanced.PhysxPhysics.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.PhysxPhysics\obj\x64\Debug\Enhanced.PhysxPhysics.pdb

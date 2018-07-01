@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Data.MySQL.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Data.MySQL.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\MySQL\obj\x64\Debug\OpenSim.Data.MySQL.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\MySQL\obj\x64\Debug\OpenSim.Data.MySQL.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\MySQL\obj\x64\Debug\OpenSim.Data.MySQL.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\MySQL\obj\x64\Debug\OpenSim.Data.MySQL.pdb

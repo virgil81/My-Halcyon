@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.FrameworkTests.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.FrameworkTests.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\FrameworkTests\obj\x64\Debug\OpenSim.Region.FrameworkTests.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\FrameworkTests\obj\x64\Debug\OpenSim.Region.FrameworkTests.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\FrameworkTests\obj\x64\Debug\OpenSim.Region.FrameworkTests.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\FrameworkTests\obj\x64\Debug\OpenSim.Region.FrameworkTests.pdb

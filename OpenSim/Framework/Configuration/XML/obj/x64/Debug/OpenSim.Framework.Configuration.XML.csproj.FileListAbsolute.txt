@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Configuration.XML.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Configuration.XML.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\XML\obj\x64\Debug\OpenSim.Framework.Configuration.XML.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\XML\obj\x64\Debug\OpenSim.Framework.Configuration.XML.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\XML\obj\x64\Debug\OpenSim.Framework.Configuration.XML.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\XML\obj\x64\Debug\OpenSim.Framework.Configuration.XML.pdb

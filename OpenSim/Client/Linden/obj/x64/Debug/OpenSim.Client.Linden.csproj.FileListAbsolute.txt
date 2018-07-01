@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Client.Linden.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Client.Linden.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Client\Linden\obj\x64\Debug\OpenSim.Client.Linden.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Client\Linden\obj\x64\Debug\OpenSim.Client.Linden.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Client\Linden\obj\x64\Debug\OpenSim.Client.Linden.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Client\Linden\obj\x64\Debug\OpenSim.Client.Linden.pdb

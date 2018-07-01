@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.ApplicationPlugins.ScriptEngine.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.ApplicationPlugins.ScriptEngine.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\ApplicationPlugins\ScriptEngine\obj\x64\Debug\OpenSim.ApplicationPlugins.ScriptEngine.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\ApplicationPlugins\ScriptEngine\obj\x64\Debug\OpenSim.ApplicationPlugins.ScriptEngine.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\ApplicationPlugins\ScriptEngine\obj\x64\Debug\OpenSim.ApplicationPlugins.ScriptEngine.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\ApplicationPlugins\ScriptEngine\obj\x64\Debug\OpenSim.ApplicationPlugins.ScriptEngine.pdb

@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Grid.GridServer.Modules.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Grid.GridServer.Modules.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\GridServer.Modules\obj\x64\Debug\OpenSim.Grid.GridServer.Modules.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\GridServer.Modules\obj\x64\Debug\OpenSim.Grid.GridServer.Modules.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\GridServer.Modules\obj\x64\Debug\OpenSim.Grid.GridServer.Modules.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\GridServer.Modules\obj\x64\Debug\OpenSim.Grid.GridServer.Modules.pdb

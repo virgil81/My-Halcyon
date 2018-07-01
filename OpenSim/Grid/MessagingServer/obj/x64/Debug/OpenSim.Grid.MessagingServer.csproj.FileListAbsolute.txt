@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Grid.MessagingServer.exe
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Grid.MessagingServer.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\MessagingServer\obj\x64\Debug\OpenSim.Grid.MessagingServer.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\MessagingServer\obj\x64\Debug\OpenSim.Grid.MessagingServer.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\MessagingServer\obj\x64\Debug\OpenSim.Grid.MessagingServer.exe
+C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Grid\MessagingServer\obj\x64\Debug\OpenSim.Grid.MessagingServer.pdb

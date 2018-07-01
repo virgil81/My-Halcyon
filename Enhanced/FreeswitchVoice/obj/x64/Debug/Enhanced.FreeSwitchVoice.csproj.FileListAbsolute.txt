@@ -1,0 +1,6 @@
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.FreeSwitchVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.FreeSwitchVoice.pdb
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\FreeswitchVoice\obj\x64\Debug\Enhanced.FreeSwitchVoice.csprojAssemblyReference.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\FreeswitchVoice\obj\x64\Debug\Enhanced.FreeSwitchVoice.csproj.CoreCompileInputs.cache
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\FreeswitchVoice\obj\x64\Debug\Enhanced.FreeSwitchVoice.dll
+C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\FreeswitchVoice\obj\x64\Debug\Enhanced.FreeSwitchVoice.pdb
