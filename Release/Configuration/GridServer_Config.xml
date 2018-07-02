@@ -1,0 +1,17 @@
+﻿<Root>
+  <Config 
+  default_asset_server="whip://%WhipPass%@%WhipLocalIP%:32700" 
+  asset_send_key="12charKeyCod" 
+  asset_recv_key="12charKeyCod" 
+  default_user_server="http://%ServicesLocalIP%:8002" 
+  user_send_key="12charKeyCod" 
+  user_recv_key="12charKeyCod" 
+  sim_send_key="12charKeyCod" 
+  sim_recv_key="12charKeyCod" 
+  database_provider="OpenSim.Data.MySQL.dll" 
+  http_port="8009" 
+  allow_forceful_banlines="TRUE" 
+  allow_region_registration="True" 
+  database_connect="Data Source=%DBLocalIP%;Database=%GridDB%;User ID=%DBUser%;password=%DBPass%" 
+  ssl_public_certificate="" />
+</Root>
