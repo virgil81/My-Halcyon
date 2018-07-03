@@ -41,6 +41,7 @@ namespace OpenSim.Framework
         public const string DEFAULT_DATA_DIR = "../Data/data";
         public const string DEFAULT_ASSETS_DIR = "../Data/assets";
         public const string DEFAULT_INVENTORY_DIR = "../Data/inventory";
+        public const string DEFAULT_OAR_BACKUP_FILENAME = "region.oar";
 
         /// <summary>
         ///     Region specific constnats
