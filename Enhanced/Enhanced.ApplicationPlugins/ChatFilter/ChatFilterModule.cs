@@ -36,7 +36,7 @@ using System.Text.RegularExpressions;
 using Nini.Config;
 using OpenMetaverse;
 using OpenSim.Framework;
-using OpenSim.Framemwork.Communications.Cache;
+using OpenSim.Framework.Communications.Cache;
 using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 
