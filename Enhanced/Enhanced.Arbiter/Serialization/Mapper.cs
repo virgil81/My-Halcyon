@@ -1,4 +1,33 @@
-﻿using System;
+﻿/// <license>
+///     Copyright (c) Contributors, My-Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
+
+using System;
 using System.Diagnostics;
 using FlatBuffers;
 using OpenMetaverse;
@@ -8,12 +37,12 @@ using OpenSim.Region.Framework.Scenes;
 namespace Enhanced.Arbiter.Serialization
 {
     /// <summary>
-    /// Maps between a flatbuffer primitive and a halcyon primitive and vice versa
+    ///     Maps between a flatbuffer primitive and a halcyon primitive and vice versa
     /// </summary>
     public class Mapper
     {
         /// <summary>
-        /// Converts from a flatbuffer vector3 to an OMV vector3
+        ///     Converts from a flatbuffer vector3 to an OMV vector3
         /// </summary>
         /// <param name="flatVector3"></param>
         /// <returns></returns>
@@ -28,7 +57,7 @@ namespace Enhanced.Arbiter.Serialization
         }
 
         /// <summary>
-        /// Converts from a flatbuffer byte string to an OMV UUID
+        ///     Converts from a flatbuffer byte string to an OMV UUID
         /// </summary>
         /// <param name="bytes">The byte string</param>
         /// <returns>An OMV UUID</returns>
@@ -38,7 +67,7 @@ namespace Enhanced.Arbiter.Serialization
         }
 
         /// <summary>
-        /// Converts from a flatbuffer quaternion to an OMV quaternion
+        ///     Converts from a flatbuffer quaternion to an OMV quaternion
         /// </summary>
         /// <param name="flatQuat"></param>
         /// <returns></returns>
@@ -48,7 +77,7 @@ namespace Enhanced.Arbiter.Serialization
         }
 
         /// <summary>
-        /// Returns a new byte array from the given segment
+        ///     Returns a new byte array from the given segment
         /// </summary>
         /// <param name="bytes">The segment to copy bytes from</param>
         /// <returns>A new array or null if the segment is null</returns>
@@ -65,7 +94,7 @@ namespace Enhanced.Arbiter.Serialization
         }
 
         /// <summary>
-        /// Maps from a flatbuffer serialized group to a SOG
+        ///     Maps from a flatbuffer serialized group to a SOG
         /// </summary>
         /// <param name="inGroup">The flatbuffer group to serialize</param>
         /// <returns></returns>
@@ -81,24 +110,32 @@ namespace Enhanced.Arbiter.Serialization
             
             for (int i = 0; i < inGroup.ChildPartsLength; i++)
             {
-                if (! inGroup.ChildParts(i).HasValue) continue;
+                if (! inGroup.ChildParts(i).HasValue)
+				{
+					continue;
+				}
 
                 SceneObjectPart childPart = Mapper.MapFlatbufferPrimToPart(inGroup.ChildParts(i).Value);
 
                 int originalLinkNum = childPart.LinkNum;
                 group.AddPart(childPart);
 
-                // SceneObjectGroup.AddPart() tries to be smart and automatically set the LinkNum.
-                // We override that here
+                /// <summary>
+				///     SceneObjectGroup.AddPart() tries to be
+				///     smart and automatically set the LinkNum.
+				///     Therefore we override that here.
+				/// </summary>
                 if (originalLinkNum != 0)
-                    childPart.LinkNum = originalLinkNum;
+				{
+					childPart.LinkNum = originalLinkNum;
+				}
             }
 
             return group;
         }
 
         /// <summary>
-        /// Maps the flatbuffer primshape object to a halcyon primitivebaseshape
+        ///     Maps the flatbuffer primshape object to a halcyon primitivebaseshape
         /// </summary>
         /// <param name="flatPrimBaseShape">The flat</param>
         /// <returns></returns>
@@ -170,7 +207,7 @@ namespace Enhanced.Arbiter.Serialization
         }
         
         /// <summary>
-        /// Maps a flatbuffer primitive to a scene object part
+        ///     Maps a flatbuffer primitive to a scene object part
         /// </summary>
         /// <param name="prim">The flatbuffer serialized primitive</param>
         /// <returns>A new SceneObjectPart from the serialized primitive</returns>
@@ -203,7 +240,7 @@ namespace Enhanced.Arbiter.Serialization
         }
 
         /// <summary>
-        /// Maps the given sceneobjectpart to a flatbuffer primitive
+        ///     Maps the given sceneobjectpart to a flatbuffer primitive
         /// </summary>
         /// <param name="sop">The scene object to be serialized</param>
         /// <param name="builder">A FlatBufferBuilder that has been reset</param>
