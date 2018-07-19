@@ -1,43 +1,42 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
-using OpenSim.Framework;
-using OpenMetaverse;
-using KellermanSoftware.CompareNetObjects;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
+using KellermanSoftware.CompareNetObjects;
+using NUnit.Framework;
+using OpenMetaverse;
+using OpenSim.Framework;
 
 namespace Enhanced.Data.Assets.Stratus.Tests
 {
@@ -73,7 +72,11 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [TestFixtureTearDown]
         public void Stop()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
+
             _client.Stop();
         }
 
@@ -81,7 +84,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestWriteAndRetrieveAssets()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             AssetBase baseAsset = new AssetBase();
 
@@ -110,7 +116,8 @@ namespace Enhanced.Data.Assets.Stratus.Tests
             CollectionAssert.AreEqual(baseAsset.Data, cfAsset.Data);
 
             start = Environment.TickCount;
-            //cleanup
+
+			// cleanup
             _client.PurgeAssetSync(baseAsset.FullID);
             Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
         }
@@ -119,7 +126,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestReadNonexistentAsset()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             var start = Environment.TickCount;
             AssetBase cfAsset = _client.RequestAssetSync(UUID.Random());
@@ -131,7 +141,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestReadNonexistentAssetMetadata()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             var start = Environment.TickCount;
             var meta = _client.RequestAssetMetadataSync(UUID.Random());
@@ -143,7 +156,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestWriteSameAssetRepeat()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             AssetBase baseAsset = new AssetBase();
 
@@ -174,7 +190,8 @@ namespace Enhanced.Data.Assets.Stratus.Tests
             CollectionAssert.AreEqual(baseAsset.Data, cfAsset.Data);
 
             start = Environment.TickCount;
-            //cleanup
+
+			// cleanup
             _client.PurgeAssetSync(baseAsset.FullID);
             Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
         }
@@ -183,7 +200,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestOverwriteAssetFails()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             AssetBase baseAsset = new AssetBase();
 
@@ -210,7 +230,7 @@ namespace Enhanced.Data.Assets.Stratus.Tests
             AssetBase cfAsset = _client.RequestAssetSync(baseAsset.FullID);
             Console.WriteLine("Time to read: {0}", Environment.TickCount - start);
 
-            //cleanup
+            // cleanup
             _client.PurgeAssetSync(baseAsset.FullID);
             Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
         }
@@ -219,7 +239,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(3)]
         public void TestWriteAndRetrieveLargeAssets()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
             Random random = new Random();
             AssetBase baseAsset = new AssetBase();
@@ -252,7 +275,7 @@ namespace Enhanced.Data.Assets.Stratus.Tests
             CollectionAssert.AreEqual(baseAsset.Data, cfAsset.Data);
 
             start = Environment.TickCount;
-            //cleanup
+            // cleanup
             _client.PurgeAssetSync(baseAsset.FullID);
             Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
         }
@@ -260,7 +283,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Test]
         public void TestWriteTHENRetrieveLargeAssets()
         {
-            if (!_runTests) return;
+			if (!_runTests)
+			{
+				return;
+			}
 
             Random random = new Random();
             List<AssetBase> assets = new List<AssetBase>();
@@ -292,7 +318,6 @@ namespace Enhanced.Data.Assets.Stratus.Tests
                     assets.Add(baseAsset);
                 }
 
-
                 foreach (var baseAsset in assets)
                 {
                     start = Environment.TickCount;
@@ -306,14 +331,14 @@ namespace Enhanced.Data.Assets.Stratus.Tests
                     Assert.IsTrue(comp.Compare(baseAsset, cfAsset), comp.DifferencesString);
                     CollectionAssert.AreEqual(baseAsset.Data, cfAsset.Data);
                 }
-
             }
             finally
             {
                 foreach (var baseAsset in assets)
                 {
                     start = Environment.TickCount;
-                    //cleanup
+                 
+					// cleanup
                     _client.PurgeAssetSync(baseAsset.FullID);
                     Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
                 }
@@ -323,7 +348,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Test]
         public void TestWriteThenReadManyTimes()
         {
-            if (!_runTests) return;
+            if (!_runTests) 
+			{
+				return;
+			}
 
             Random random = new Random();
             List<AssetBase> assets = new List<AssetBase>();
@@ -382,14 +410,18 @@ namespace Enhanced.Data.Assets.Stratus.Tests
                     }
                 });
 
-                if (exceptions.Count > 0) throw new AggregateException(exceptions);
+                if (exceptions.Count > 0)
+				{
+					throw new AggregateException(exceptions);
+				}
             }
             finally
             {
                 foreach (var baseAsset in assets)
                 {
                     start = Environment.TickCount;
-                    //cleanup
+
+					// cleanup
                     _client.PurgeAssetSync(baseAsset.FullID);
                     Console.WriteLine("Time to purge: {0}", Environment.TickCount - start);
                 }

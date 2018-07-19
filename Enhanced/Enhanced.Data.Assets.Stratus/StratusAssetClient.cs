@@ -1,47 +1,46 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OpenSim.Framework;
-using Nini.Config;
-using log4net;
 using System.Reflection;
+using System.Text;
+using log4net;
+using Nini.Config;
+using OpenSim.Framework;
 
 namespace Enhanced.Data.Assets.Stratus
 {
     /// <summary>
-    /// The asset client that is loaded by the plugin loader. This client then intelligently selects how
-    /// to query the asset service(s) based on its configuration
+    ///     The asset client that is loaded by the plugin loader. This client then intelligently selects how
+    ///     to query the asset service(s) based on its configuration
     /// </summary>
     /// <remarks>
     ///    [Enhanced.Data.Assets.Stratus]
@@ -73,7 +72,8 @@ namespace Enhanced.Data.Assets.Stratus
         public void Initialize(ConfigSettings settings)
         {
             IConfig stratusConfig = settings.SettingsFile["Enhanced.Data.Assets.Stratus"];
-            if (stratusConfig != null && stratusConfig.GetBoolean("enabled", true))
+          
+			if (stratusConfig != null && stratusConfig.GetBoolean("enabled", true))
             {
                 Config.Settings.Instance.Enabled = true;
                 Config.Settings.Instance.CFSupport = stratusConfig.GetBoolean("CFSupport", true);
@@ -83,7 +83,7 @@ namespace Enhanced.Data.Assets.Stratus
 
                 if (Config.Settings.Instance.LegacySupport == true && Config.Settings.Instance.WhipURL == null)
                 {
-                    //not allowed, we need a whip URL
+                    // not allowed, we need a whip URL
                     throw new Exception("To enable stratus legacy asset support, you must include the WhipURL setting");
                 }
 
@@ -104,19 +104,20 @@ namespace Enhanced.Data.Assets.Stratus
                     (Config.Settings.Instance.CFUsername == null || Config.Settings.Instance.CFApiKey == null || 
                     Config.Settings.Instance.CFContainerPrefix == null || Config.Settings.Instance.CFDefaultRegion == null))
                 {
-                    //not allowed, we need the full cloudfiles auth information
+                    // not allowed, we need the full cloudfiles auth information
                     throw new Exception("To enable stratus Cloud Files support, you must include the CFDefaultRegion, CFUsername, CFAPIKey, and CFContainerPrefix settings");
                 }
 
                 Config.Settings.Instance.WriteTarget = stratusConfig.GetString("WriteTarget", null);
-                if (Config.Settings.Instance.CFSupport && Config.Settings.Instance.LegacySupport && Config.Settings.Instance.WriteTarget == null)
+              
+				if (Config.Settings.Instance.CFSupport && Config.Settings.Instance.LegacySupport && Config.Settings.Instance.WriteTarget == null)
                 {
                     throw new Exception("If both legacy and Cloud Files support is enabled, you must specify 'whip' or 'cf' in the WriteTarget setting");
                 }
 
                 Config.Settings.Instance.WriteTarget = Config.Settings.Instance.WriteTarget.ToLower();
 
-                m_log.InfoFormat("[InWorldz.Stratus] Plugin is enabled");
+				m_log.InfoFormat("[Stratus]: Plugin is enabled");
 
                 if (Config.Settings.Instance.LegacySupport)
                 {
@@ -125,16 +126,17 @@ namespace Enhanced.Data.Assets.Stratus
 
                     if (Config.Settings.Instance.CFSupport)
                     {
-                        //legacy and CF support.
+                        // legacy and CF support.
                         _firstReadServer = _whipAssetClient; //whip is the first read server with legacy/cf since it has lower latency
-                        if (Config.Settings.Instance.WriteTarget == "whip")
+                        
+						if (Config.Settings.Instance.WriteTarget == "whip")
                         {
                             _writeServer = _whipAssetClient;
                         }
                     }
                     else
                     {
-                        //just legacy
+                        // just legacy
                         _firstReadServer = _whipAssetClient;
                         _writeServer = _whipAssetClient;
                     }
@@ -148,7 +150,7 @@ namespace Enhanced.Data.Assets.Stratus
                     {
                         _secondReadServer = _cfAssetClient; //cf is the second read server when whip is enabled
 
-                        //legacy and CF support
+                        // legacy and CF support
                         if (Config.Settings.Instance.WriteTarget == "cf")
                         {
                             _writeServer = _cfAssetClient;
@@ -158,18 +160,22 @@ namespace Enhanced.Data.Assets.Stratus
                     {
                         _firstReadServer = _cfAssetClient; //first read server when only CF is enabled
 
-                        //just CF
+                        // just CF
                         _writeServer = _cfAssetClient;
                     }
                 }
 
                 _firstReadServer.SetReceiver(this);
-                if (_secondReadServer != null) _secondReadServer.SetReceiver(this);
+              
+				if (_secondReadServer != null)
+				{
+					_secondReadServer.SetReceiver(this);
+				}
             }
             else
             {
                 Config.Settings.Instance.Enabled = false;
-                m_log.InfoFormat("[InWorldz.Stratus] Plugin is disabled");
+				m_log.InfoFormat("[Stratus]: Plugin is disabled");
             }
         }
 
@@ -212,7 +218,8 @@ namespace Enhanced.Data.Assets.Stratus
         public AssetBase RequestAssetSync(OpenMetaverse.UUID assetID)
         {
             AssetBase asset;
-            if (TryRequestAsset(assetID, _firstReadServer, out asset))
+           
+			if (TryRequestAsset(assetID, _firstReadServer, out asset))
             {
                 return asset;
             }
@@ -224,7 +231,7 @@ namespace Enhanced.Data.Assets.Stratus
         }
 
         /// <summary>
-        /// Tries to retrieve the asset with the given id
+        ///     Tries to retrieve the asset with the given id
         /// </summary>
         /// <param name="assetID"></param>
         /// <param name="server"></param>
@@ -239,7 +246,7 @@ namespace Enhanced.Data.Assets.Stratus
             catch (AssetServerException e)
             {
                 asset = null;
-                m_log.ErrorFormat("[InWorldz.Stratus]: Unable to retrieve asset {0}: {1}", assetID, e);
+                m_log.ErrorFormat("[Stratus]: Unable to retrieve asset {0}: {1}", assetID, e);
             }
 
             return asset != null;
@@ -252,7 +259,7 @@ namespace Enhanced.Data.Assets.Stratus
 
         public void UpdateAsset(AssetBase asset)
         {
-            m_log.WarnFormat("[InWorldz.Stratus]: UpdateAsset called for {0}  Assets are immutable.", asset.FullID);
+            m_log.WarnFormat("[Stratus]: UpdateAsset called for {0}  Assets are immutable.", asset.FullID);
             this.StoreAsset(asset);
         }
 
@@ -275,13 +282,13 @@ namespace Enhanced.Data.Assets.Stratus
             this.Stop();
         }
 
-        //see IAssetReceiver
+        // see IAssetReceiver
         public void AssetReceived(AssetBase asset, AssetRequestInfo data)
         {
             _assetReceiver.AssetReceived(asset, data);
         }
 
-        //see IAssetReceiver
+        // see IAssetReceiver
         public void AssetNotFound(OpenMetaverse.UUID assetID, AssetRequestInfo data)
         {
             this.HandleAssetCallback(assetID, data, null);
@@ -289,7 +296,7 @@ namespace Enhanced.Data.Assets.Stratus
 
         public void AssetError(OpenMetaverse.UUID assetID, Exception error, AssetRequestInfo data)
         {
-            m_log.ErrorFormat("[InWorldz.Stratus]: Error while requesting asset {0}: {1}", assetID, error);
+            m_log.ErrorFormat("[Stratus]: Error while requesting asset {0}: {1}", assetID, error);
             this.HandleAssetCallback(assetID, data, error);
         }
 

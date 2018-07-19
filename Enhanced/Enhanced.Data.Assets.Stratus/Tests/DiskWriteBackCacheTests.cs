@@ -1,32 +1,31 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
@@ -73,7 +72,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [TestFixtureTearDown]
         public void Stop()
         {
-            if (!_runTests) return;
+            if (!_runTests) 
+			{
+				return;
+			}
 
             _client.Stop();
         }
@@ -145,9 +147,12 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Test]
         public void TestWriteToCF()
         {
-            if (!_runTests) return;
+            if (!_runTests)
+			{
+				return;
+			}
 
-            //delete any leftover files in the writeback cache
+            // delete any leftover files in the writeback cache
             foreach (var file in Directory.EnumerateFiles("cache/cf_writeback"))
             {
                 File.Delete(file);
@@ -172,10 +177,10 @@ namespace Enhanced.Data.Assets.Stratus.Tests
 
             wbc.DoWriteCycle();
 
-            //the asset should still be in the WB cache
+            // the asset should still be in the WB cache
             Assert.IsNotNull(wbc.GetAsset(baseAsset.FullID.Guid));
 
-            //... but we should now be able to get the asset from CF
+            // but we should now be able to get the asset from CF
             AssetBase cfAsset = _client.RequestAssetSync(baseAsset.FullID);
 
             CompareObjects comp = new CompareObjects();
@@ -190,9 +195,12 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Repeat(1)]
         public void TestCFTimeoutAndWritePath()
         {
-            if (!_runTests) return;
+            if (!_runTests) 
+			{
+				return;
+			}
 
-            //delete any leftover files in the writeback cache
+            // delete any leftover files in the writeback cache
             foreach (var file in Directory.EnumerateFiles("cache/cf_writeback"))
             {
                 File.Delete(file);
@@ -224,8 +232,8 @@ namespace Enhanced.Data.Assets.Stratus.Tests
 
             System.Threading.Thread.Sleep(5000);
 
-            //we should now be able to get the asset from CF since it should've been written back
-            //by the write back recovery code
+            // we should now be able to get the asset from CF since it should've been written back
+            // by the write back recovery code
             AssetBase cfAsset = _client.RequestAssetSync(baseAsset.FullID);
 
             CompareObjects comp = new CompareObjects();
@@ -239,9 +247,12 @@ namespace Enhanced.Data.Assets.Stratus.Tests
         [Test]
         public void TestCFTimeoutAndWritePathWithImmediateStaleDeletes()
         {
-            if (!_runTests) return;
+            if (!_runTests) 
+			{
+				return;
+			}
 
-            //delete any leftover files in the writeback cache
+            // delete any leftover files in the writeback cache
             foreach (var file in Directory.EnumerateFiles("cache/cf_writeback"))
             {
                 File.Delete(file);
@@ -267,7 +278,7 @@ namespace Enhanced.Data.Assets.Stratus.Tests
 
                 System.Threading.Thread.Sleep(5000);
 
-                //confirm the asset is now missing from the writeback cache
+                // confirm the asset is now missing from the writeback cache
                 Assert.IsNull(_client.DiskWriteBackCache.GetAsset(baseAsset.FullID.Guid));
             }
             finally
@@ -276,8 +287,8 @@ namespace Enhanced.Data.Assets.Stratus.Tests
                 Config.Settings.Instance.UnitTest_DeleteOldCacheFilesImmediately = false;
             }
 
-            //we should now be able to get the asset from CF since it should've been written back
-            //by the write back recovery code
+            // we should now be able to get the asset from CF since it should've been written back
+            // by the write back recovery code
             AssetBase cfAsset = _client.RequestAssetSync(baseAsset.FullID);
 
             CompareObjects comp = new CompareObjects();

@@ -1,57 +1,56 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using OpenSim.Framework;
 using OpenMetaverse;
-using System.IO;
+using OpenSim.Framework;
 
 namespace Enhanced.Data.Assets.Stratus.Cache
 {
     /// <summary>
-    /// An asset cache based on LRU that uses buffer pooling
+    ///     An asset cache based on LRU that uses buffer pooling
     /// </summary>
     internal class Cache
     {
         /// <summary>
-        /// We dont make the cache exactly the same size as the buffer pool. This tries to make sure
-        /// we always have some room left in the buffer pool and that we're not constantly swapping
-        /// buffers in and out
+        ///     We dont make the cache exactly the same size as the buffer pool. This tries to make sure
+        ///     we always have some room left in the buffer pool and that we're not constantly swapping
+        ///     buffers in and out
         /// </summary>
         private const float CACHE_VS_BUFFERPOOL_EXTENSION_FACTOR = 1.1f;
 
         /// <summary>
-        /// Sizes of the byte buffers for assets
+        ///     Sizes of the byte buffers for assets
         /// </summary>
         internal static readonly int[] BUFFER_SIZES = new int[] 
         { 
@@ -69,29 +68,23 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         private ByteBufferPool _bufferPool;
 
         /// <summary>
-        /// Returns the number of items in the cache
+        ///     Returns the number of items in the cache
         /// </summary>
         public int ItemCount
         {
-            get
-            {
-                return _assetCache.Count;
-            }
+            get { return _assetCache.Count; }
         }
 
         /// <summary>
-        /// Returns the size of the items in the cache
+        ///     Returns the size of the items in the cache
         /// </summary>
         public int Size
         {
-            get
-            {
-                return _assetCache.Size;
-            }
+            get { return _assetCache.Size; }
         }
 
         /// <summary>
-        /// Constructs a new asset cache
+        ///     Constructs a new asset cache
         /// </summary>
         /// <param name="maxEntryAge">The maximum age for a cache entry before it becomes a candidate to be purged</param>
         public Cache(int maxEntryAge = 0)
@@ -129,7 +122,8 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             byte[] cacheData = _bufferPool.LeaseBytes(dataLen);
 
             data.Position = 0;
-            using (MemoryStream outStream = new MemoryStream(cacheData))
+            
+			using (MemoryStream outStream = new MemoryStream(cacheData))
             {
                 data.CopyTo(outStream);
             }
@@ -153,8 +147,8 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Should be called periodically to run cleanup tasks on data
-        /// that has aged out
+        ///     Should be called periodically to run cleanup tasks on data
+        ///     that has aged out
         /// </summary>
         public void Maintain()
         {

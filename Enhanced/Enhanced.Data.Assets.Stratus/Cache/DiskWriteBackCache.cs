@@ -1,119 +1,117 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenMetaverse;
 using System.IO;
-using Amib.Threading;
-using OpenSim.Framework;
-using log4net;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Amib.Threading;
+using log4net;
+using OpenMetaverse;
+using OpenSim.Framework;
 
 namespace Enhanced.Data.Assets.Stratus.Cache
 {
     /// <summary>
-    /// A writeback cache used to suppliment cloud files when writing is slow
+    ///     A writeback cache used to suppliment cloud files when writing is slow
     /// </summary>
     internal class DiskWriteBackCache
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
-        /// How long to wait on pending writes during a shutdown
+        ///     How long to wait on pending writes during a shutdown
         /// </summary>
         private const int SHUTDOWN_WAIT_TIMEOUT = 5 * 1000;
 
         /// <summary>
-        /// The directory where we store the files that we're trying to send to CF
+        ///     The directory where we store the files that we're trying to send to CF
         /// </summary>
         private const string WRITEBACK_CACHE_DIR = "./cache/cf_writeback";
 
         /// <summary>
-        /// Timeout before we delete assets that have recently been written to CF (see _recentlyWritten)
+        ///     Timeout before we delete assets that have recently been written to CF (see _recentlyWritten)
         /// </summary>
         private const ulong RECENT_WRITE_TIMEOUT = 60 * 1000;
 
         /// <summary>
-        /// The number of worker threads we'll use to write the waiting assets to CF
+        ///     The number of worker threads we'll use to write the waiting assets to CF
         /// </summary>
         private const int NUM_WRITE_WORKERS = 4;
 
         /// <summary>
-        /// How long to sleep between trying to write assets
+        ///     How long to sleep between trying to write assets
         /// </summary>
         private const int WRITE_TIMER_PERIOD = 1000;
 
         /// <summary>
-        /// In memory list of IDs that are currently stored in the writeback cache
+        ///     In memory list of IDs that are currently stored in the writeback cache
         /// </summary>
         private C5.HashedLinkedList<Guid> _ids = new C5.HashedLinkedList<Guid>();
 
         /// <summary>
-        /// Assets that were recently written to disk. This helps us to overcome a timing window whereby
-        /// CF would report an asset missing while we were writing that asset to disk. Then, by the time
-        /// the caller checks us, we would report the asset missing as well if we were able to write it to 
-        /// CF. Instead, this list can be checked by a process that can clean up the written assets after 
-        /// a timeout, getting rid of the timing window.
+        ///     Assets that were recently written to disk. This helps us to overcome a timing window whereby
+        ///     CF would report an asset missing while we were writing that asset to disk. Then, by the time
+        ///     the caller checks us, we would report the asset missing as well if we were able to write it to 
+        ///     CF. Instead, this list can be checked by a process that can clean up the written assets after 
+        ///     a timeout, getting rid of the timing window.
         /// </summary>
         private Dictionary<Guid, ulong> _recentlyWritten = new Dictionary<Guid, ulong>();
 
         /// <summary>
-        /// Lock taken during any operation
+        ///     Lock taken during any operation
         /// </summary>
         private object _oplock = new object();
 
         /// <summary>
-        /// Write workers for copying our local assets to cloud files
+        ///     Write workers for copying our local assets to cloud files
         /// </summary>
         private CloudFilesAssetWorker[] _workers = new CloudFilesAssetWorker[NUM_WRITE_WORKERS];
 
         /// <summary>
-        /// Threadpool to cover our write backs 
+        ///     Threadpool to cover our write backs 
         /// </summary>
         private SmartThreadPool _writeBackPool = new SmartThreadPool(30 * 1000, NUM_WRITE_WORKERS);
 
         /// <summary>
-        /// Timer that performs the write loop
+        ///     Timer that performs the write loop
         /// </summary>
         private Timer _writeTimer;
 
         /// <summary>
-        /// Whether or not the cache should be running
+        ///     Whether or not the cache should be running
         /// </summary>
         private volatile bool _stop;
-
 
         public DiskWriteBackCache()
         {
@@ -147,7 +145,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             }
             catch (Exception e)
             {
-                m_log.ErrorFormat("[InWorldz.Stratus] Error when executing asset writeback {0}", e);
+				m_log.ErrorFormat("[Stratus]: Error when executing asset writeback {0}", e);
             }
             finally
             {
@@ -159,7 +157,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Loads all the asset IDs into memory from the file names in the cache directory
+        ///     Loads all the asset IDs into memory from the file names in the cache directory
         /// </summary>
         private void LoadAssetIdsFromCacheDir()
         {
@@ -170,35 +168,47 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Auto-repair the case where we don't really have a cached item
-        /// Uses the lock but it should be called from within the lock by caller as well.
+        ///     Auto-repair the case where we don't really have a cached item
+        ///     Uses the lock but it should be called from within the lock by caller as well.
         /// </summary>
         /// <param name="assetId">The ID of the asset that isn't actually cached.</param>
         /// <returns>Returns true if asset cache file is missing or empty.</returns>
         private bool RepairEmpty(Guid assetId)
         {
             string assetFileName = GetAssetFileName(assetId);
-            lock (_oplock)
+            
+			lock (_oplock)
             {
                 FileInfo fileInfo = new System.IO.FileInfo(assetFileName);
-                if (fileInfo.Exists)
+            
+				if (fileInfo.Exists)
                 {
                     if (fileInfo.Length > 0)
-                        return false; // this one is actually okay
-                    // we have an empty asset cache file (disk full?)
+					{
+						// This one is actually okay
+						return false;
+					}
+                
+					// we have an empty asset cache file (disk full?)
                     fileInfo.Delete();
                 }
+
                 if (_ids.Contains(assetId))
-                    _ids.Remove(assetId);
-                if (_recentlyWritten.ContainsKey(assetId))
-                    _recentlyWritten.Remove(assetId);
+				{
+					_ids.Remove(assetID);
+				}
+                
+				if (_recentlyWritten.ContainsKey(assetId))
+				{
+					_recentlyWritten.Remove(assetID);
+				}
 
                 return true;    // missing or empty asset cache file
             }
         }
 
         /// <summary>
-        /// Puts an asset into the writeback cache
+        ///     Puts an asset into the writeback cache
         /// </summary>
         /// <param name="asset"></param>
         public void StoreAsset(StratusAsset asset)
@@ -211,14 +221,17 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             {
                 if (_ids.Contains(asset.Id) || _recentlyWritten.ContainsKey(asset.Id))
                 {
-                    // Auto-repair the case where we don't really have a cached item.
-                    // Only call this when we think we already have an asset file.
+					/// <summary>
+					///     Auto-repair the case where we do not really have a cached item.
+					///     Only call this when we think we already have an asset file.
+					/// </summary>
                     if (!RepairEmpty(asset.Id))
                     {
                         //we already have this asset scheduled to write
                         throw new AssetAlreadyExistsException("Asset " + asset.Id.ToString() + " already cached for writeback");
                     }
-                    // else fall through to write the item to disk (repair the cached item)
+
+					// else fall through to write the item to disk (repair the cached item)
                 }
 
                 try
@@ -230,7 +243,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
                 }
                 catch (Exception e)
                 {
-                    m_log.ErrorFormat("There was an error writing an asset back to disk. The process will be terminated. {0}", e);
+					m_log.ErrorFormat("[Stratus]: There was an error writing an asset back to disk. The process will be terminated. {0}", e);
                     Environment.Exit(-1);
                 }
 
@@ -239,7 +252,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Tries to read an asset from the disk
+        ///     Tries to read an asset from the disk
         /// </summary>
         /// <param name="assetId">The asset ID</param>
         /// <returns></returns>
@@ -252,11 +265,16 @@ namespace Enhanced.Data.Assets.Stratus.Cache
                     return null;
                 }
 
-                // Auto-repair the case where we don't really have a cached item
+                /// <summary>
+				///     Auto-repair the case where we do not really hae a cached item.
+				/// </summary>
                 if (RepairEmpty(assetId))
                 {
-                    // No asset: we shouldn't have gotten this far, but cleaned up tracking above.
-                    // Returning null here avoids using the cache which doesn't have it anyway.
+					/// <summary>
+					///     No Asset
+					///     We should not have gotten this far, but cleaned up tracking above.
+					///     Returning null here avoids using the cache which does not have it anyway.
+					/// </summary>
                     return null;
                 }
 
@@ -268,7 +286,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Returns the file name and path where we can find the given asset in the cache
+        ///     Returns the file name and path where we can find the given asset in the cache
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
@@ -278,7 +296,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Makes sure the cache directory exists, and creates it if not
+        ///     Makes sure the cache directory exists, and creates it if not
         /// </summary>
         private void CheckCacheDir()
         {
@@ -289,12 +307,13 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Performs a single write cycle. Attempts to write at most NUM_WRITE_WORKERS assets at a time to CF
+        ///     Performs a single write cycle. Attempts to write at most NUM_WRITE_WORKERS assets at a time to CF
         /// </summary>
         internal bool DoWriteCycle()
         {
             int count = 0;
-            lock (_oplock)
+            
+			lock (_oplock)
             {
                 count = _ids.Count;
             }
@@ -310,7 +329,7 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             int num = Math.Min(NUM_WRITE_WORKERS, count);
             List<Guid> idsToTry = GetNextAssetsWaitingForWrite(num);
 
-            //fire up the writes
+            // fire up the writes
             for (int i = 0; i < num; ++i)
             {
                 int capture = i;
@@ -328,13 +347,13 @@ namespace Enhanced.Data.Assets.Stratus.Cache
                         }
                         catch (AssetAlreadyExistsException)
                         {
-                            //this is ok, consider this a success
+                            // this is ok, consider this a success
                             MarkAssetWritten(assetId);
                         }
                         catch (Exception e)
                         {
-                            //asset could not be written
-                            m_log.ErrorFormat("[InWorldz.Stratus] Error when retrying write for {0}: {1}", assetId, e);
+                            // asset could not be written
+						m_log.ErrorFormat("[Stratus]: Error when retrying write for {0}: {1}", assetId, e);
                         }
                     }
                 );
@@ -360,22 +379,24 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             {
                 IEnumerator<Guid> walker = _ids.GetEnumerator();
                 int i = 0;
+
                 while (walker.MoveNext() && i < num)
                 {
                     idsToTry.Add(walker.Current);
                     ++i;
                 }
             }
+
             return idsToTry;
         }
 
         /// <summary>
-        /// Marks the given ID as having been delay written to CF
+        ///     Marks the given ID as having been delay written to CF
         /// </summary>
         /// <param name="assetId"></param>
         private void MarkAssetWritten(Guid assetId)
         {
-            //asset was written
+            // asset was written
             lock (_oplock)
             {
                 _ids.Remove(assetId);
@@ -384,8 +405,8 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Checks to make sure we have CF workers waiting in our collection, and if not, 
-        /// creates a new set
+        ///     Checks to make sure we have CF workers waiting in our collection, and if not, 
+        ///     creates a new set
         /// </summary>
         private void CheckPopulateWorkers()
         {
@@ -399,21 +420,25 @@ namespace Enhanced.Data.Assets.Stratus.Cache
         }
 
         /// <summary>
-        /// Checks for files that were written to CF and are older than the RECENT_WRITE_TIMEOUT
+        ///     Checks for files that were written to CF and are older than the RECENT_WRITE_TIMEOUT
         /// </summary>
         private void CheckAndCleanOldWrites()
         {
             lock (_oplock)
             {
-                if (_recentlyWritten.Count == 0) return;
+                if (_recentlyWritten.Count == 0) 
+				{
+					return;
+				}
 
                 List<Guid> needsDelete = new List<Guid>();
-                foreach (var kvp in _recentlyWritten)
+
+				foreach (var kvp in _recentlyWritten)
                 {
                     if (Config.Settings.Instance.UnitTest_DeleteOldCacheFilesImmediately ||
                         Util.GetLongTickCount() - kvp.Value >= RECENT_WRITE_TIMEOUT)
                     {
-                        //needs a delete
+                        // needs a delete
                         needsDelete.Add(kvp.Key);
                     }
                 }
@@ -434,8 +459,8 @@ namespace Enhanced.Data.Assets.Stratus.Cache
             }
             catch (Exception e)
             {
-                //this isnt a huge deal, but we want to log it
-                m_log.ErrorFormat("[InWorldz.Stratus] Unable to remove disk cached asset {0}. {1}", id, e);
+                // this isnt a huge deal, but we want to log it
+				m_log.ErrorFormat("[Stratus]: Unable to remove disk cached asset {0}. {1}", id, e);
             }
         }
     }

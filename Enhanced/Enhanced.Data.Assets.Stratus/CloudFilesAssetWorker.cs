@@ -1,59 +1,58 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.openstack.Providers.Rackspace;
-using net.openstack.Core.Domain;
 using System.IO;
-using OpenMetaverse;
-using JSIStudios.SimpleRESTServices.Client;
-using net.openstack.Core.Exceptions.Response;
-using OpenSim.Framework;
-using log4net;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using log4net;
+using JSIStudio.SimpleRESTServices.Client;
+using net.OpenStack.Core.Domain;
+using net.OpenStack.Core.Exceptions.Response;
+using net.openstack.Providers.Rackspace;
+using OpenMetaverse;
+using OpenSim.Framework;
 
 namespace Enhanced.Data.Assets.Stratus
 {
     /// <summary>
-    /// This class does the actual setup work for the cloudfiles client. These objects are pooled
-    /// and used by the worker threads.
+    ///     This class does the actual setup work for the cloudfiles client. These objects are pooled
+    ///     and used by the worker threads.
     /// </summary>
     internal class CloudFilesAssetWorker
     {
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
-        /// How many hex characters to use for the CF container prefix
+        ///     How many hex characters to use for the CF container prefix
         /// </summary>
         const int CONTAINER_UUID_PREFIX_LEN = 4;
 
@@ -73,12 +72,12 @@ namespace Enhanced.Data.Assets.Stratus
             IRestService restService = new CoreExt.ExtendedJsonRestServices(readTimeout, writeTimeout);
             _provider = new CoreExt.ExtendedCloudFilesProvider(identity, Config.Settings.Instance.CFDefaultRegion, null, restService);
             
-            //warm up
+            // warm up
             _provider.GetAccountHeaders(useInternalUrl: Config.Settings.Instance.CFUseInternalURL, region: Config.Settings.Instance.CFDefaultRegion);
         }
 
         /// <summary>
-        /// Calls into the cloud files provider to grab an object and returns a memory stream containing
+        ///     Calls into the cloud files provider to grab an object and returns a memory stream containing
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
@@ -87,7 +86,8 @@ namespace Enhanced.Data.Assets.Stratus
             string assetIdStr = assetId.ToString();
 
             MemoryStream memStream = new MemoryStream();
-            try
+            
+			try
             {
                 this.WarnIfLongOperation("GetObject",
                     () => _provider.GetObject(GenerateContainerName(assetIdStr), GenerateAssetObjectName(assetIdStr),
@@ -103,8 +103,8 @@ namespace Enhanced.Data.Assets.Stratus
         }
         
         /// <summary>
-        /// CF containers are PREFIX_#### where we use the first N chars of the hex representation
-        /// of the asset ID to partition the space. The hex alpha chars in the container name are uppercase
+        ///     CF containers are PREFIX_#### where we use the first N chars of the hex representation
+        ///     of the asset ID to partition the space. The hex alpha chars in the container name are uppercase
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
@@ -114,7 +114,7 @@ namespace Enhanced.Data.Assets.Stratus
         }
 
         /// <summary>
-        /// The object name is defined by the assetId, dashes stripped, with the .asset prefix
+        ///     The object name is defined by the assetId, dashes stripped, with the .asset prefix
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
@@ -133,7 +133,7 @@ namespace Enhanced.Data.Assets.Stratus
 
             if (time >= WARNING_TIME)
             {
-                m_log.WarnFormat("[InWorldz.Stratus]: Slow CF operation {0} took {1} ms", opName, time);
+                m_log.WarnFormat("[Stratus]: Slow CF operation {0} took {1} ms", opName, time);
             }
         }
 
@@ -149,8 +149,7 @@ namespace Enhanced.Data.Assets.Stratus
                 string assetIdStr = asset.Id.ToString();
 
                 Dictionary<string, string> mheaders = this.GenerateStorageHeaders(asset, stream);
-
-
+    
                 this.WarnIfLongOperation("CreateObject",
                     () => _provider.CreateObject(GenerateContainerName(assetIdStr), stream, GenerateAssetObjectName(assetIdStr),
                             "application/octet-stream", headers: mheaders, useInternalUrl: Config.Settings.Instance.CFUseInternalURL,
@@ -164,7 +163,8 @@ namespace Enhanced.Data.Assets.Stratus
             catch (ResponseException e)
             {
                 stream.Dispose();
-                if (e.Response.StatusCode == System.Net.HttpStatusCode.PreconditionFailed)
+    
+				if (e.Response.StatusCode == System.Net.HttpStatusCode.PreconditionFailed)
                 {
                     throw new AssetAlreadyExistsException(String.Format("Asset {0} already exists and can not be overwritten", asset.Id));
                 }
@@ -182,13 +182,15 @@ namespace Enhanced.Data.Assets.Stratus
 
         private Dictionary<string, string> GenerateStorageHeaders(StratusAsset asset, MemoryStream stream)
         {
-            //the HTTP headers only accept letters and digits
+            // the HTTP headers only accept letters and digits
             StringBuilder fixedName = new StringBuilder();
             bool appended = false;
-            foreach (char letter in asset.Name)
+            
+			foreach (char letter in asset.Name)
             {
                 char c = (char) (0x000000ff & (uint) letter);
-                if (c == 127 || (c < ' ' && c != '\t'))
+            
+				if (c == 127 || (c < ' ' && c != '\t'))
                 {
                     continue;
                 }
@@ -199,7 +201,10 @@ namespace Enhanced.Data.Assets.Stratus
                 }
             }
 
-            if (!appended) fixedName.Append("empty");
+            if (!appended)
+			{
+				fixedName.Append("empty");
+			}
 
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
