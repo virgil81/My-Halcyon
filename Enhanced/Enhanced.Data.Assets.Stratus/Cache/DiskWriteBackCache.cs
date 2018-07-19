@@ -195,12 +195,12 @@ namespace Enhanced.Data.Assets.Stratus.Cache
 
                 if (_ids.Contains(assetId))
 				{
-					_ids.Remove(assetID);
+					_ids.Remove(assetId);
 				}
                 
 				if (_recentlyWritten.ContainsKey(assetId))
 				{
-					_recentlyWritten.Remove(assetID);
+					_recentlyWritten.Remove(assetId);
 				}
 
                 return true;    // missing or empty asset cache file
