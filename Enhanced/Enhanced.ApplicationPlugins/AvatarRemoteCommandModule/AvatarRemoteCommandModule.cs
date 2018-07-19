@@ -435,7 +435,7 @@ namespace Enhanced.ApplicationPlugins.AvatarRemoteCommandModule
 			/// </summary>
             if (regionName != presence.Scene.RegionInfo.RegionName)
 			{
-				presence.ControllingCLient.SendTeleportLocationStart();
+				presence.ControllingClient.SendTeleportLocationStart();
 			}
 
             presence.Scene.RequestTeleportLocation(presence.ControllingClient,
