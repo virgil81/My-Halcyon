@@ -36,7 +36,7 @@ using System.Text;
 using log4net;
 using JSIStudios.SimpleRESTServices.Client;
 using net.openstack.Core.Domain;
-using net.openStack.Core.Exceptions.Response;
+using net.openstack.Core.Exceptions.Response;
 using net.openstack.Providers.Rackspace;
 using OpenMetaverse;
 using OpenSim.Framework;
