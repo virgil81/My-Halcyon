@@ -1,73 +1,70 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using OpenSim.Framework.Communications;
-using OpenSim.Framework;
-using OpenSim.Data;
-using OpenMetaverse;
-
-using Aquiles.Core.Cluster;
+using Apache.Cassandra;
 using Aquiles.Cassandra10;
+using Aquiles.Core.Cluster;
 using Aquiles.Helpers;
 using Aquiles.Helpers.Encoders;
 using log4net;
-using System.Reflection;
-using System.Diagnostics;
-using Apache.Cassandra;
-
+using OpenMetaverse;
+using OpenSim.Data;
+using OpenSim.Framework;
+using OpenSim.Framework.Communications;
 
 namespace Enhanced.Data.Inventory.Cassandra
 {
     public class InventoryStorage : IInventoryStorage
     {
         /// <summary>
-        /// What kind of mutations we want to apply to a folder
+        ///     What kind of mutations we want to apply to a folder
         /// </summary>
         private enum FolderMutationSelector
         {
             /// <summary>
-            /// Mutate all the folder properties
+            ///     Mutate all the folder properties
             /// </summary>
             All,
 
             /// <summary>
-            /// Mutate all folder properties except for the folder's parent
+            ///     Mutate all folder properties except for the folder's parent
             /// </summary>
             AllButParent,
 
             /// <summary>
-            /// Mutate only the folder's parent
+            ///     Mutate only the folder's parent
             /// </summary>
             ParentOnly
         }
@@ -103,8 +100,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             _clusterName = clusterName;
         }
 
-        
-
         #region IInventoryStorage Members
 
         public List<InventoryFolderBase> GetInventorySkeleton(UUID userId)
@@ -112,19 +107,20 @@ namespace Enhanced.Data.Inventory.Cassandra
             try
             {
                 Dictionary<Guid, InventoryFolderBase> index = GetFolderIndex(userId);
+
                 if (index.Count == 0)
                 {
                     return new List<InventoryFolderBase>();
                 }
 
                 List<byte[]> keys = new List<byte[]>(index.Count);
+
                 foreach (KeyValuePair<Guid, InventoryFolderBase> indexInfo in index)
                 {
                     keys.Add(ByteEncoderHelper.GuidEncoder.ToByteArray(indexInfo.Value.ID.Guid));
                 }
 
-
-                //retrieve the versions for all folders
+                // retrieve the versions for all folders
                 ColumnParent versionParent = new ColumnParent
                 {
                     Column_family = FOLDERVERSIONS_CF,
@@ -141,6 +137,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     Guid fid = ByteEncoderHelper.GuidEncoder.FromByteArray(kvp.Key);
 
                     InventoryFolderBase f;
+
                     if (index.TryGetValue(fid, out f))
                     {
                         if (kvp.Value.Count == 1)
@@ -154,13 +151,13 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder skeleton: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to retrieve folder skeleton: {0}", e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
 
         /// <summary>
-        /// Retrieves all the rows for the given list of keys in chunkSize chunks
+        ///     Retrieves all the rows for the given list of keys in chunkSize chunks
         /// </summary>
         /// <param name="chunkSize"></param>
         /// <param name="allKeys"></param>
@@ -194,6 +191,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     List<byte[]> keys = allKeys.GetRange(i, remaining >= chunkSize ? chunkSize : remaining);
 
                     object val =
+                
                     cluster.Execute(new ExecutionBlock(delegate(Apache.Cassandra.Cassandra.Client client)
                     {
                         return client.multiget_slice(keys, colParent, pred, consistencyLevel);
@@ -201,7 +199,8 @@ namespace Enhanced.Data.Inventory.Cassandra
                     }), KEYSPACE);
 
                     Dictionary<byte[], List<ColumnOrSuperColumn>> chunk = (Dictionary<byte[], List<ColumnOrSuperColumn>>)val;
-                    foreach(KeyValuePair<byte[], List<ColumnOrSuperColumn>> kvp in chunk)
+
+                    foreach (KeyValuePair<byte[], List<ColumnOrSuperColumn>> kvp in chunk)
                     {
                         ret.Add(kvp.Key, kvp.Value);
                     }
@@ -209,7 +208,6 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                 return ret;
             }
-            
         }
 
         private InventoryFolderBase DecodeFolderBaseFromIndexedCols(Guid id, Dictionary<string, Column> indexedCols)
@@ -270,6 +268,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             List<ColumnOrSuperColumn> retColumns = new List<ColumnOrSuperColumn>();
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
+
             while (true)
             {
                 object val =
@@ -283,26 +282,26 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                 if (pred.Slice_range.Start.Length == 0)
                 {
-                    //no start specified, beginning of range
+                    // no start specified, beginning of range
                     retColumns.AddRange(cols);
                 }
                 else
                 {
-                    //omit the first returned item since it will be the last item
-                    //in the previous get
+                    // omit the first returned item since it will be the last item
+                    // in the previous get
                     for (int i = 1; i < cols.Count; i++)
                     {
                         retColumns.Add(cols[i]);
                     }
                 }
 
-                //if we didnt retrieve chunkSize rows, we finished
+                // if we didnt retrieve chunkSize rows, we finished
                 if (cols.Count < chunkSize)
                 {
                     break;
                 }
 
-                //else, we need to set the new start and continue
+                // else, we need to set the new start and continue
                 if (cols[cols.Count - 1].Column != null)
                 {
                     pred.Slice_range.Start = cols[cols.Count - 1].Column.Name;
@@ -317,7 +316,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Retrieves the index of all folders owned by this user
+        ///     Retrieves the index of all folders owned by this user
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
@@ -337,7 +336,6 @@ namespace Enhanced.Data.Inventory.Cassandra
                 range.Reversed = false;
                 range.Count = int.MaxValue;
                 pred.Slice_range = range;
-
 
                 List<ColumnOrSuperColumn> cols = this.RetrieveAllColumnsInChunks(FOLDER_INDEX_CHUNK_SZ,
                     ownerIdBytes, columnParent, pred, DEFAULT_CONSISTENCY_LEVEL);
@@ -364,8 +362,8 @@ namespace Enhanced.Data.Inventory.Cassandra
                     }
                     catch (KeyNotFoundException)
                     {
-                        //there is a corruption, this folder can not be read
-                        _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra]: Unable to read all columns from folder index item: {0}",
+                        // there is a corruption, this folder can not be read
+                        _log.ErrorFormat("[Cassandra]: Unable to read all columns from folder index item: {0}",
                             new UUID(ByteEncoderHelper.GuidEncoder.FromByteArray(col.Super_column.Name)).ToString());
                     }
                 }
@@ -374,14 +372,17 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder index: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to retrieve folder index: {0}", e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
 
         public InventoryFolderBase GetFolder(UUID folderId)
         {
-            if (folderId == UUID.Zero) throw new InventorySecurityException("Not returning folder with ID UUID.Zero");
+            if (folderId == UUID.Zero)
+            {
+                throw new InventorySecurityException("Not returning folder with ID UUID.Zero");
+            }
 
             try
             {
@@ -435,7 +436,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     folder.Items.Add(item);
                 }
 
-                //grab the folder version
+                // grab the folder version
                 try
                 {
                     ColumnPath path = new ColumnPath
@@ -457,10 +458,10 @@ namespace Enhanced.Data.Inventory.Cassandra
                 }
                 catch (Exception e)
                 {
-                    _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Could not retrieve the version for folder {0} substituting 1: {1}", folderId, e);
+                    _log.ErrorFormat("[Cassandra]: Could not retrieve the version for folder {0} substituting 1: {1}", folderId, e);
 
-                    //version column missing. this is either a partially deleted folder
-                    //or the version mutation never happened. Return 1
+                    // version column missing. this is either a partially deleted folder
+                    // or the version mutation never happened. Return 1
                     folder.Version = 1;
                 }
 
@@ -468,19 +469,22 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (InventoryObjectMissingException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder attributes: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to retrieve folder attributes: {0}", e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder attributes: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to retrieve folder attributes: {0}", e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
 
         public InventoryFolderBase GetFolderAttributes(UUID folderId)
         {
-            if (folderId == UUID.Zero) throw new InventorySecurityException("Not returning folder with ID UUID.Zero");
+            if (folderId == UUID.Zero)
+            {
+                throw new InventorySecurityException("Not returning folder with ID UUID.Zero");
+            }
 
             try
             {
@@ -507,6 +511,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     }), KEYSPACE);
 
                 List<ColumnOrSuperColumn> cols = (List<ColumnOrSuperColumn>)val;
+
                 if (cols.Count == 0)
                 {
                     throw new InventoryObjectMissingException(String.Format("Folder with ID {0} could not be found", folderId));
@@ -514,13 +519,12 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                 InventoryFolderBase folder = DecodeFolderBase(folderId.Guid, cols);
 
-                //grab the folder version
+                // grab the folder version
                 ColumnPath path = new ColumnPath
                 {
                     Column = ByteEncoderHelper.UTF8Encoder.ToByteArray("count"),
                     Column_family = FOLDERVERSIONS_CF
                 };
-
 
                 object verVal =
                     cluster.Execute(new ExecutionBlock(delegate(Apache.Cassandra.Cassandra.Client client)
@@ -537,12 +541,10 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (InventoryObjectMissingException e)
             {
-//                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder attributes: {0}", e);
                 throw; // produces a duplicate error farther up with more context
             }
             catch (Exception e)
             {
-//                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve folder attributes: {0}", e);
                 throw new InventoryStorageException(e.Message, e); // produces another error farther up with more context
             }
         }
@@ -562,7 +564,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             FolderMutationSelector mutationTypes, Dictionary<byte[], Dictionary<string, List<Mutation>>> outMuts, Guid newParent,
             long timeStamp)
         {
-            //Folder CF mutations
+            // Folder CF mutations
             List<Mutation> folderMutList = new List<Mutation>();
 
             Mutation propertiesMut = new Mutation();
@@ -620,21 +622,19 @@ namespace Enhanced.Data.Inventory.Cassandra
                 propertiesColumns.Add(parentIdCol);
             }
 
-
             propertiesMut.Column_or_supercolumn.Super_column.Columns = propertiesColumns;
             folderMutList.Add(propertiesMut);
 
             Dictionary<string, List<Mutation>> folderKeyMuts = new Dictionary<string, List<Mutation>>();
             folderKeyMuts[FOLDERS_CF] = folderMutList;
 
-            //version increment
+            // version increment
             Mutation versionMut = VersionIncrement();
             folderKeyMuts[FOLDERVERSIONS_CF] = new List<Mutation> { versionMut };
 
             outMuts[folderIdBytes] = folderKeyMuts;
 
-
-            //UserFolder CF mutations
+            // UserFolder CF mutations
             if (!outMuts.ContainsKey(userIdBytes))
             {
                 outMuts[userIdBytes] = new Dictionary<string, List<Mutation>>();
@@ -648,7 +648,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             List<Mutation> userKeyMuts = outMuts[userIdBytes][USERFOLDERS_CF];
             List<Mutation> userFolderMutList = new List<Mutation>();
 
-            //userfolders index, the list of all folders per user
+            // userfolders index, the list of all folders per user
             Mutation userFolderPropertiesMut = new Mutation();
             userFolderPropertiesMut.Column_or_supercolumn = new ColumnOrSuperColumn();
             userFolderPropertiesMut.Column_or_supercolumn.Super_column = this.BuildFolderIndexEntry(folder, folderIdBytes, mutationTypes, newParent, timeStamp);
@@ -665,7 +665,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while creating folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while creating folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -745,7 +745,6 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             }), KEYSPACE);
 
-
             UpdateParentWithNewChild(folder, folder.ParentID.Guid, Guid.Empty, timeStamp);
         }
 
@@ -770,8 +769,11 @@ namespace Enhanced.Data.Inventory.Cassandra
         private void GenerateParentUpdateForSubfolder(InventoryFolderBase child, byte[] parentIdArray,
             Dictionary<byte[], Dictionary<string, List<Mutation>>> muts, long timeStamp)
         {
-            //never mutate the zero ID folder
-            if (new Guid(parentIdArray) == Guid.Empty) return;
+            // never mutate the zero ID folder
+            if (new Guid(parentIdArray) == Guid.Empty)
+            {
+                return;
+            }
 
             List<Mutation> folderMutList = new List<Mutation>();
 
@@ -803,14 +805,12 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             Dictionary<byte[], Dictionary<string, List<Mutation>>> muts = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 
-
             byte[] parentIdArray = ByteEncoderHelper.GuidEncoder.ToByteArray(parentId);
 
             muts[parentIdArray] = new Dictionary<string, List<Mutation>>();
 
             GenerateParentUpdateForSubfolder(child, parentIdArray, muts, timeStamp);
             muts[parentIdArray].Add(FOLDERVERSIONS_CF, new List<Mutation> { VersionIncrement() });
-
 
             if (oldParentId != Guid.Empty && oldParentId != parentId)
             {
@@ -828,7 +828,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         private void GenerateSubfolderIndexDeletion(Guid oldParentId, long timeStamp, byte[] childIdBytes, Dictionary<byte[], Dictionary<string, List<Mutation>>> muts)
         {
-            //we have a new parent, we have to tell the old one we're not its child anymore
+            // we have a new parent, we have to tell the old one we're not its child anymore
             Mutation propertiesRem = new Mutation();
             propertiesRem.Deletion = new Deletion();
             propertiesRem.Deletion.Super_column = ByteEncoderHelper.UTF8Encoder.ToByteArray("sub_folders");
@@ -852,14 +852,14 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unrecoverable error caught while saving folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Unrecoverable error caught while saving folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while saving folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while saving folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -904,19 +904,19 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             try
             {
-                //don't do anything with a folder that wants to set its new parent
-                //to the same folder as its current parent, this can cause corruption
+                // don't do anything with a folder that wants to set its new parent
+                // to the same folder as its current parent, this can cause corruption
                 if (folder.ParentID == parentId)
                 {
-                    _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Refusing to move folder {0} to new parent {1} for {2}. The source and destination are the same",
+                    _log.WarnFormat("[Cassandra]: Refusing to move folder {0} to new parent {1} for {2}. The source and destination are the same",
                         folder.ID, parentId, folder.Owner);
                     return;
                 }
 
-                //don't do anything with a folder that wants to set its new parent to UUID.Zero
+                // don't do anything with a folder that wants to set its new parent to UUID.Zero
                 if (parentId == UUID.Zero)
                 {
-                    _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Refusing to move folder {0} to new parent {1} for {2}. New parent has ID UUID.Zero",
+                    _log.WarnFormat("[Cassandra]: Refusing to move folder {0} to new parent {1} for {2}. New parent has ID UUID.Zero",
                         folder.ID, parentId, folder.Owner);
                     return;
                 }
@@ -925,13 +925,13 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while moving folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while moving folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while moving folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while moving folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -987,7 +987,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while sending folder {0} to trash for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while sending folder {0} to trash for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -1014,9 +1014,14 @@ namespace Enhanced.Data.Inventory.Cassandra
                     indexInfo.Value.Level == InventoryFolderBase.FolderLevel.Root)
                 {
                     if ((short)type == indexInfo.Value.Type)
+                    {
                         return indexInfo.Value;
+                    }
+
                     if (((short)type == (short)FolderType.Root) && (indexInfo.Value.Type == (short)FolderType.OldRoot)) // old AssetType.RootFolder == 9
+                    {
                         return indexInfo.Value; // consider 9 to be FolderType.Root too
+                    }
                 }
             }
 
@@ -1034,8 +1039,11 @@ namespace Enhanced.Data.Inventory.Cassandra
             while ((parentFolderID != Guid.Empty) && folderIndex.ContainsKey(parentFolderID))
             {
                 parentFolder = folderIndex[parentFolderID];
+
                 if ((parentFolder.Level == InventoryFolderBase.FolderLevel.TopLevel) || (parentFolder.Level == InventoryFolderBase.FolderLevel.Root))
+                {
                     return parentFolder;    // found it
+                }
 
                 // otherwise we need to walk farther up the parentage chain
                 parentFolderID = parentFolder.ParentID.Guid;
@@ -1080,13 +1088,13 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unrecoverable error while purging contents in folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Unrecoverable error while purging contents in folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while sending folder {0} to trash for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while sending folder {0} to trash for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -1103,7 +1111,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         private void PurgeFolderContentsInternal(InventoryFolderBase folder, long timeStamp)
         {
-            //block all deletion requests for a folder with a 0 id
+            // block all deletion requests for a folder with a 0 id
             if (folder.ID == UUID.Zero)
             {
                 throw new UnrecoverableInventoryStorageException("Refusing to allow the purge of the inventory ZERO root folder");
@@ -1113,10 +1121,10 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             byte[] folderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folder.ID.Guid);
             
-            //to purge a folder, we have to find all subfolders and items inside a folder
-            //for each of the sub folders folders they choose, we need to recurse into all
-            //sub-sub folders and grab out the items and folders. Once we have all of them
-            //to the last leaf level we do simple removes on all the items and folders
+            // to purge a folder, we have to find all subfolders and items inside a folder
+            // for each of the sub folders folders they choose, we need to recurse into all
+            // sub-sub folders and grab out the items and folders. Once we have all of them
+            // to the last leaf level we do simple removes on all the items and folders
             List<UUID> allFolders = new List<UUID>();
             List<UUID> allItems = new List<UUID>();
 
@@ -1130,6 +1138,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             List<byte[]> allFolderIdBytes = new List<byte[]>();
             List<byte[]> rootFolderIdBytes = new List<byte[]>();
+
             foreach (UUID fid in allFolders)
             {
                 byte[] thisFolderIdbytes = ByteEncoderHelper.GuidEncoder.ToByteArray(fid.Guid);
@@ -1157,32 +1166,31 @@ namespace Enhanced.Data.Inventory.Cassandra
                 }
             }
 
-            //we have all the contents, so delete the actual folders and their versions...
-            //this will wipe out the folders and in turn all items in subfolders
-            //but does not take care of the items in the root
+            // we have all the contents, so delete the actual folders and their versions...
+            // this will wipe out the folders and in turn all items in subfolders
+            // but does not take care of the items in the root
             byte[] ownerIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folder.Owner.Guid);
             this.GetFolderDeletionMutations(ownerIdBytes, allFolderIdBytes, timeStamp, muts);
 
-            //remove the individual items from the root folder
+            // remove the individual items from the root folder
             foreach (byte[] rootItem in rootItemIdBytes)
             {
                 this.GetItemDeletionMutations(rootItem, folderIdBytes, timeStamp, muts, false);
             }
 
-            //remove the individual folder references from the root folder
+            // remove the individual folder references from the root folder
             foreach (byte[] rootFolder in rootFolderIdBytes)
             {
                 this.GetSubfolderEntryDeletionMutations(rootFolder, folderIdBytes, timeStamp, muts);
             }
 
-            //delete the ItemParents folder references for the removed items...
+            // delete the ItemParents folder references for the removed items...
             foreach (byte[] itemId in allItemIdBytes)
             {
                 this.GetItemParentDeletionMutations(itemId, timeStamp, muts);
             }
 
-            
-            //increment the version of the purged folder
+            // increment the version of the purged folder
             this.GetFolderVersionIncrementMutations(muts, folderIdBytes);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -1197,7 +1205,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         private void DebugFolderPurge(string method, InventoryFolderBase folder, StringBuilder debugFolderList)
         {
-            _log.DebugFormat("[Enhanced.Data.Inventory.Cassandra] About to purge from {0} {1}\n Objects:\n{2}",
+            _log.DebugFormat("[Cassandra]: About to purge from {0} {1}\n Objects:\n{2}",
                 folder.Name, folder.ID, debugFolderList.ToString());
         }
 
@@ -1211,13 +1219,13 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unrecoverable error while purging folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Unrecoverable error while purging folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while purging folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while purging folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -1234,7 +1242,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         private void PurgeFolderInternal(InventoryFolderBase folder, long timeStamp)
         {
-            //block all deletion requests for a folder with a 0 id
+            // block all deletion requests for a folder with a 0 id
             if (folder.ID == UUID.Zero)
             {
                 throw new UnrecoverableInventoryStorageException("Refusing to allow the deletion of the inventory ZERO root folder");
@@ -1245,10 +1253,10 @@ namespace Enhanced.Data.Inventory.Cassandra
             byte[] folderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folder.ID.Guid);
             byte[] parentFolderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folder.ParentID.Guid);
 
-            //to purge a folder, we have to find all subfolders and items inside a folder
-            //for each of the sub folders folders they choose, we need to recurse into all
-            //sub-sub folders and grab out the items and folders. Once we have all of them
-            //to the last leaf level we do simple removes on all the items and folders
+            // to purge a folder, we have to find all subfolders and items inside a folder
+            // for each of the sub folders folders they choose, we need to recurse into all
+            // sub-sub folders and grab out the items and folders. Once we have all of them
+            // to the last leaf level we do simple removes on all the items and folders
             List<UUID> allFolders = new List<UUID>();
             List<UUID> allItems = new List<UUID>();
             C5.HashSet<UUID> rootItems = new C5.HashSet<UUID>();
@@ -1260,6 +1268,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             this.DebugFolderPurge("PurgeFolderInternal", folder, debugFolderList);
 
             List<byte[]> allFolderIdBytes = new List<byte[]>();
+
             foreach (UUID fid in allFolders)
             {
                 allFolderIdBytes.Add(ByteEncoderHelper.GuidEncoder.ToByteArray(fid.Guid));
@@ -1267,6 +1276,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             List<byte[]> allItemIdBytes = new List<byte[]>();
             List<byte[]> rootItemIdBytes = new List<byte[]>();
+
             foreach (UUID iid in allItems)
             {
                 byte[] itemIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(iid.Guid);
@@ -1279,23 +1289,24 @@ namespace Enhanced.Data.Inventory.Cassandra
                 }
             }
 
-            //we have all the contents, so delete the actual folders and their versions...
-            //this will wipe out the folders and in turn all items in subfolders
+            // we have all the contents, so delete the actual folders and their versions...
+            // this will wipe out the folders and in turn all items in subfolders
             byte[] ownerIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folder.Owner.Guid);
             this.GetFolderDeletionMutations(ownerIdBytes, allFolderIdBytes, timeStamp, muts);
-            //then we delete this actual folder
+            
+            // then we delete this actual folder
             this.GetSingleFolderDeletionMutations(ownerIdBytes, folderIdBytes, timeStamp, muts);
-            //and remove the subfolder reference from this folders parent
+            
+            // and remove the subfolder reference from this folders parent
             this.GetSubfolderEntryDeletionMutations(folderIdBytes, parentFolderIdBytes, timeStamp, muts);
 
-            //delete the ItemParents folder references for the removed items...
+            // delete the ItemParents folder references for the removed items...
             foreach (byte[] itemId in allItemIdBytes)
             {
                 this.GetItemParentDeletionMutations(itemId, timeStamp, muts);
             }
 
-
-            //increment the version of the parent of the purged folder
+            // increment the version of the parent of the purged folder
             if (folder.ParentID != UUID.Zero)
             {
                 this.GetFolderVersionIncrementMutations(muts, parentFolderIdBytes);
@@ -1315,7 +1326,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         // but assumes the caller knows that the ID specified has no items or subfolders.
         private void PurgeEmptyFolderInternal(UUID ownerID, long timeStamp, UUID folderID, UUID parentID)
         {
-            //block all deletion requests for a folder with a 0 id
+            // block all deletion requests for a folder with a 0 id
             if (folderID == UUID.Zero)
             {
                 throw new UnrecoverableInventoryStorageException("Refusing to allow the deletion of the inventory ZERO root folder");
@@ -1326,15 +1337,17 @@ namespace Enhanced.Data.Inventory.Cassandra
             byte[] folderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folderID.Guid);
             byte[] parentFolderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(parentID.Guid);
 
-            //we have all the contents, so delete the actual folders and their versions...
-            //this will wipe out the folders and in turn all items in subfolders
+            // we have all the contents, so delete the actual folders and their versions...
+            // this will wipe out the folders and in turn all items in subfolders
             byte[] ownerIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(ownerID.Guid);
-            //delete this actual folder
+            
+            // delete this actual folder
             this.GetSingleFolderDeletionMutations(ownerIdBytes, folderIdBytes, timeStamp, muts);
-            //and remove the subfolder reference from this folders parent
+            
+            // and remove the subfolder reference from this folders parent
             this.GetSubfolderEntryDeletionMutations(folderIdBytes, parentFolderIdBytes, timeStamp, muts);
 
-            //increment the version of the parent of the purged folder
+            // increment the version of the parent of the purged folder
             if (parentID != UUID.Zero)
             {
                 this.GetFolderVersionIncrementMutations(muts, parentFolderIdBytes);
@@ -1359,19 +1372,21 @@ namespace Enhanced.Data.Inventory.Cassandra
             try
             {
                 if ((folder.Items.Count != 0) || (folder.SubFolders.Count != 0))
+                {
                     throw new UnrecoverableInventoryStorageException("Refusing to PurgeEmptyFolder for folder that is not empty");
+                }
 
                 PurgeEmptyFolderInternal(folder.Owner, timeStamp, folder.ID, folder.ParentID);
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unrecoverable error while purging empty folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Unrecoverable error while purging empty folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while purging empty folder {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while purging empty folder {0} for {1}: {2}",
                     folder.ID, folder.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -1396,12 +1411,12 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (UnrecoverableInventoryStorageException e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unrecoverable error while purging folders: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unrecoverable error while purging folders: {0}", e);
                 throw;
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while purging folders: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Exception caught while purging folders: {0}", e);
 
                 if (_delayedMutationMgr != null)
                 {
@@ -1464,8 +1479,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[folderIdBytes][FOLDERS_CF].Add(folderMut);
             
-
-            //index removal
+            // index removal
             if (!muts.ContainsKey(userIdBytes))
             {
                 muts[userIdBytes] = new Dictionary<string, List<Mutation>>();
@@ -1483,8 +1497,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[userIdBytes][USERFOLDERS_CF].Add(userFolderMut);
 
-
-            //version removal
+            // version removal
             if (!muts[folderIdBytes].ContainsKey(FOLDERVERSIONS_CF))
             {
                 muts[folderIdBytes][FOLDERVERSIONS_CF] = new List<Mutation>();
@@ -1528,24 +1541,25 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
 
             InventoryFolderBase folder;
+
             try
             {
                 folder = this.GetFolder(id);
             }
             catch (InventoryObjectMissingException)
             {
-                //missing a folder is not a fatal exception, it could indicate a corrupted or temporarily
-                //inconsistent inventory state. this should not stop the remainder of the collection
-                _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Found missing folder with subFolder index remaining in parent. Inventory may need subfolder index maintenance.");
+                // missing a folder is not a fatal exception, it could indicate a corrupted or temporarily
+                // inconsistent inventory state. this should not stop the remainder of the collection
+                _log.WarnFormat("[Cassandra]: Found missing folder with subFolder index remaining in parent. Inventory may need subfolder index maintenance.");
                 return;
             }
             catch (InventoryStorageException e)
             {
                 if (e.InnerException != null && e.InnerException is KeyNotFoundException)
                 {
-                    //not a fatal exception, it could indicate a corrupted or temporarily
-                    //inconsistent inventory state. this should not stop the remainder of the collection
-                    _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Found corrupt folder with subFolder index remaining in parent. User inventory needs subfolder index maintenance.");
+                    // not a fatal exception, it could indicate a corrupted or temporarily
+                    // inconsistent inventory state. this should not stop the remainder of the collection
+                    _log.WarnFormat("[Cassandra]: Found corrupt folder with subFolder index remaining in parent. User inventory needs subfolder index maintenance.");
                     return;
                 }
                 else
@@ -1575,7 +1589,6 @@ namespace Enhanced.Data.Inventory.Cassandra
                         subFolder.ID, ownerId, subFolder.Owner)); ;
                 }
 
-
                 if (SubfolderIsConsistent(subFolder.ID, folder.ID, index))
                 {
                     debugFolderList.AppendLine("F " + subFolder.ID.ToString() + " " + subFolder.Name);
@@ -1591,15 +1604,15 @@ namespace Enhanced.Data.Inventory.Cassandra
                 }
                 else
                 {
-                    _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Not recursing into folder {0} with parent {1}. Index is inconsistent", 
+                    _log.WarnFormat("[Cassandra]: Not recursing into folder {0} with parent {1}. Index is inconsistent", 
                         subFolder.ID, folder.ID);
                 }
             }
         }
 
         /// <summary>
-        /// Makes sure that both the index and subfolder index agree that the given subfolder
-        /// id belongs to the given parent
+        ///     Makes sure that both the index and subfolder index agree that the given subfolder
+        ///     id belongs to the given parent
         /// </summary>
         /// <param name="subfolderId"></param>
         /// <param name="subfolderIndexParentId"></param>
@@ -1607,6 +1620,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         private bool SubfolderIsConsistent(UUID subfolderId, UUID subfolderIndexParentId, Dictionary<Guid, InventoryFolderBase> index)
         {
             InventoryFolderBase indexFolder;
+
             if (index.TryGetValue(subfolderId.Guid, out indexFolder))
             {
                 if (indexFolder.ParentID == subfolderIndexParentId)
@@ -1619,9 +1633,9 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Retrieves a set of items in the same folder. This should be efficient compared to
-        /// retrieving each item separately regardless of parent. This will be mostly used
-        /// for gestures which are usually all in the same folder anyways
+        ///     Retrieves a set of items in the same folder. This should be efficient compared to
+        ///     retrieving each item separately regardless of parent. This will be mostly used
+        ///     for gestures which are usually all in the same folder anyways
         /// </summary>
         /// <param name="folderId"></param>
         /// <param name="itemIds"></param>
@@ -1635,6 +1649,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             SlicePredicate pred = new SlicePredicate();
             pred.Column_names = new List<byte[]>();
+
             foreach (UUID id in itemIds)
             {
                 pred.Column_names.Add(ByteEncoderHelper.GuidEncoder.ToByteArray(id.Guid));
@@ -1657,6 +1672,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
 
             List<InventoryItemBase> retItems = new List<InventoryItemBase>();
+
             foreach (ColumnOrSuperColumn superCol in itemCols)
             {
                 Guid itemId = ByteEncoderHelper.GuidEncoder.FromByteArray(superCol.Super_column.Name);
@@ -1669,12 +1685,11 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         public InventoryItemBase GetItem(UUID itemId, UUID parentFolderHint)
         {
-            //Retrieving an item requires a lookup of the parent folder followed by 
-            //a retrieval of the item. This was a consious decision made since the 
-            //inventory item data currently takes up the most space and a
-            //duplication of this data to prevent the index lookup 
-            //would be expensive in terms of space required
-
+            // Retrieving an item requires a lookup of the parent folder followed by 
+            // a retrieval of the item. This was a consious decision made since the 
+            // inventory item data currently takes up the most space and a
+            // duplication of this data to prevent the index lookup 
+            // would be expensive in terms of space required
             try
             {
                 Guid parentId;
@@ -1693,8 +1708,8 @@ namespace Enhanced.Data.Inventory.Cassandra
                     throw new InventoryObjectMissingException(String.Format("Item with ID {0} could not be found", itemId), "Item was not found in the index");
                 }
 
-                //try to retrieve the item. note that even though we have an index there is a chance we will
-                //not have the item data due to a race condition between index mutation and item mutation
+                // try to retrieve the item. note that even though we have an index there is a chance we will
+                // not have the item data due to a race condition between index mutation and item mutation
                 byte[] itemIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(itemId.Guid);
                 byte[] folderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(parentId);
 
@@ -1736,7 +1751,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to retrieve item {0}: {1}", itemId, e);
+                _log.ErrorFormat("[Cassandra]: Unable to retrieve item {0}: {1}", itemId, e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
@@ -1746,6 +1761,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             Dictionary<UUID, List<UUID>> folderItemMapping = this.FindItemParentFolderIds(itemIds);
 
             List<InventoryItemBase> foundItems = new List<InventoryItemBase>();
+
             foreach (var kvp in folderItemMapping)
             {
                 foundItems.AddRange(this.GetItemsInSameFolder(kvp.Key, kvp.Value, throwOnNotFound));
@@ -1823,7 +1839,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             List<ColumnOrSuperColumn> indexCols = (List<ColumnOrSuperColumn>)val;
 
-            //no index means the item doesnt exist
+            // no index means the item doesnt exist
             if (indexCols.Count == 0)
             {
                 return Guid.Empty;
@@ -1835,7 +1851,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Returns a dictionary of parents with a list of items Dictionary[FolderID, List[Items]] 
+        ///     Returns a dictionary of parents with a list of items Dictionary[FolderID, List[Items]] 
         /// </summary>
         /// <param name="itemIds"></param>
         /// <returns></returns>
@@ -1849,6 +1865,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             pred.Column_names.Add(ByteEncoderHelper.UTF8Encoder.ToByteArray("parent"));
 
             List<byte[]> allItemIdBytes = new List<byte[]>();
+
             foreach (UUID id in itemIds)
             {
                 allItemIdBytes.Add(ByteEncoderHelper.GuidEncoder.ToByteArray(id.Guid));
@@ -1898,7 +1915,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while creating item {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while creating item {0} for {1}: {2}",
                     item.ID, item.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -1917,7 +1934,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         {
             if (item.Folder == UUID.Zero)
             {
-                _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Repairing parent folder ID for item {0} for {1}: Folder set to UUID.Zero", item.ID, item.Owner);
+                _log.WarnFormat("[Cassandra]: Repairing parent folder ID for item {0} for {1}: Folder set to UUID.Zero", item.ID, item.Owner);
                 item.Folder = this.FindFolderForType(item.Owner, (AssetType)FolderType.Root).ID;
             }
         }
@@ -1931,10 +1948,10 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[itemIdBytes] = new Dictionary<string, List<Mutation>>();
             
-            //create the item properly in its parent folder
+            // create the item properly in its parent folder
             this.GetItemStorageMutations(item, folderIdBytes, itemIdBytes, muts, timeStamp);
 
-            //also add the reference to the item in ItemParents
+            // also add the reference to the item in ItemParents
             this.GetItemParentStorageMutations(item, itemIdBytes, folderIdBytes, timeStamp, muts);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -1964,7 +1981,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         private void GetItemStorageMutations(InventoryItemBase item, byte[] folderIdBytes, byte[] itemIdBytes, 
             Dictionary<byte[], Dictionary<string, List<Mutation>>> outMuts, long timeStamp)
         {
-            //Folder CF mutations
+            // Folder CF mutations
             List<Mutation> itemMutList = new List<Mutation>();
 
             Mutation propertiesMut = new Mutation();
@@ -2143,7 +2160,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             Dictionary<string, List<Mutation>> folderKeyMuts = new Dictionary<string, List<Mutation>>();
             folderKeyMuts[FOLDERS_CF] = itemMutList;
 
-            //version increment
+            // version increment
             Mutation versionMut = VersionIncrement();
             folderKeyMuts[FOLDERVERSIONS_CF] = new List<Mutation> { versionMut };
 
@@ -2162,7 +2179,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while saving item {0} for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while saving item {0} for {1}: {2}",
                     item.ID, item.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -2186,14 +2203,14 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[itemIdBytes] = new Dictionary<string, List<Mutation>>();
 
-            //update the item properly in its parent folder
+            // update the item properly in its parent folder
             this.GetItemStorageMutations(item, folderIdBytes, itemIdBytes, muts, timeStamp);
 
-            //to keep the transaction consistent, if we're updating the item in its parent folder, 
-            //we also rewrite the ItemParent link. That way this op can run in parallel with other
-            //ops affecting the item and at least one of them will "win"
-            //this is to mitigate an effect seen in production where the item loses its ItemParent
-            //entry but is still in the folder
+            // to keep the transaction consistent, if we're updating the item in its parent folder, 
+            // we also rewrite the ItemParent link. That way this op can run in parallel with other
+            // ops affecting the item and at least one of them will "win"
+            // this is to mitigate an effect seen in production where the item loses its ItemParent
+            // entry but is still in the folder
             this.GetItemParentStorageMutations(item, itemIdBytes, folderIdBytes, timeStamp, muts);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -2217,11 +2234,11 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             try
             {
-                //dont do anything with an item that wants to set its new parent 
-                //to its current parent. this can cause corruption
+                // dont do anything with an item that wants to set its new parent 
+                // to its current parent. this can cause corruption
                 if (item.Folder == parentFolder.ID)
                 {
-                    _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Refusing to move item {0} to new folder {1} for {2}. The source and destination folder are the same",
+                    _log.WarnFormat("[Cassandra]: Refusing to move item {0} to new folder {1} for {2}. The source and destination folder are the same",
                         item.ID, parentFolder.ID, item.Owner);
                     return;
                 }
@@ -2230,7 +2247,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while moving item {0} to folder {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while moving item {0} to folder {1}: {2}",
                     item.ID, parentFolder.ID, e);
 
                 if (_delayedMutationMgr != null)
@@ -2255,13 +2272,13 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[itemIdBytes] = new Dictionary<string, List<Mutation>>();
 
-            //insert the item into its new folder
+            // insert the item into its new folder
             this.GetItemStorageMutations(item, newParentFolderBytes, itemIdBytes, muts, timeStamp);
 
-            //update the index to point to the new parent
+            // update the index to point to the new parent
             this.GetItemParentStorageMutations(item, itemIdBytes, newParentFolderBytes, timeStamp, muts);
 
-            //remove the item from the old folder
+            // remove the item from the old folder
             this.GetItemDeletionMutations(itemIdBytes, oldParentFolderBytes, timeStamp, muts, true);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -2277,7 +2294,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Removes the item from its parent folder container
+        ///     Removes the item from its parent folder container
         /// </summary>
         /// <param name="itemIdBytes"></param>
         /// <param name="oldParentFolderBytes"></param>
@@ -2310,7 +2327,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     muts[folderIdBytes][FOLDERVERSIONS_CF] = new List<Mutation>();
                 }
 
-                //version increment
+                // version increment
                 Mutation versionMut = VersionIncrement();
                 muts[folderIdBytes][FOLDERVERSIONS_CF].Add(versionMut);
             }
@@ -2326,7 +2343,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while sending item {0} to trash for {1}: {2}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while sending item {0} to trash for {1}: {2}",
                     item.ID, item.Owner, e);
 
                 if (_delayedMutationMgr != null)
@@ -2375,20 +2392,26 @@ namespace Enhanced.Data.Inventory.Cassandra
             try
             {
                 string invType;
-                if (item.AssetType == (int)AssetType.Link)
-                    invType = "link";
-                else
-                if (item.AssetType == (int)AssetType.LinkFolder)
-                    invType = "folder link";
-                else
-                    invType = "type "+item.AssetType.ToString();
 
-                _log.WarnFormat("[Enhanced.Data.Inventory.Cassandra] Purge of {0} id={1} asset={2} '{3}' for user={4}", invType, item.ID, item.AssetID, item.Name, item.Owner);
+                if (item.AssetType == (int)AssetType.Link)
+                {
+                    invType = "link";
+                }
+                else if (item.AssetType == (int)AssetType.LinkFolder)
+                {
+                    invType = "folder link";
+                }
+                else
+                {
+                    invType = "type " + item.AssetType.ToString();
+                }
+
+                _log.WarnFormat("[Cassandra]: Purge of {0} id={1} asset={2} '{3}' for user={4}", invType, item.ID, item.AssetID, item.Name, item.Owner);
                 PurgeItemInternal(item, timeStamp);
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while purging item {0}: {1}",
+                _log.ErrorFormat("[Cassandra]: Exception caught while purging item {0}: {1}",
                     item.ID, e);
 
                 if (_delayedMutationMgr != null)
@@ -2412,10 +2435,10 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             muts[itemIdBytes] = new Dictionary<string, List<Mutation>>();
 
-            //remove the item from the index
+            // remove the item from the index
             this.GetItemParentDeletionMutations(itemIdBytes, timeStamp, muts);
 
-            //remove the item from the old folder
+            // remove the item from the old folder
             this.GetItemDeletionMutations(itemIdBytes, oldParentFolderBytes, timeStamp, muts, true);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -2457,7 +2480,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Exception caught while purging items: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Exception caught while purging items: {0}", e);
 
                 if (_delayedMutationMgr != null)
                 {
@@ -2485,10 +2508,10 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                 muts[itemIdBytes] = new Dictionary<string, List<Mutation>>();
 
-                //remove the item from the index
+                // remove the item from the index
                 this.GetItemParentDeletionMutations(itemIdBytes, timeStamp, muts);
 
-                //remove the item from the old folder
+                // remove the item from the old folder
                 this.GetItemDeletionMutations(itemIdBytes, oldParentFolderBytes, timeStamp, muts, true);
             }
 
@@ -2506,15 +2529,15 @@ namespace Enhanced.Data.Inventory.Cassandra
         {
             long timeStamp = Util.UnixTimeSinceEpochInMicroseconds();
 
-            //failed gesture de/activation is not really fatal nor do we want to retry
-            //so we don't bother to run it through the delayed mutation manager
+            // failed gesture de/activation is not really fatal nor do we want to retry
+            // so we don't bother to run it through the delayed mutation manager
             try
             {
                 ActivateGesturesInternal(userId, itemIds, timeStamp);
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to activate gestures for {0}: {1}",
+                _log.ErrorFormat("[Cassandra]: Unable to activate gestures for {0}: {1}",
                     userId, e);
 
                 throw new InventoryStorageException(String.Format("Unable to activate gestures for {0}: {1}", userId, e.Message), e);
@@ -2560,15 +2583,15 @@ namespace Enhanced.Data.Inventory.Cassandra
         {
             long timeStamp = Util.UnixTimeSinceEpochInMicroseconds();
 
-            //failed gesture de/activation is not really fatal nor do we want to retry
-            //so we don't bother to run it through the delayed mutation manager
+            // failed gesture de/activation is not really fatal nor do we want to retry
+            // so we don't bother to run it through the delayed mutation manager
             try
             {
                 DeactivateGesturesInternal(userId, itemIds, timeStamp);
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to deactivate gestures for {0}: {1}",
+                _log.ErrorFormat("[Cassandra]: Unable to deactivate gestures for {0}: {1}",
                     userId, e);
 
                 throw new InventoryStorageException(String.Format("Unable to deactivate gestures for {0}: {1}", userId, e));
@@ -2659,8 +2682,8 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Retrieves the index of all folders owned by this user and attempts to
-        /// find and repair any inconsistencies
+        ///     Retrieves the index of all folders owned by this user and attempts to
+        ///     find and repair any inconsistencies
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
@@ -2680,7 +2703,6 @@ namespace Enhanced.Data.Inventory.Cassandra
                 range.Reversed = false;
                 range.Count = int.MaxValue;
                 pred.Slice_range = range;
-
 
                 List<ColumnOrSuperColumn> cols = this.RetrieveAllColumnsInChunks(FOLDER_INDEX_CHUNK_SZ,
                     ownerIdBytes, columnParent, pred, DEFAULT_CONSISTENCY_LEVEL);
@@ -2705,7 +2727,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                     }
                     catch (KeyNotFoundException)
                     {
-                        //there is a corruption, this folder can not be read
+                        // there is a corruption, this folder can not be read
                         badIndexFolders.Add(ByteEncoderHelper.GuidEncoder.FromByteArray(col.Super_column.Name));
                     }
                 }
@@ -2713,16 +2735,16 @@ namespace Enhanced.Data.Inventory.Cassandra
                 List<Guid> destroyedFolders = new List<Guid>();
                 List<InventoryFolderBase> recoverableFolders = new List<InventoryFolderBase>();
 
-                //for each folder that has a bad index, try to read the folder.
-                //if we can read the folder, restore it from the data we have
-                //otherwise delete the index, the data is gone
+                // for each folder that has a bad index, try to read the folder.
+                // if we can read the folder, restore it from the data we have
+                // otherwise delete the index, the data is gone
                 foreach (Guid id in badIndexFolders)
                 {
                     try
                     {
                         InventoryFolderBase folder = this.GetFolderAttributes(new UUID(id));
 
-                        //also verify the parent exists and is readable
+                        // also verify the parent exists and is readable
                         InventoryFolderBase parentFolder = this.GetFolderAttributes(folder.ParentID);
 
                         recoverableFolders.Add(folder);
@@ -2741,7 +2763,7 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                 foreach (InventoryFolderBase folder in recoverableFolders)
                 {
-                    //recover anything recoverable
+                    // recover anything recoverable
                     this.CreateFolderInternal(folder, timeStamp);
                 }
 
@@ -2752,7 +2774,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to recover folder index: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to recover folder index: {0}", e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
@@ -2761,7 +2783,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         {
             Dictionary<byte[], Dictionary<string, List<Mutation>>> muts = new Dictionary<byte[], Dictionary<string, List<Mutation>>>();
 
-            //to rebuild the index, we collect all items and rewrite their item->folder index entries
+            // to rebuild the index, we collect all items and rewrite their item->folder index entries
             List<InventoryFolderBase> skel = this.GetInventorySkeleton(ownerId);
 
             List<KeyValuePair<InventoryItemBase, UUID>> parentFolders = new List<KeyValuePair<InventoryItemBase, UUID>>();
@@ -2769,6 +2791,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             foreach (InventoryFolderBase skelFolder in skel)
             {
                 InventoryFolderBase fullFolder = this.GetFolder(skelFolder.ID);
+
                 foreach (var item in fullFolder.Items)
                 {
                     parentFolders.Add(new KeyValuePair<InventoryItemBase, UUID>(item, fullFolder.ID));
@@ -2803,10 +2826,10 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Pulls down all folders and collects the list of subfolder
-        /// UUIDs for each. Then attempts to read each of the sub folders 
-        /// listed in the subfolder index, and removes any indexed subfolders
-        /// that are no longer readable due to a partial deletion
+        ///     Pulls down all folders and collects the list of subfolder
+        ///     UUIDs for each. Then attempts to read each of the sub folders 
+        ///     listed in the subfolder index, and removes any indexed subfolders
+        ///     that are no longer readable due to a partial deletion
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
@@ -2826,7 +2849,6 @@ namespace Enhanced.Data.Inventory.Cassandra
                 range.Reversed = false;
                 range.Count = int.MaxValue;
                 pred.Slice_range = range;
-
 
                 List<ColumnOrSuperColumn> cols = this.RetrieveAllColumnsInChunks(FOLDER_INDEX_CHUNK_SZ,
                     ownerIdBytes, columnParent, pred, DEFAULT_CONSISTENCY_LEVEL);
@@ -2853,14 +2875,14 @@ namespace Enhanced.Data.Inventory.Cassandra
                     }
                     catch (KeyNotFoundException)
                     {
-                        //there is a corruption, this folder can not be read. Ignore since there is
-                        //another maint that can fix this that should be run first.
+                        // there is a corruption, this folder can not be read. Ignore since there is
+                        // another maint that can fix this that should be run first.
                     }
                 }
 
                 List<KeyValuePair<Guid, Guid>> invalidParentChild = new List<KeyValuePair<Guid, Guid>>();
 
-                //for each folder in the index, retrieve it and check for unreadable subfolders
+                // for each folder in the index, retrieve it and check for unreadable subfolders
                 foreach (InventoryFolderBase indexFolder in goodIndexFolders)
                 {
                     try
@@ -2883,22 +2905,21 @@ namespace Enhanced.Data.Inventory.Cassandra
                                 {
                                     invalidParentChild.Add(new KeyValuePair<Guid, Guid>(folder.ID.Guid, subfolder.ID.Guid));
                                 }
-                            }
-                            
+                            }         
                         }
                     }
                     catch (Exception e)
                     {
-                        //we can't even get the folder, so no subfolders to fix
-                        _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Indexed folder {0} could not be retrieved to look for children: {1}", indexFolder.ID, e);
+                        // we can't even get the folder, so no subfolders to fix
+                        _log.ErrorFormat("[Cassandra]: Indexed folder {0} could not be retrieved to look for children: {1}", indexFolder.ID, e);
                     }
                 }
 
-                _log.InfoFormat("[Enhanced.Data.Inventory.Cassandra][MAINT] Found {0} subfolder indexes to repair", invalidParentChild.Count);
+                _log.InfoFormat("[Cassandra][Maintenance]: Found {0} subfolder indexes to repair", invalidParentChild.Count);
 
                 long timeStamp = Util.UnixTimeSinceEpochInMicroseconds();
 
-                //we couldn't read the folder, pull it from the subfolder list of its parent
+                // we couldn't read the folder, pull it from the subfolder list of its parent
                 foreach (KeyValuePair<Guid, Guid> parentChildKvp in invalidParentChild)
                 {
                     byte[] childIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(parentChildKvp.Value);
@@ -2917,22 +2938,22 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("[Enhanced.Data.Inventory.Cassandra] Unable to repair subfolder index: {0}", e);
+                _log.ErrorFormat("[Cassandra]: Unable to repair subfolder index: {0}", e);
                 throw new InventoryStorageException(e.Message, e);
             }
         }
 
         /// <summary>
-        /// This is a last resort function. To be used only when a folder has become so huge or filled
-        /// with tombstones that it is unreadable. Will remove the folder and indexes only. Does
-        /// not recurse into the folder to find children
+        ///     This is a last resort function. To be used only when a folder has become so huge or filled
+        ///     with tombstones that it is unreadable. Will remove the folder and indexes only. Does
+        ///     not recurse into the folder to find children
         /// </summary>
         /// <param name="folderId"></param>
         public void Maint_DestroyFolder(Guid userId, Guid folderId)
         {
             long timeStamp = Util.UnixTimeSinceEpochInMicroseconds();
 
-            //block all deletion requests for a folder with a 0 id
+            // block all deletion requests for a folder with a 0 id
             if (folderId == Guid.Empty)
             {
                 throw new UnrecoverableInventoryStorageException("Refusing to allow the deletion of the inventory ZERO root folder");
@@ -2943,7 +2964,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             byte[] folderIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(folderId);
             byte[] ownerIdBytes = ByteEncoderHelper.GuidEncoder.ToByteArray(userId);
 
-            //then we delete this actual folder
+            // then we delete this actual folder
             this.GetSingleFolderDeletionMutations(ownerIdBytes, folderIdBytes, timeStamp, muts);
 
             ICluster cluster = AquilesHelper.RetrieveCluster(_clusterName);
@@ -2984,7 +3005,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Provides a way for the unit tests to perform mutations directly
+        ///     Provides a way for the unit tests to perform mutations directly
         /// </summary>
         /// <param name="muts"></param>
         internal void PerformMutations(Dictionary<byte[], Dictionary<string, List<Mutation>>> muts)
@@ -2999,7 +3020,5 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         #endregion
-
-        
     }
 }

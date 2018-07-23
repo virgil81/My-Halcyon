@@ -1,43 +1,45 @@
-/*
- * Copyright (c) InWorldz Halcyon Developers
- * Copyright (c) Contributors, http://opensimulator.org/
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the OpenSim Project nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Reflection;
 using log4net;
 using OpenMetaverse;
 using OpenSim.Framework;
 using OpenSim.Data.SimpleDB;
-using System.Data;
 
 namespace Enhanced.Data.Inventory.Cassandra
 {
     /// <summary>
-    /// A MySQL interface for the inventory server
+    ///     A MySQL interface for the inventory server
     /// </summary>
     public class LegacyMysqlStorageImpl
     {
@@ -88,7 +90,8 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Returns the most appropriate folder for the given inventory type, or null if one could not be found
+        ///     Returns the most appropriate folder for the 
+        ///     given inventory type, or null if one could not be found
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="type"></param>
@@ -96,12 +99,12 @@ namespace Enhanced.Data.Inventory.Cassandra
         public InventoryFolderBase findUserTopLevelFolderFor(UUID owner, UUID folderID)
         {
             // this is a stub, not supported in MySQL legacy storage
-            m_log.ErrorFormat("[MySQLInventoryData]: Inventory for user {0} needs to be migrated to Cassandra.", owner.ToString());
+            m_log.ErrorFormat("[MySQL Inventory Data]: Inventory for user {0} needs to be migrated to Cassandra.", owner.ToString());
             return null;
         }
 
         /// <summary>
-        /// Returns a list of items in the given folders
+        ///     Returns a list of items in the given folders
         /// </summary>
         /// <param name="folders"></param>
         /// <returns></returns>
@@ -111,17 +114,23 @@ namespace Enhanced.Data.Inventory.Cassandra
 
             foreach (InventoryFolderBase folder in folders)
             {
-                if (!String.IsNullOrEmpty(inList)) inList += ",";
+                if (!String.IsNullOrEmpty(inList))
+                {
+                    inList += ",";
+                }
+
                 inList += "'" + folder.ID.ToString() + "'";
             }
 
-            if (String.IsNullOrEmpty(inList)) return new List<InventoryItemBase>();
+            if (String.IsNullOrEmpty(inList))
+            {
+                return new List<InventoryItemBase>();
+            }
 
             string query = "SELECT * FROM inventoryitems WHERE parentFolderID IN (" + inList + ");";
 
             try
             {
-
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
                     using (IDataReader reader = conn.QueryAndUseReader(query))
@@ -132,8 +141,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                         {
                             // A null item (because something went wrong) breaks everything in the folder
                             InventoryItemBase item = readInventoryItem(reader);
+
                             if (item != null)
+                            {
                                 items.Add(item);
+                            }
                         }
 
                         return items;
@@ -148,7 +160,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Returns a list of items in a specified folder
+        ///     Returns a list of items in a specified folder
         /// </summary>
         /// <param name="folderID">The folder to search</param>
         /// <returns>A list containing inventory items</returns>
@@ -158,7 +170,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryitems WHERE parentFolderID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", folderID.ToString());
@@ -171,8 +182,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                         {
                             // A null item (because something went wrong) breaks everything in the folder
                             InventoryItemBase item = readInventoryItem(reader);
+
                             if (item != null)
+                            {
                                 items.Add(item);
+                            }
                         }
                     }
 
@@ -187,7 +201,8 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Returns a list of the root folders within a users inventory (folders that only have the root as their parent)
+        ///     Returns a list of the root folders within 
+        ///     a users inventory (folders that only have the root as their parent)
         /// </summary>
         /// <param name="user">The user whos inventory is to be searched</param>
         /// <returns>A list of folder objects</returns>
@@ -197,7 +212,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryfolders WHERE parentFolderID = ?root AND agentID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", user.ToString());
@@ -206,8 +220,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                     using (IDataReader reader = conn.QueryAndUseReader(query, parms))
                     {
                         List<InventoryFolderBase> items = new List<InventoryFolderBase>();
+
                         while (reader.Read())
+                        {
                             items.Add(readInventoryFolder(reader));
+                        }
 
                         return items;
                     }
@@ -220,7 +237,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
         }
 
-
         /// <summary>
         /// see <see cref="InventoryItemBase.getUserRootFolder"/>
         /// </summary>
@@ -232,7 +248,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryfolders WHERE parentFolderID = ?zero AND agentID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", user.ToString());
@@ -241,8 +256,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                     using (IDataReader reader = conn.QueryAndUseReader(query, parms))
                     {
                         List<InventoryFolderBase> items = new List<InventoryFolderBase>();
+
                         while (reader.Read())
+                        {
                             items.Add(readInventoryFolder(reader));
+                        }
 
                         InventoryFolderBase rootFolder = null;
 
@@ -268,9 +286,9 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Return a list of folders in a users inventory contained within the specified folder.
-        /// This method is only used in tests - in normal operation the user always have one,
-        /// and only one, root folder.
+        ///     Return a list of folders in a users inventory contained within the specified folder.
+        ///     This method is only used in tests - in normal operation the user always have one,
+        ///     and only one, root folder.
         /// </summary>
         /// <param name="parentID">The folder to search</param>
         /// <returns>A list of inventory folders</returns>
@@ -280,7 +298,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryfolders WHERE parentFolderID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", parentID.ToString());
@@ -290,7 +307,9 @@ namespace Enhanced.Data.Inventory.Cassandra
                         List<InventoryFolderBase> items = new List<InventoryFolderBase>();
 
                         while (reader.Read())
+                        {
                             items.Add(readInventoryFolder(reader));
+                        }
 
                         return items;
                     }
@@ -304,7 +323,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Reads a one item from an SQL result
+        ///     Reads a one item from an SQL result
         /// </summary>
         /// <param name="reader">The SQL Result</param>
         /// <returns>the item read</returns>
@@ -365,7 +384,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Returns a specified inventory item
+        ///     Returns a specified inventory item
         /// </summary>
         /// <param name="item">The item to return</param>
         /// <returns>An inventory item</returns>
@@ -375,7 +394,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryitems WHERE inventoryID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", itemID.ToString());
@@ -383,8 +401,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                     using (IDataReader reader = conn.QueryAndUseReader(query, parms))
                     {
                         InventoryItemBase item = null;
+
                         if (reader.Read())
+                        {
                             item = readInventoryItem(reader);
+                        }
 
                         return item;
                     }
@@ -399,7 +420,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Reads a list of inventory folders returned by a query.
+        ///     Reads a list of inventory folders returned by a query.
         /// </summary>
         /// <param name="reader">A MySQL Data Reader</param>
         /// <returns>A List containing inventory folders</returns>
@@ -424,9 +445,8 @@ namespace Enhanced.Data.Inventory.Cassandra
             return null;
         }
 
-
         /// <summary>
-        /// Returns a specified inventory folder
+        ///     Returns a specified inventory folder
         /// </summary>
         /// <param name="folder">The folder to return</param>
         /// <returns>A folder class</returns>
@@ -436,7 +456,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     string query = "SELECT * FROM inventoryfolders WHERE folderID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", folderID.ToString());
@@ -464,7 +483,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Adds a specified item to the database
+        ///     Adds a specified item to the database
         /// </summary>
         /// <param name="item">The inventory item</param>
         public void addInventoryItem(InventoryItemBase item)
@@ -519,20 +538,11 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Updates the specified inventory item
+        ///     Updates the specified inventory item
         /// </summary>
         /// <param name="item">Inventory item to update</param>
         public void updateInventoryItem(InventoryItemBase item)
         {
-
-            //addInventoryItem(item);
-
-            /* 12/9/2009 - Ele's Edit - Rather than simply adding a whole new item, which seems kind of pointless to me, 
-             let's actually try UPDATING the item as it should be. This is not fully functioning yet from the updating of items
-             * within Scene.Inventory.cs MoveInventoryItem yet. Not sure the effect it will have on the rest of the updates either, as they
-             * originally pointed back to addInventoryItem above.
-            */
-
             string sql =
                 "UPDATE inventoryitems SET assetID=?assetID, assetType=?assetType, parentFolderID=?parentFolderID, "
                  + "avatarID=?avatarID, inventoryName=?inventoryName, inventoryDescription=?inventoryDescription, inventoryNextPermissions=?inventoryNextPermissions, "
@@ -577,11 +587,10 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 m_log.Error(e.ToString());
             }
-
         }
 
         /// <summary>
-        /// Detele the specified inventory item
+        ///     Detele the specified inventory item
         /// </summary>
         /// <param name="item">The inventory item UUID to delete</param>
         public void deleteInventoryItem(InventoryItemBase item)
@@ -617,7 +626,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Creates a new inventory folder
+        ///     Creates a new inventory folder
         /// </summary>
         /// <param name="folder">Folder to create</param>
         public void addInventoryFolder(InventoryFolderBase folder)
@@ -657,7 +666,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Increments the version of the passed folder, making sure the folder isn't Zero. Must be called from within a using{} block!
+        ///     Increments the version of the passed folder, making sure the folder isn't Zero. Must be called from within a using{} block!
         /// </summary>
         /// <param name="conn">Database connection.</param>
         /// <param name="folderId">Folder UUID to increment</param>
@@ -674,7 +683,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Updates an inventory folder
+        ///     Updates an inventory folder
         /// </summary>
         /// <param name="folder">Folder to update</param>
         public void updateInventoryFolder(InventoryFolderBase folder)
@@ -700,11 +709,10 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 m_log.Error(e.ToString());
             }
-
         }
 
         /// <summary>
-        /// Move an inventory folder
+        ///     Move an inventory folder
         /// </summary>
         /// <param name="folder">Folder to move</param>
         /// <remarks>UPDATE inventoryfolders SET parentFolderID=?parentFolderID WHERE folderID=?folderID</remarks>
@@ -733,11 +741,10 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 m_log.Error(e.ToString());
             }
-
         }
 
         /// <summary>
-        /// Append a list of all the child folders of a parent folder
+        ///     Append a list of all the child folders of a parent folder
         /// </summary>
         /// <param name="folders">list where folders will be appended</param>
         /// <param name="parentID">ID of parent</param>
@@ -746,12 +753,13 @@ namespace Enhanced.Data.Inventory.Cassandra
             List<InventoryFolderBase> subfolderList = getInventoryFolders(parentID);
 
             foreach (InventoryFolderBase f in subfolderList)
+            {
                 folders.Add(f);
+            }
         }
 
-
         /// <summary>
-        /// See IInventoryDataPlugin
+        ///     See IInventoryDataPlugin
         /// </summary>
         /// <param name="parentID"></param>
         /// <returns></returns>
@@ -786,16 +794,18 @@ namespace Enhanced.Data.Inventory.Cassandra
 
                     /* Fetch the parent folder from the database to determine the agent ID, and if
                      * we're querying the root of the inventory folder tree */
-
                     string query = "SELECT * FROM inventoryfolders WHERE folderID = ?uuid";
                     Dictionary<string, object> parms = new Dictionary<string, object>();
                     parms.Add("?uuid", parentID.ToString());
 
                     IDataReader reader;
+
                     using (reader = conn.QueryAndUseReader(query, parms))
                     {
                         while (reader.Read())          // Should be at most 1 result
+                        {
                             parentFolder.Add(readInventoryFolder(reader));
+                        }
                     }
 
                     if (parentFolder.Count >= 1)   // No result means parent folder does not exist
@@ -812,8 +822,11 @@ namespace Enhanced.Data.Inventory.Cassandra
                                 while (reader.Read())
                                 {
                                     InventoryFolderBase curFolder = readInventoryFolder(reader);
+
                                     if (curFolder.ID != parentID) // Do not need to add the root node of the tree to the list
+                                    {
                                         folders.Add(curFolder);
+                                    }
                                 }
                             }
                         } // if we are querying the root folder
@@ -830,12 +843,16 @@ namespace Enhanced.Data.Inventory.Cassandra
                                 while (reader.Read())
                                 {
                                     InventoryFolderBase curFolder = readInventoryFolder(reader);
+
                                     if (hashtable.ContainsKey(curFolder.ParentID))      // Current folder already has a sibling
+                                    {
                                         hashtable[curFolder.ParentID].Add(curFolder);   // append to sibling list
+                                    }
                                     else // else current folder has no known (yet) siblings
                                     {
                                         List<InventoryFolderBase> siblingList = new List<InventoryFolderBase>();
                                         siblingList.Add(curFolder);
+                                     
                                         // Current folder has no known (yet) siblings
                                         hashtable.Add(curFolder.ParentID, siblingList);
                                     }
@@ -855,12 +872,20 @@ namespace Enhanced.Data.Inventory.Cassandra
                          * and we need to return the requested subtree. We will build the requested subtree
                          * by performing a breadth-first-search on the hash table */
                         if (hashtable.ContainsKey(parentID))
+                        {
                             folders.AddRange(hashtable[parentID]);
+                        }
+
                         for (int i = 0; i < folders.Count; i++) // **Note: folders.Count is *not* static
+                        {
                             if (hashtable.ContainsKey(folders[i].ID))
+                            {
                                 folders.AddRange(hashtable[folders[i].ID]);
+                            }
+                        }
                     }
                 } // lock (database)
+
                 return folders;
             }
             catch (Exception e)
@@ -871,7 +896,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Delete a folder from database. Must be called from within a using{} block for the database connection.
+        ///     Delete a folder from database. Must be called from within a using{} block for the database connection.
         /// </summary>
         /// Passing in the connection allows for consolidation of the DB connections, important as this method is often called from an inner loop.
         /// <param name="folderID">the folder UUID</param>
@@ -888,7 +913,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Delete all subfolders and items in a folder. Must be called from within a using{} block for the database connection.
+        ///     Delete all subfolders and items in a folder. Must be called from within a using{} block for the database connection.
         /// </summary>
         /// Passing in the connection allows for consolidation of the DB connections, important as this method is often called from an inner loop.
         /// <param name="folderID">the folder UUID</param>
@@ -916,7 +941,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Delete all subfolders and items in a folder.
+        ///     Delete all subfolders and items in a folder.
         /// </summary>
         /// <param name="folderID">the folder UUID</param>
         public void deleteFolderContents(UUID folderID)
@@ -943,7 +968,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         }
 
         /// <summary>
-        /// Deletes an inventory folder
+        ///     Deletes an inventory folder
         /// </summary>
         /// <param name="folderId">Id of folder to delete</param>
         public void deleteInventoryFolder(InventoryFolderBase folder)
@@ -955,7 +980,6 @@ namespace Enhanced.Data.Inventory.Cassandra
             {
                 using (ISimpleDB conn = _connFactory.GetConnection())
                 {
-
                     using (ITransaction transaction = conn.BeginTransaction()) // Use a transaction to guarantee that the following it atomic - it'd be bad to have a partial delete of the tree!
                     {
                         // Since the DB doesn't currently have foreign key constraints the order of delete ops doean't matter, 
@@ -999,11 +1023,15 @@ namespace Enhanced.Data.Inventory.Cassandra
                     using (IDataReader result = conn.QueryAndUseReader(query, parms))
                     {
                         List<InventoryItemBase> list = new List<InventoryItemBase>();
+
                         while (result.Read())
                         {
                             InventoryItemBase item = readInventoryItem(result);
+
                             if (item != null)
+                            {
                                 list.Add(item);
+                            }
                         }
 
                         return list;
@@ -1030,11 +1058,15 @@ namespace Enhanced.Data.Inventory.Cassandra
                     using (IDataReader result = conn.QueryAndUseReader(query, parms))
                     {
                         List<InventoryItemBase> list = new List<InventoryItemBase>();
+
                         while (result.Read())
                         {
                             InventoryItemBase item = readInventoryItem(result);
+
                             if (item != null)
+                            {
                                 list.Add(item);
+                            }
                         }
 
                         return list;

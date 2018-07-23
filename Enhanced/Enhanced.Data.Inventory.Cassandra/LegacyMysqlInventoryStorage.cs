@@ -1,32 +1,31 @@
-/*
- * Copyright (c) 2015, InWorldz Halcyon Developers
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- *   * Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
- * 
- *   * Redistributions in binary form must reproduce the above copyright notice,
- *     this list of conditions and the following disclaimer in the documentation
- *     and/or other materials provided with the distribution.
- * 
- *   * Neither the name of halcyon nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it 
+///     covers please see the Licenses directory.
+/// 
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+/// 
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
@@ -34,14 +33,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using log4net;
-using OpenSim.Data;
 using OpenMetaverse;
+using OpenSim.Data;
 using OpenSim.Framework;
 
 namespace Enhanced.Data.Inventory.Cassandra
 {
     /// <summary>
-    /// IInventorystorage adapter to the old mysql inventory system
+    ///     IInventorystorage adapter to the old mysql inventory system
     /// </summary>
     public class LegacyMysqlInventoryStorage : IInventoryStorage
     {
@@ -60,6 +59,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             List<InventoryFolderBase> retFolders = new List<InventoryFolderBase>();
 
             InventoryFolderBase rootFolder = _impl.getUserRootFolder(userId);
+
             if (rootFolder != null)
             {
                 retFolders.Add(rootFolder);
@@ -68,7 +68,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             else
             {
                 // Handle a null here but throw the same exception Cassandra does.
-                throw new InventoryStorageException("[LegacyMysqlInventoryStorage] Unable to retrieve folder skeleton: root folder");
+                throw new InventoryStorageException("[Legacy Mysql Inventory Storage]: Unable to retrieve folder skeleton: root folder");
             }
 
             return retFolders;
@@ -83,7 +83,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                 throw new InventoryObjectMissingException(String.Format("Unable to find folder {0}", folderId));
             }
 
-            //now we need the descendents
+            // now we need the descendents
             List<InventoryItemBase> items = _impl.getInventoryInFolder(folderId);
             List<InventoryFolderBase> folders = _impl.getInventoryFolders(folderId);
 
@@ -119,14 +119,14 @@ namespace Enhanced.Data.Inventory.Cassandra
             // Don't do anything with a folder that wants to set its new parent to the same folder as its current parent.
             if (folder.ParentID == parentId)
             {
-                m_log.WarnFormat("[LegacyMysqlInventoryStorage] Refusing to move folder {0} to new parent {1} for {2}. The source and destination are the same", folder.ID, parentId, folder.Owner);
+                m_log.WarnFormat("[Legacy Mysql Inventory Storage]: Refusing to move folder {0} to new parent {1} for {2}. The source and destination are the same", folder.ID, parentId, folder.Owner);
                 return;
             }
 
             // Don't do anything with a folder that wants to set its new parent to UUID.Zero
             if (parentId == UUID.Zero)
             {
-                m_log.WarnFormat("[LegacyMysqlInventoryStorage] Refusing to move folder {0} to new parent {1} for {2}. New parent has ID UUID.Zero", folder.ID, parentId, folder.Owner);
+                m_log.WarnFormat("[Legacy Mysql Inventory Storage]: Refusing to move folder {0} to new parent {1} for {2}. New parent has ID UUID.Zero", folder.ID, parentId, folder.Owner);
                 return;
             }
 
@@ -151,16 +151,17 @@ namespace Enhanced.Data.Inventory.Cassandra
             }
             else if (type == (AssetType)FolderType.Root)
             {
-                //this is a special case for the legacy inventory services. 
-                //the root folder type asset type may have been incorrectly saved
-                //as the old AssetType.RootFolder (which is 9),
-                //rather than AssetType.Folder (which is 8) with FolderType.Root (which is also 8).
+                // this is a special case for the legacy inventory services. 
+                // the root folder type asset type may have been incorrectly saved
+                // as the old AssetType.RootFolder (which is 9),
+                // rather than AssetType.Folder (which is 8) with FolderType.Root (which is also 8).
                 folder = _impl.findUserFolderForType(owner, (int)FolderType.OldRoot);
+
                 if (folder == null)
                 {
-                    //this is another special case for the legacy inventory services.
-                    //the root folder type may be incorrectly set to folder instead of RootFolder
-                    //we must find it a different way in this case
+                    // this is another special case for the legacy inventory services.
+                    // the root folder type may be incorrectly set to folder instead of RootFolder
+                    // we must find it a different way in this case
                     return _impl.getUserRootFolder(owner);
                 }
             }
@@ -253,6 +254,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             foreach (UUID id in itemIds)
             {
                 InventoryItemBase item = _impl.getInventoryItem(id);
+
                 if (item != null)
                 {
                     item.Flags |= (uint)1;
@@ -266,6 +268,7 @@ namespace Enhanced.Data.Inventory.Cassandra
             foreach (UUID id in itemIds)
             {
                 InventoryItemBase item = _impl.getInventoryItem(id);
+
                 if (item != null)
                 {
                     item.Flags &= ~(uint)1;
