@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Data.Assets.Stratu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Data.Inventory.Cassandra", "Enhanced\Enhanced.Data.Inventory.Cassandra\Enhanced.Data.Inventory.Cassandra.csproj", "{62DC97F5-0000-0000-0000-000000000000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InWorldz.JWT", "Enhanced\JWT\InWorldz.JWT.csproj", "{D4CA6D90-0000-0000-0000-000000000000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.JWT", "Enhanced\JWT\Enhanced.JWT.csproj", "{D4CA6D90-0000-0000-0000-000000000000}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enhanced.Emporia.Engine", "Enhanced\Enhanced.Emporia.Engine\Enhanced.Emporia.Engine.csproj", "{BDE863EA-0000-0000-0000-000000000000}"
 EndProject

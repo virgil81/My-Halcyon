@@ -29,7 +29,7 @@
  */
 using System;
 using System.Reflection;
-using InWorldz.JWT;
+using Enhanced.JWT;
 using log4net;
 using OpenMetaverse;
 

@@ -33,7 +33,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Timers;
-using InWorldz.JWT;
+using Enhanced.JWT;
 using Nwc.XmlRpc;
 using OpenMetaverse;
 using OpenSim.Framework;

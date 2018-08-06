@@ -9,6 +9,6 @@
     	<Cache id="Default" provider="Default" type="OpenSim.Framework.Communications.Cache.AssetCache" />
     </Extension>
     <Extension path="/OpenSim/AssetClient">
-	    <AssetClient id="WHIP"	 provider="WHIP"   type="InWorldz.Whip.Client.AssetClient" />
+	    <AssetClient id="WHIP"	 provider="WHIP"   type="Enhanced.Whip.Client.AssetClient" />
     </Extension>
 </Addin>

@@ -32,7 +32,7 @@ using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace InWorldz.JWT
+namespace Enhanced.JWT
 {
     public class JWTSignatureUtil
     {

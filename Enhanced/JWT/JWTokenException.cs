@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InWorldz.JWT
+namespace Enhanced.JWT
 {
     public class JWTokenException : Exception
     {

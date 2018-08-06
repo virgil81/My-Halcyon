@@ -30,7 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Xml;
-using InWorldz.JWT;
+using Enhanced.JWT;
 using Nini.Config;
 using OpenMetaverse;
 using OpenSim.Framework.Servers.HttpServer;

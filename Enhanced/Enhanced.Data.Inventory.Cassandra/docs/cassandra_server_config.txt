@@ -29,12 +29,12 @@ log4j-server.properties:
 log4j.appender.R.File=/opt/cassandra/log/system.log
 
 echo "CASS_HOME=/opt/cassandra/apache-cassandra-1.0.8" > /etc/profile.d/cassandra.sh
-echo "PATH=${CASS_HOME}Release/bin:${PATH}" >> /etc/profile.d/cassandra.sh
+echo "PATH=${CASS_HOME}Release/Release/bin:${PATH}" >> /etc/profile.d/cassandra.sh
 
 ln -s /opt/cassandra/apache-cassandra-1.0.8/conf/ /etc/cassandra
 
 groupadd -g 555 cassandra
-useradd -u 555 -g cassandra -c "Cassandra" cassandra -d /opt/cassandra -s Release/bin/bash
+useradd -u 555 -g cassandra -c "Cassandra" cassandra -d /opt/cassandra -s Release/Release/bin/bash
 
 mkdir /var/run/cassandra
 chown cassandra:cassandra /var/run/cassandra
@@ -50,7 +50,7 @@ passwd cassandra
 
 ---------
 [root@inv1 ~]# cat /etc/init.d/cassandra
-#!Release/bin/bash
+#!Release/Release/bin/bash
 # init script for Cassandra.
 # chkconfig: 2345 90 10
 # description: Cassandra
@@ -58,7 +58,7 @@ passwd cassandra
 . /etc/rc.d/init.d/functions
 
 CASS_HOME=/opt/cassandra/apache-cassandra-1.0.8
-CASS_BIN=$CASS_HOMERelease/bin/cassandra
+CASS_BIN=$CASS_HOMERelease/Release/bin/cassandra
 CASS_LOG=/opt/cassandra/log/cassandra.out
 CASS_USER="cassandra"
 CASS_PID=/var/run/cassandra/cassandra.pid

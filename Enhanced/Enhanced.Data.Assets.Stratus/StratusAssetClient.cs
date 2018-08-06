@@ -1,9 +1,9 @@
 /// <license>
 ///     Copyright (c) Contributors, InWorldz Halcyon Developers
 ///     See CONTRIBUTORS.TXT for a full list of copyright holders.
-///     For an explanation of the license of each contributor and the content it 
+///     For an explanation of the license of each contributor and the content it
 ///     covers please see the Licenses directory.
-/// 
+///
 ///     Redistribution and use in source and binary forms, with or without
 ///     modification, are permitted provided that the following conditions are met:
 ///         * Redistributions of source code must retain the above copyright
@@ -14,7 +14,7 @@
 ///         * Neither the name of the Halcyon Project nor the
 ///         names of its contributors may be used to endorse or promote products
 ///         derived from this software without specific prior written permission.
-/// 
+///
 ///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
 ///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 ///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -61,7 +61,7 @@ namespace Enhanced.Data.Assets.Stratus
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private CloudFilesAssetClient _cfAssetClient;
-        private InWorldz.Whip.Client.AssetClient _whipAssetClient;
+        private Whip.Client.AssetClient _whipAssetClient;
 
         private IAssetServer _firstReadServer;
         private IAssetServer _secondReadServer = null;
@@ -72,7 +72,7 @@ namespace Enhanced.Data.Assets.Stratus
         public void Initialize(ConfigSettings settings)
         {
             IConfig stratusConfig = settings.SettingsFile["Enhanced.Data.Assets.Stratus"];
-          
+
 			if (stratusConfig != null && stratusConfig.GetBoolean("enabled", true))
             {
                 Config.Settings.Instance.Enabled = true;
@@ -100,8 +100,8 @@ namespace Enhanced.Data.Assets.Stratus
                 Config.Settings.Instance.CFUseCache = stratusConfig.GetBoolean("CFUseCache", true);
                 Config.Settings.Instance.CFCacheSize = stratusConfig.GetInt("CFCacheSize", 20 * 1024 * 1024);
 
-                if (Config.Settings.Instance.CFSupport == true && 
-                    (Config.Settings.Instance.CFUsername == null || Config.Settings.Instance.CFApiKey == null || 
+                if (Config.Settings.Instance.CFSupport == true &&
+                    (Config.Settings.Instance.CFUsername == null || Config.Settings.Instance.CFApiKey == null ||
                     Config.Settings.Instance.CFContainerPrefix == null || Config.Settings.Instance.CFDefaultRegion == null))
                 {
                     // not allowed, we need the full cloudfiles auth information
@@ -109,7 +109,7 @@ namespace Enhanced.Data.Assets.Stratus
                 }
 
                 Config.Settings.Instance.WriteTarget = stratusConfig.GetString("WriteTarget", null);
-              
+
 				if (Config.Settings.Instance.CFSupport && Config.Settings.Instance.LegacySupport && Config.Settings.Instance.WriteTarget == null)
                 {
                     throw new Exception("If both legacy and Cloud Files support is enabled, you must specify 'whip' or 'cf' in the WriteTarget setting");
@@ -121,14 +121,14 @@ namespace Enhanced.Data.Assets.Stratus
 
                 if (Config.Settings.Instance.LegacySupport)
                 {
-                    _whipAssetClient = new InWorldz.Whip.Client.AssetClient(Config.Settings.Instance.WhipURL);
+                    _whipAssetClient = new Whip.Client.AssetClient(Config.Settings.Instance.WhipURL);
                     _whipAssetClient.Initialize(settings);
 
                     if (Config.Settings.Instance.CFSupport)
                     {
                         // legacy and CF support.
                         _firstReadServer = _whipAssetClient; //whip is the first read server with legacy/cf since it has lower latency
-                        
+
 						if (Config.Settings.Instance.WriteTarget == "whip")
                         {
                             _writeServer = _whipAssetClient;
@@ -145,7 +145,7 @@ namespace Enhanced.Data.Assets.Stratus
                 if (Config.Settings.Instance.CFSupport)
                 {
                     _cfAssetClient = new CloudFilesAssetClient();
-                    
+
                     if (Config.Settings.Instance.LegacySupport)
                     {
                         _secondReadServer = _cfAssetClient; //cf is the second read server when whip is enabled
@@ -166,7 +166,7 @@ namespace Enhanced.Data.Assets.Stratus
                 }
 
                 _firstReadServer.SetReceiver(this);
-              
+
 				if (_secondReadServer != null)
 				{
 					_secondReadServer.SetReceiver(this);
@@ -218,7 +218,7 @@ namespace Enhanced.Data.Assets.Stratus
         public AssetBase RequestAssetSync(OpenMetaverse.UUID assetID)
         {
             AssetBase asset;
-           
+
 			if (TryRequestAsset(assetID, _firstReadServer, out asset))
             {
                 return asset;

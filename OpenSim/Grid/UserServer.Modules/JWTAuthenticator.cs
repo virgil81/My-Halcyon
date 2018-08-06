@@ -32,7 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using InWorldz.JWT;
+using Enhanced.JWT;
 using LitJson;
 using log4net;
 using OpenSim.Framework.Communications.JWT;

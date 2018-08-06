@@ -128,7 +128,7 @@ namespace OpenSim.Region.Physics.Manager
         {
             // TODO / NOTE
             // The assembly named 'OpenSim.Region.Physics.BasicPhysicsPlugin' was loaded from
-            // 'file:///C:/OpenSim/trunk2Release/bin/Physics/OpenSim.Region.Physics.BasicPhysicsPlugin.dll'
+            // 'file:///C:/OpenSim/trunk2Release/Release/bin/Physics/OpenSim.Region.Physics.BasicPhysicsPlugin.dll'
             // using the LoadFrom context. The use of this context can result in unexpected behavior
             // for serialization, casting and dependency resolution. In almost all cases, it is recommended
             // that the LoadFrom context be avoided. This can be done by installing assemblies in the

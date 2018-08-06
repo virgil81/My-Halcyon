@@ -1,4 +1,4 @@
-#!Release/bin/sh
+#!Release/Release/bin/sh
 
 # This script will build LaunchSLClient.app from the .exe, .dll's, and
 # other necessary files.

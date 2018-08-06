@@ -31,7 +31,7 @@
 using System;
 using OpenMetaverse;
 
-namespace InWorldz.JWT
+namespace Enhanced.JWT
 {
     /// <summary>
     /// Options that can are passed through a JWT authentication payload

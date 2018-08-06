@@ -60,7 +60,7 @@ namespace Enhanced.Region.Data.Thoosa
 
         public void Initialize(Nini.Config.IConfigSource source)
         {
-            var cfg = source.Configs["InWorldz.Thoosa"];
+            var cfg = source.Configs["Enhanced.Thoosa"];
             if (cfg == null || cfg.GetBoolean("enable_serialization_engine", true))
             {
                 _engine = new Engines.SerializationEngine();
@@ -68,11 +68,11 @@ namespace Enhanced.Region.Data.Thoosa
 
                 Preload();
 
-                m_log.InfoFormat("[InWorldz.Thoosa]: Serialization engine enabled");
+                m_log.InfoFormat("[Enhanced.Thoosa]: Serialization engine enabled");
             }
             else
             {
-                m_log.InfoFormat("[InWorldz.Thoosa]: Serialization engine disabled");
+                m_log.InfoFormat("[Enhanced.Thoosa]: Serialization engine disabled");
             }
         }
 

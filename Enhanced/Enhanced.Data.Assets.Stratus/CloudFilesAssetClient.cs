@@ -247,7 +247,7 @@ namespace Enhanced.Data.Assets.Stratus
             }
             else
             {
-                m_log.WarnFormat("[InWorldz.Stratus]: Timout waiting for synchronous asset request for {0}", assetID);
+                m_log.WarnFormat("[Enhanced.Stratus]: Timout waiting for synchronous asset request for {0}", assetID);
             }
 
 

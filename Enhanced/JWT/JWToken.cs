@@ -1,5 +1,5 @@
 ﻿using System;
-namespace InWorldz.JWT
+namespace Enhanced.JWT
 {
     /// <summary>
     /// Simplified access to and from a JWT token and the data contained therein.

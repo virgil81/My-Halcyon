@@ -13,9 +13,9 @@
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
-    <DelaySign>false</DelaySign>
+    
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-	  <OutputPath>../../Release/bin/</OutputPath>
+	  <OutputPath>../../../Release/bin/</OutputPath>
     <OutputType>Library</OutputType>
     <AppDesignerFolder></AppDesignerFolder>
     <RootNamespace>OpenSim.Region.Framework.Tests</RootNamespace>
