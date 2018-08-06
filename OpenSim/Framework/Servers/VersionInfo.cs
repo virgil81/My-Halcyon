@@ -27,11 +27,12 @@
 
 using System.Reflection;
 
-// Using a * for the third number means auto-fill with the # days since 2000. Good for us here.
-// That only leaves us with two in front, so we'll divide the first number by 10.
-// i.e. 9.18.R in the assembly is presented as 0.9.18.R
-[assembly: AssemblyVersion("9.39.*")]
+// Version format is Major.Minor.Patch.Revision
+// Using the "build" number, the 3rd value, as patch is a bit non-standard from MS's perspective. However this is what https://semver.org/ uses it as
+// Using a * for the last number means auto-fill with the # days since 2000. Good for us here as we've always historically used the revision field as a unique ID value. Originally it was the SVN revision number, but since the switch to git that went away.
+
 // Do not provide AssemblyFileVersion and it will be kept in sync.
+[assembly: AssemblyVersion("0.9.40.*")]
 
 namespace OpenSim
 {
@@ -56,7 +57,7 @@ namespace OpenSim
             if (_revision == null)
             {
                 Version ver = typeof(VersionInfo).Assembly.GetName().Version;
-                _version = String.Format("{0}.{1}.{2}", ver.Major/10, ver.Major % 10, ver.Minor);
+                _version = String.Format("{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build);
                 _revision = ver.Build.ToString();
             }
             return _revision;
