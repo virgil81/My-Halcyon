@@ -1,0 +1,13 @@
+About Us	/AboutUs.aspx	
+BuyThanks	/BuyThanks.aspx	
+ConfirmPartner	/ConfirmPartner.aspx	
+ConfirmReset	/ConfirmReset.aspx	
+Connect	/Connect.aspx	
+Contact Us	/ContactUs.aspx	
+FAQ	/FAQ.aspx	
+Home	/default.aspx	
+Logon	/Logon.aspx	
+Register	/Register.aspx	
+ResetPass	/ResetPass.aspx	
+TOS Page	/TOSPage.aspx	
+Viewer	/Viewer.aspx	
