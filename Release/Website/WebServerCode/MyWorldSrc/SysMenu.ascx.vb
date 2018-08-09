@@ -37,23 +37,26 @@ Partial Class SysMenu
   '  MenuTitle - Display name for the entry in the menu. Blank for MenuCmd = B, required for all other commands.
   ' Example structure: TopMenu.AddItem(MenuID, ParentID, MenuCmd, MenuLink, MenuTitle)
 
+  'TODO: Need to make a matching JavaScript function that can call Popup pages for TOS And related pages. Take from Register page.
+  ' Remove Sysmenu from Register to not have a conflict and add a cancel button.
+
   'Trace.IsEnabled = False                                 ' Page controls this setting. Use only as override for menu
   TopMenu.SetTrace = Trace.IsEnabled
   TopMenu.AddItem(1, 0, "P", "/Default.aspx", "Home")
   TopMenu.AddItem(2, 0, "P", "/FAQ.aspx", "FAQ")
-  TopMenu.AddItem(3, 0, "M", "", "About US")
+  TopMenu.AddItem(3, 0, "M", "", "Information")
   TopMenu.AddItem(4, 3, "P", "/AboutUs.aspx", "About")
   TopMenu.AddItem(5, 3, "P", "/Team.aspx", "Meet The Team")
   TopMenu.AddItem(6, 0, "M", "", "World")
-  TopMenu.AddItem(7, 6, "P", "/Places.aspx", "SG Places")
+  TopMenu.AddItem(7, 6, "P", "/Places.aspx", "Places")
   TopMenu.AddItem(8, 0, "M", "", "Policy Center")
-  TopMenu.AddItem(9, 8, "P", "/BankingPage.aspx", "Banking Policy")
-  TopMenu.AddItem(10, 8, "P", "/CommunityStandardsPage.aspx", "Community Standards")
-  TopMenu.AddItem(11, 8, "P", "/DMCAPage.aspx", "DMCA and EUCD Policies")
-  TopMenu.AddItem(12, 8, "P", "/GamblingPage.aspx", "Gambling Policy")
-  TopMenu.AddItem(13, 8, "P", "/PrivacyPage.aspx", "Privacy Policy")
-  TopMenu.AddItem(14, 8, "P", "/TOSPage.aspx", "Terms of Service")
-  TopMenu.AddItem(15, 8, "P", "/TPVPage.aspx", "Third Party Viewer Policy")
+  TopMenu.AddItem(9, 8, "L", "ShowPOP('Banking');", "Banking Policy")
+  TopMenu.AddItem(10, 8, "L", "ShowPOP('Standards');", "Community Standards")
+  TopMenu.AddItem(11, 8, "L", "ShowPOP('DMCA');", "DMCA and EUCD Policies")
+  TopMenu.AddItem(12, 8, "L", "ShowPOP('Gambling');", "Gambling Policy")
+  TopMenu.AddItem(13, 8, "L", "ShowPOP('Privacy');", "Privacy Policy")
+  TopMenu.AddItem(14, 8, "L", "ShowPOP('TOS');", "Terms of Service")
+  TopMenu.AddItem(15, 8, "L", "ShowPOP('TPV');", "Third Party Viewer Policy")
   TopMenu.AddItem(16, 0, "M", "", "Support")
   TopMenu.AddItem(17, 16, "P", "/ContactUs.aspx", "Contact Us")
   TopMenu.AddItem(18, 16, "P", "/ViewerDownloads.aspx", "Viewer Downloads")

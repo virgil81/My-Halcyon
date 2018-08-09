@@ -139,8 +139,9 @@ Partial Class Logon
    End If
    drGetPage.Close()
    'tHtmlOut = Guid.NewGuid().ToString()
-
-   ShowContent.InnerHtml = tHtmlOut.ToString()
+   If tHtmlOut.ToString().Trim().Length > 0 Then
+    ShowContent.InnerHtml = tHtmlOut.ToString()
+   End If
 
    ' Display logon data fields
    FirstName.Value = ""
@@ -176,10 +177,10 @@ Partial Class Logon
  End Function
 
  ' Logon Button
- Private Sub Button3_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button1.Click
+ Private Sub Logon_CheckedChanged(sender As Object, e As EventArgs) Handles Logon.CheckedChanged
   Dim tMsg As String
   tMsg = ValAddEdit(True)
-
+  Logon.Checked = False                                     ' Allow retry in case of error
   If Not BodyTag.Attributes.Item("onload") Is Nothing Then  ' Remove onload error message display 
    BodyTag.Attributes.Remove("onload")
   End If
@@ -233,9 +234,20 @@ Partial Class Logon
       SysAccts.Read()
       Session("Access") = SysAccts("Nbr2")
      Else                                                   ' Website initial installation setup account for Grid Owner
-      If users("username").ToString().Trim() = "Grid" And users("lastname").ToString().Trim() = "Owner" Then
-       Session("Access") = 9                                ' SysAdmin Logon access
+      ' Get account name for Grid Owner in Control.
+      Dim MAvatar As MySql.Data.MySqlClient.MySqlDataReader
+      SQLCmd = "Select Parm2 " +
+               "From control " +
+               "Where Control='GridSysAccounts' and Parm1='GridOwnerAcct'"
+      If Trace.IsEnabled Then Trace.Warn("Economy", "Check for Economy SQLCmd: " + SQLCmd.ToString())
+      MAvatar = MyDB.GetReader("MySite", SQLCmd)
+      If MAvatar.HasRows() Then
+       MAvatar.Read()
+       If users("username").ToString().Trim() + " " + users("lastname").ToString().Trim() = MAvatar("Parm2").ToString().Trim() Then
+        Session("Access") = 9                                ' SysAdmin Logon access
+       End If
       End If
+      MAvatar.Close()
      End If
      SysAccts.Close()
 

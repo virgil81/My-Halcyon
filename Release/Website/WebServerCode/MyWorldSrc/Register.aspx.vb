@@ -165,13 +165,13 @@ Partial Class Register
    'SBMenu.AddItem("T", "", "Other Options")                 ' Title entry
    'SBMenu.AddItem("L", "CallEdit(0,'TempAddEdit.aspx');", "New Entry")        ' Javascript activated entry
    'SBMenu.AddItem("P", "/Path/page.aspx", "Link Name")      ' Program URL link entry
-   SBMenu.AddItem("L", "ShowBanking();", "Banking Policy")
-   SBMenu.AddItem("L", "ShowCommunityStandards();", "Community Standards")
-   SBMenu.AddItem("L", "ShowDMCA();", "DMCA and EUCD Policies")
-   SBMenu.AddItem("L", "ShowGambling();", "Gambling Policy")
-   SBMenu.AddItem("L", "ShowPrivacy();", "Privacy Policy")
-   SBMenu.AddItem("L", "ShowTOS();", "Terms of Service")
-   SBMenu.AddItem("L", "ShowTPV();", "Third Party Viewer Policy")
+   SBMenu.AddItem("L", "ShowPOP('Banking');", "Banking Policy")
+   SBMenu.AddItem("L", "ShowPOP('Standards');", "Community Standards")
+   SBMenu.AddItem("L", "ShowPOP('DMCA');", "DMCA and EUCD Policies")
+   SBMenu.AddItem("L", "ShowPOP('Gambling');", "Gambling Policy")
+   SBMenu.AddItem("L", "ShowPOP('Privacy');", "Privacy Policy")
+   SBMenu.AddItem("L", "ShowPOP('TOS');", "Terms of Service")
+   SBMenu.AddItem("L", "ShowPOP('TPV);", "Third Party Viewer Policy")
    If Trace.IsEnabled Then Trace.Warn("Register", "Show Menu")
    SidebarMenu.InnerHtml = SBMenu.BuildMenu("Menu Selections", 14) ' Build and display Menu options
    SBMenu.Close()

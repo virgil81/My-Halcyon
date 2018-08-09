@@ -15,6 +15,11 @@
   <script type="text/javascript" src="/scripts/TreeView.js"></script>
   <script type="text/javascript">
 
+   function DoLogon() { // Set Page display order
+    document.getElementById("Logon").checked = true;
+    setTimeout('__doPostBack(\'Logon\',\'\')', 0);
+   }
+
   </script>
  </head>
  <body id="BodyTag" runat="server">
@@ -23,73 +28,78 @@
    <uc1:Header id="Header1" runat="server"></uc1:Header>
    <uc1:SysMenu id="SysMenu1" runat="server"></uc1:SysMenu>
   </div>
-  <div id="LSideBar">
-   <table class="SidebarCtl">
-    <tr>
-     <td class="ProgTitle">My World Logon</td>
-    </tr>
-    <tr>
-     <td class="SidebarSpacer">&nbsp;</td>
-    </tr>
-    <!-- Sidebar Menu Control -->
-    <tr>
-     <td id="SidebarMenu" runat="server">
-      <!-- Sidebar menu content is set in code -->
-     </td>
-    </tr>
-   </table>
-  </div>
-  <div id="BodyArea">
+  <div id="BodyAreaFull">
    <table class="BodyTable">
     <tr>
      <td class="BodyBg">
       <table style=" width:100%;">
        <tr>
-        <td id="ShowContent" runat="server" style="width: 50%; vertical-align: top;">
-        </td>
-        <td style="width: 50%; vertical-align: top;">
-         <form id="aspnetForm" method="post" runat="server">
-         <table style="width: 95%; border: solid 1px #000000; margin: 10px 5px 10px 5px;">
-          <tr>
-           <td>
-            <table style="width: 100%;">
-             <tr>
-              <td class="FldTitleCol">
-               First Name
-              </td>
-              <td class="FldEntryCol">
-               <input type="text" id="FirstName" runat="server" size="20" maxlength="20" class="Form"/>
-              </td>
-             </tr>
-             <tr>
-              <td class="FldTitleCol">
-               Last Name
-              </td>
-              <td class="FldEntryCol">
-               <input type="text" id="LastName" runat="server" size="20" maxlength="20" class="Form"/>
-              </td>
-             </tr>
-             <tr>
-              <td class="FldTitleCol">
-               Password
-              </td>
-              <td class="FldEntryCol">
-               <input type="password" id="Password" runat="server" size="15" maxlength="15" class="Form"/>
-              </td>
-             </tr>
-            </table>
-           </td>
-          </tr>
-          <tr id="UpdDelBtn" runat="server"> 
-           <td style="text-align: center;" class="SubTitle">
-            <asp:Button ID="Button1" Text="Logon" runat="server"/>
-           </td>
-          </tr>
-         </table>
-         </form>
+        <td id="ShowContent" runat="server" style="height: 30px; min-height: 30px; width: 100%; vertical-align: top;">&nbsp;
         </td>
        </tr>
       </table>
+      <div style="overflow: auto; margin: 0; padding: 15px; ">
+       <div id="LogonBox">
+        <div class="Content">
+         <h1>Sign In</h1>
+         <form id="aspnetForm" method="post" runat="server">
+          <table style="width: 100%;">
+           <tr>
+            <td style="height: 30px; width: 30%; font-weight: bold; text-align: right; padding-right: 3px;">
+             First Name:
+            </td>
+            <td style="height: 30px; width: 70%; padding-left: 3px;">
+             <input type="text" id="FirstName" runat="server" size="20" maxlength="20" class="Form"/>
+            </td>
+           </tr>
+           <tr>
+            <td style="height: 30px; width: 30%; font-weight: bold; text-align: right; padding-right: 3px;">
+             Last Name:
+            </td>
+            <td style="height: 30px; width: 70%; padding-left: 3px;">
+             <input type="text" id="LastName" runat="server" size="20" maxlength="20" class="Form"/>
+            </td>
+           </tr>
+           <tr>
+            <td style="height: 30px; width: 30%; font-weight: bold; text-align: right; padding-right: 3px;">
+             Password:
+            </td>
+            <td style="height: 30px; width: 70%; padding-left: 3px;">
+             <input type="password" id="Password" runat="server" size="15" maxlength="15" class="Form"/>
+            </td>
+           </tr>
+          </table>
+          <table style="width: 100%;">
+           <tr id="UpdDelBtn" runat="server"> 
+            <td style="height: 30px; text-align: center;">
+             <span class="SimButton" onclick="DoLogon();">Login</span>
+            </td>
+           </tr>
+          </table>
+          <asp:CheckBox ID="Logon" runat="server" AutoPostBack="true" CssClass="NoShow" />
+         </form>
+        </div>
+       </div>
+       <div id="InfoBox">
+        <div class="Content">
+         <h1>Sign Up Today!</h1>
+         <p>Join MyWorld for any reason you like!</p>
+         <ul>
+          <li>Why not?</li>
+          <li>Explore!</li>
+          <li>Meet new friends!</li>
+         </ul>
+         <p><b>Membership is Free!</b></p>
+          <table style="width: 100%;">
+           <tr> 
+            <td style="height: 30px; text-align: center;">
+             <span class="SimButton" onclick="window.location='/Register.aspx';">Sign Up</span>
+            </td>
+           </tr>
+          </table>
+        </div>
+       </div>
+      </div>
      </td>
     </tr>
    </table>

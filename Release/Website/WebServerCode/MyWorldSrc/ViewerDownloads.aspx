@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html xmlns="https://www.w3.org/1999/xhtml" >
  <head>
-  <title>Second Galaxy</title>
+  <title>Viewers - My World</title>
   <link href="/styles/Site.css" type="text/css" rel="stylesheet" />
   <link href="/Styles/TopMenu.css" type="text/css" rel="stylesheet" />
   <link href="/styles/TreeView.css" type="text/css" rel="stylesheet" />

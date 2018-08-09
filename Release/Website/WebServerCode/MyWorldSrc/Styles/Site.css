@@ -13,6 +13,15 @@ body { margin: 0; background-color: #FFFFFF; line-height: normal; color: #000000
 #FooterPos { width: 100%; vertical-align: top; background-color: #FFFFFF; margin: 0; padding: 0;}
 #__asptrace {  width: 940px; vertical-align: top; background-color: #dddddd;  }
 
+/* Logon page controls*/
+#LogonBox { min-height: 300px; width: 400px; border: solid 1px #000000; border-radius: 5px; margin: 0 0 0 10px; 
+            display: inline-grid; float: left; }
+#InfoBox { min-height: 300px; width: 400px; border: solid 1px #000000; border-radius: 5px; margin: 0 10px 0 0; 
+           display: inline-grid; float: right; padding: 0 0 0 0; }
+.Content { padding: 15px; }
+.SimButton { border: solid 1px #000000; padding: 1px 6px; cursor: default; 
+             -webkit-appearance: push-button; border-width: 2px; font: 400 13.3333px Arial; }
+
 table.HeaderTable { width: 100%; /*background-image: url('/Images/Site/Header.jpg'); background-repeat: no-repeat;*/}
  td.Header { width: 50%; height: 50px; text-align: center; font-size: 32px; font-weight: bold; }
  td.HeaderLeft { width: 50%; height: 50px; text-align: right; font-size: 32px; font-weight: bold; }
@@ -59,7 +68,7 @@ p.Paragraphs { font-family: Verdana, Arial, Helvetica, Geneva, sans-serif; font-
 
 /* My World Account Avatar Animations */
 /* http://www.w3schools.com/css/css3_animations.asp */
-.avatar{width:200px; height:200px; display: inline-block; margin:0 auto; padding:0; background-position: 0px 100%; border-radius: 10px; border-right: 3px solid #36495A; border-bottom: 3px solid #36495A; box-shadow: inset 0 0 10px #AAAAAA;}
+.avatar{width:200px; height:200px; display: inline-grid; margin:0 auto; padding:0; background-position: 0px 100%; border-radius: 10px; border-right: 3px solid #36495A; border-bottom: 3px solid #36495A; box-shadow: inset 0 0 10px #AAAAAA;}
 
 /* Delete window specific settings */
 #DelWin { width: 500px; vertical-align: top; background-color: #ffffff; }
@@ -142,6 +151,8 @@ a.MenuLink:hover { color: #000000; text-decoration: none; font-weight: normal; f
 
 a.TOC { color: #000000; text-decoration: none; font-weight: bold; font-size: 14px; }
 a.TOCRtn { color: #AAAAAA; text-decoration: none; font-weight: bold; font-size: 14px; }
+
+a.Footer {font-family: Verdana, Arial, Helvetica, Geneva, sans-serif; font-size: 9px; font-style: normal; line-height: normal; font-weight: bold; font-variant: normal; color: #333333; }
 
 p.Justify { text-align: justify; }
 

@@ -32,7 +32,7 @@ function TopMenuOver(aLevel,aParent,divID) {    // Activated by a Menu entry to 
    //document.getElementById(divID).style.top=(document.getElementById(aParent).getBoundingClientRect().bottom-document.getElementById(aParent).getBoundingClientRect().top+document.getElementById(aParent).getBoundingClientRect().top)+'px';
    document.getElementById(divID).style.top=
     (document.getElementById(aParent).getBoundingClientRect().bottom - 
-     document.getElementById(aParent).getBoundingClientRect().top)+'px';
+     document.getElementById(aParent).getBoundingClientRect().top+11)+'px';
    document.getElementById(divID).style.width=(document.getElementById(aParent).getBoundingClientRect().right-document.getElementById(aParent).getBoundingClientRect().left)+'px';
    currOpen.push(divID);
    currActive.push(0);

@@ -1,6 +1,5 @@
 <%@ Page Language="VB" AutoEventWireup="false" CodeFile="Register.aspx.vb" Inherits="Register" %>
 <%@ Register TagPrefix="uc1" TagName="Header" Src="~/Header.ascx" %>
-<%@ Register TagPrefix="uc1" TagName="SysMenu" Src="~/SysMenu.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Footer" Src="~/Footer.ascx" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -8,39 +7,13 @@
  <head>
   <title>Register - My World</title>
   <link href="/styles/Site.css" type="text/css" rel="stylesheet" />
-  <link href="/Styles/TopMenu.css" type="text/css" rel="stylesheet" />
   <link href="/styles/TreeView.css" type="text/css" rel="stylesheet" />
   <script type="text/javascript" src="/Scripts/Cookie.js"></script>
   <script type="text/javascript" src="/Scripts/TreeView.js"></script>
-  <script type="text/javascript" src="/Scripts/TopMenu.js"></script>
   <script type="text/javascript">
 
-   function ShowBanking() {
-    window.open('/BankingPage.aspx', 'BankingPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowCommunityStandards() {
-    window.open('/CommunityStandardsPage.aspx', 'CommunityStandardsPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowDMCA() {
-    window.open('/DMCAPage.aspx', 'DMCAPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowGambling() {
-    window.open('/GamblingPage.aspx', 'GamblingPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowPrivacy() {
-    window.open('/PrivacyPage.aspx', 'PrivacyPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowTOS() {
-    window.open('/TOSPage.aspx','TOSPage','width=840,height=600,scrollbars=yes,resizable=yes');
-   }
-
-   function ShowTPV() {
-    window.open('/TPVPage.aspx', 'TPVPage', 'width=840,height=600,scrollbars=yes,resizable=yes');
+   function ShowPOP(tPage) {
+    window.open('/' + tPage + '.aspx', tPage, 'width=840,height=600,scrollbars=yes,resizable=yes');
    }
 
    var PriorAvatarEl = null;
@@ -61,7 +34,6 @@
   <!-- Built from Web Basic Page Template v. 1.0 -->
   <div id="HeaderPos">
    <uc1:Header id="Header1" runat="server"></uc1:Header>
-   <uc1:SysMenu id="SysMenu1" runat="server"></uc1:SysMenu>
   </div>
   <div id="LSideBar">
    <table class="SidebarCtl">
@@ -162,7 +134,8 @@
         </tr>
         <tr>
          <td colspan="2" style="text-align: center;" class="SubTitle">
-          <asp:Button ID="Button1" runat="server" Text="Register" />
+          <asp:Button ID="Button1" runat="server" Text="Register" />&nbsp; &nbsp;
+          <input type="button" onclick="window.location = '/Default.aspx';" value="Cancel" />
          </td>
         </tr>
         <tr>
