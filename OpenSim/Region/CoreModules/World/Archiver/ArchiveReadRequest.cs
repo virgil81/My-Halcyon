@@ -1,29 +1,31 @@
-/*
- * Copyright (c) InWorldz Halcyon Developers
- * Copyright (c) Contributors, http://opensimulator.org/
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the OpenSim Project nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/// <license>
+///     Copyright (c) Contributors, InWorldz Halcyon Developers
+///     See CONTRIBUTORS.TXT for a full list of copyright holders.
+///     For an explanation of the license of each contributor and the content it
+///     covers please see the Licenses directory.
+///
+///     Redistribution and use in source and binary forms, with or without
+///     modification, are permitted provided that the following conditions are met:
+///         * Redistributions of source code must retain the above copyright
+///         notice, this list of conditions and the following disclaimer.
+///         * Redistributions in binary form must reproduce the above copyright
+///         notice, this list of conditions and the following disclaimer in the
+///         documentation and/or other materials provided with the distribution.
+///         * Neither the name of the Halcyon Project nor the
+///         names of its contributors may be used to endorse or promote products
+///         derived from this software without specific prior written permission.
+///
+///     THIS SOFTWARE IS PROVIDED BY THE DEVELOPERS ``AS IS'' AND ANY
+///     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+///     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+///     DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE FOR ANY
+///     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+///     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+///     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+///     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+///     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+///     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/// </license>
 
 using System;
 using System.Collections.Generic;
@@ -35,18 +37,18 @@ using System.Text;
 using log4net;
 using OpenMetaverse;
 using OpenSim.Framework;
+using OpenSim.Framework.Communications.Cache;
 using OpenSim.Framework.Serialization;
 using OpenSim.Framework.Serialization.External;
-using OpenSim.Framework.Communications.Cache;
 using OpenSim.Region.CoreModules.World.Terrain;
+using OpenSim.Region.Framework;
 using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
-using OpenSim.Region.Framework;
 
 namespace OpenSim.Region.CoreModules.World.Archiver
 {
     /// <summary>
-    /// Handles an individual archive read request
+    ///     Handles an individual archive read request
     /// </summary>
     public class ArchiveReadRequest
     {
@@ -56,22 +58,22 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         private Stream m_loadStream;
         private Guid m_requestId;
         private string m_errorMessage;
-        private IGroupsModule m_GroupsModule; 
+        private IGroupsModule m_GroupsModule;
 
-        /// <value>
-        /// Should the archive being loaded be merged with what is already on the region?
-        /// </value>
+        /// <summary>
+        ///     Should the archive being loaded be merged with what is already on the region?
+        /// </summary>
         private bool m_merge;
 
         /// <summary>
-        /// Should the dearchive process be allowed to reassign creators and previous users
+        ///     Should the dearchive process be allowed to reassign creators and previous users
         /// </summary>
         private bool m_allowUserReassignment;
 
         private bool m_skipErrorGroups = false;
 
         /// <summary>
-        /// Used to cache lookups for valid uuids.
+        ///     Used to cache lookups for valid uuids.
         /// </summary>
         private IDictionary<UUID, bool> m_validUserUuids =
             new Dictionary<UUID, bool>
@@ -104,7 +106,7 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         }
 
         /// <summary>
-        /// Dearchive the region embodied in this request.
+        ///     Dearchive the region embodied in this request.
         /// </summary>
         public void DearchiveRegion()
         {
@@ -115,7 +117,10 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         public bool NoCopyObjectOrContents(SceneObjectGroup target)
         {
             if (m_allowUserReassignment)
-                return false;    // ignore no-copy permissions for "load oar"
+            {
+                // Ignore no-copy permissions for "load oar"
+                return false;
+            }
 
             // "loadexplicit oar" and rezzed in-world object is no-copy
             return ((target.GetEffectivePermissions(true) & (uint)PermissionMask.Copy) != (uint)PermissionMask.Copy);
@@ -127,21 +132,20 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             int failedAssetRestores = 0;
             List<string> serializedSceneObjects = new List<string>();
             string filePath = "NONE";
-            
+
             try
             {
                 TarArchiveReader archive = new TarArchiveReader(m_loadStream);
-               
+
                 byte[] data;
                 TarArchiveReader.TarEntryType entryType;
 
                 while ((data = archive.ReadEntry(out filePath, out entryType)) != null)
-                {                    
-                    //m_log.DebugFormat(
-                    //    "[ARCHIVER]: Successfully read {0} ({1} bytes)", filePath, data.Length);
-                    
+                {
                     if (TarArchiveReader.TarEntryType.TYPE_DIRECTORY == entryType)
-                        continue;                    
+                    {
+                        continue;
+                    }
 
                     if (filePath.StartsWith(ArchiveConstants.OBJECTS_PATH))
                     {
@@ -150,9 +154,13 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                     else if (filePath.StartsWith(ArchiveConstants.ASSETS_PATH))
                     {
                         if (LoadAsset(filePath, data))
+                        {
                             successfulAssetRestores++;
+                        }
                         else
+                        {
                             failedAssetRestores++;
+                        }
                     }
                     else if (!m_merge && filePath.StartsWith(ArchiveConstants.TERRAINS_PATH))
                     {
@@ -164,29 +172,26 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                     }
                 }
 
-                //m_log.Debug("[ARCHIVER]: Reached end of archive");
-
                 archive.Close();
             }
             catch (Exception e)
             {
-                m_log.ErrorFormat(
-                    "[ARCHIVER]: Aborting load with error in archive file {0}.  {1}", filePath, e);
+                m_log.ErrorFormat("[Archiver]: Aborting load with error in archive file {0}.  {1}", filePath, e);
                 m_errorMessage += e.ToString();
                 m_scene.EventManager.TriggerOarFileLoaded(m_requestId, m_errorMessage);
                 return;
             }
 
-            m_log.InfoFormat("[ARCHIVER]: Restored {0} assets", successfulAssetRestores);
+            m_log.InfoFormat("[Archiver]: Restored {0} assets", successfulAssetRestores);
 
             if (failedAssetRestores > 0)
             {
-                m_log.ErrorFormat("[ARCHIVER]: Failed to load {0} assets", failedAssetRestores);
+                m_log.ErrorFormat("[Archiver]: Failed to load {0} assets", failedAssetRestores);
                 m_errorMessage += String.Format("Failed to load {0} assets", failedAssetRestores);
             }
 
             // Reload serialized prims
-            m_log.InfoFormat("[ARCHIVER]: Preparing {0} scene objects.  Please wait.", serializedSceneObjects.Count);
+            m_log.InfoFormat("[Archiver]: Preparing {0} scene objects.  Please wait.", serializedSceneObjects.Count);
 
             IRegionSerializerModule serializer = m_scene.RequestModuleInterface<IRegionSerializerModule>();
             int sceneObjectsLoadedCount = 0;
@@ -199,21 +204,35 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             foreach (string serializedSceneObject in serializedSceneObjects)
             {
                 SceneObjectGroup sceneObject;
+
                 try
                 {
                     sceneObject = serializer.DeserializeGroupFromXml2(serializedSceneObject);
                 }
                 catch (Exception e)
                 {
-                    m_log.InfoFormat("[ARCHIVER]: Error while deserializing group: {0}", e);
-                    if (m_skipErrorGroups) continue;
-                    else throw;
+                    m_log.InfoFormat("[Archiver]: Error while deserializing group: {0}", e);
+
+                    if (m_skipErrorGroups)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 if (sceneObject == null)
                 {
-                    if (m_skipErrorGroups) continue;
-                    else throw new Exception("Error while deserializing group");
+                    if (m_skipErrorGroups)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw new Exception("Error while deserializing group");
+                    }
                 }
 
                 // For now, give all incoming scene objects new uuids.  This will allow scenes to be cloned
@@ -221,6 +240,7 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 // to the same scene (when this is possible).
                 UUID OldUUID = sceneObject.UUID;
                 sceneObject.ResetIDs();
+
                 // if sceneObject is no-copy, save the old ID with the new ID.
                 OriginalBackupIDs[sceneObject.UUID] = OldUUID;
 
@@ -229,32 +249,30 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 UUID masterAvatarId = m_scene.RegionInfo.MasterAvatarAssignedUUID;
 
                 if (m_scene.RegionInfo.EstateSettings.EstateOwner != UUID.Zero)
+                {
                     masterAvatarId = m_scene.RegionInfo.EstateSettings.EstateOwner;
+                }
 
                 foreach (SceneObjectPart part in sceneObject.GetParts())
                 {
                     if (!ResolveUserUuid(part.CreatorID))
                     {
-                        m_log.WarnFormat("[ARCHIVER]: Could not resolve av/group ID {0} for object '{1}' part creator", part.CreatorID, sceneObject.Name);
-                        // Don't fail to load an object owned by a valid user, just because a creator no longer exists in the DB. (We've seen this with some of YadNi's stuff.)
-                        // objectFixingFailed = true;
-                        // part.CreatorID = masterAvatarId;
+                        m_log.WarnFormat("[Archiver]: Could not resolve av/group ID {0} for object '{1}' part creator", part.CreatorID, sceneObject.Name);
                     }
 
                     if (!ResolveUserUuid(part.OwnerID))
                     {
-                        m_log.WarnFormat("[ARCHIVER]: Could not resolve av/group ID {0} for object '{1}' part owner", part.OwnerID, sceneObject.Name);
+                        m_log.WarnFormat("[Archiver]: Could not resolve av/group ID {0} for object '{1}' part owner", part.OwnerID, sceneObject.Name);
                         objectFixingFailed = true;
                         part.OwnerID = masterAvatarId;
                     }
 
                     if (!ResolveUserUuid(part.LastOwnerID))
                     {
-                        m_log.WarnFormat("[ARCHIVER]: Could not resolve av/group ID {0} for object '{1}' part last owner", part.LastOwnerID, sceneObject.Name);
+                        m_log.WarnFormat("[Archiver]: Could not resolve av/group ID {0} for object '{1}' part last owner", part.LastOwnerID, sceneObject.Name);
                         objectFixingFailed = true;
                         part.LastOwnerID = masterAvatarId;
                     }
-
 
                     // Fix ownership/creator of inventory items
                     // Not doing so results in inventory items
@@ -262,21 +280,19 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                     lock (part.TaskInventory)
                     {
                         TaskInventoryDictionary inv = part.TaskInventory;
+
                         foreach (KeyValuePair<UUID, TaskInventoryItem> kvp in inv)
                         {
                             if (!ResolveUserUuid(kvp.Value.OwnerID))
                             {
-                                m_log.WarnFormat("[ARCHIVER]: Could not resolve av/group ID {0} for object '{1}' inventory item owner", kvp.Value.OwnerID, sceneObject.Name);
+                                m_log.WarnFormat("[Archiver]: Could not resolve av/group ID {0} for object '{1}' inventory item owner", kvp.Value.OwnerID, sceneObject.Name);
                                 objectFixingFailed = true;
                                 kvp.Value.OwnerID = masterAvatarId;
                             }
 
                             if (!ResolveUserUuid(kvp.Value.CreatorID))
                             {
-                                m_log.WarnFormat("[ARCHIVER]: Could not resolve av/group ID {0} for object '{1}' inventory item creator", kvp.Value.CreatorID, sceneObject.Name);
-                                // Don't fail to load an object owned by a valid user, just because a creator no longer exists in the DB. (We've seen this with some of YadNi's stuff.)
-                                // objectFixingFailed = true;
-                                // kvp.Value.CreatorID = masterAvatarId;
+                                m_log.WarnFormat("[Archiver]: Could not resolve av/group ID {0} for object '{1}' inventory item creator", kvp.Value.CreatorID, sceneObject.Name);
                             }
                         }
                     }
@@ -287,19 +303,20 @@ namespace OpenSim.Region.CoreModules.World.Archiver
 
             if (objectFixingFailed && !m_allowUserReassignment)
             {
-                m_log.Error("[ARCHIVER]: Could not restore scene objects. One or more avatar accounts not found.");
+                m_log.Error("[Archiver]: Could not restore scene objects. One or more avatar accounts not found.");
                 return;
             }
 
             Dictionary<UUID, SceneObjectGroup> ExistingNoCopyObjects = new Dictionary<UUID,SceneObjectGroup>();
+
             if (!m_merge)
             {
-                m_log.Info("[ARCHIVER]: Clearing all existing scene objects");
+                m_log.Info("[Archiver]: Clearing all existing scene objects");
                 m_scene.DeleteAllSceneObjectsExcept(delegate(SceneObjectGroup existingSOG)
                                 {   // Return true if this object should be skipped in the delete.
 
                                     // Don't delete any no-copy objects.
-                                    if (NoCopyObjectOrContents(existingSOG)) 
+                                    if (NoCopyObjectOrContents(existingSOG))
                                     {
                                         ExistingNoCopyObjects.Add(existingSOG.UUID, existingSOG);
                                         return true;
@@ -308,18 +325,21 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                                 });
             }
 
-            m_log.InfoFormat("[ARCHIVER]: Loading {0} scene objects.  Please wait.", serializedSceneObjects.Count);
+            m_log.InfoFormat("[Archiver]: Loading {0} scene objects.  Please wait.", serializedSceneObjects.Count);
 
             // sceneObject is the one from backup to restore to the scene
             foreach (SceneObjectGroup backupObject in backupObjects)
             {
                 SceneObjectGroup existingObject = null;
                 UUID originalUUID = OriginalBackupIDs[backupObject.UUID];
+
                 // Don't restore any no-copy objects unless there was an existing matching UUID in the scene.
                 if (ExistingNoCopyObjects.ContainsKey(originalUUID))
+                {
                     existingObject = ExistingNoCopyObjects[originalUUID];
-                // existingSOG here means existing NO-COPY object, not deleted from scene above
+                }
 
+                // existingSOG here means existing NO-COPY object, not deleted from scene above
                 if (NoCopyObjectOrContents(backupObject))
                 {
                     if ((existingObject != null) && !existingObject.IsAttachment)
@@ -328,10 +348,10 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                         existingObject.Rotation = backupObject.Rotation;
                         existingObject.AbsolutePosition = backupObject.AbsolutePosition;
                     }
+
                     // don't restore no-copy items
                 }
-                else
-                if (m_scene.AddRestoredSceneObject(backupObject, true, false))
+                else if (m_scene.AddRestoredSceneObject(backupObject, true, false))
                 {
                     // this may have added 2nd copyable copy if existingObject is no-copy
                     sceneObjectsLoadedCount++;
@@ -339,20 +359,22 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 }
             }
 
-            m_log.InfoFormat("[ARCHIVER]: Restored {0} scene objects to the scene", sceneObjectsLoadedCount);
+            m_log.InfoFormat("[Archiver]: Restored {0} scene objects to the scene", sceneObjectsLoadedCount);
 
             int ignoredObjects = serializedSceneObjects.Count - sceneObjectsLoadedCount;
 
             if (ignoredObjects > 0)
-                m_log.WarnFormat("[ARCHIVER]: Ignored {0} scene objects that already existed in the scene", ignoredObjects);
+            {
+                m_log.WarnFormat("[Archiver]: Ignored {0} scene objects that already existed in the scene", ignoredObjects);
+            }
 
-            m_log.InfoFormat("[ARCHIVER]: Successfully loaded archive");
+            m_log.InfoFormat("[Archiver]: Successfully loaded archive");
 
             m_scene.EventManager.TriggerOarFileLoaded(m_requestId, m_errorMessage);
         }
 
         /// <summary>
-        /// Look up the given user id to check whether it's one that is valid for this grid.
+        ///     Look up the given user id to check whether it's one that is valid for this grid.
         /// </summary>
         /// <param name="uuid"></param>
         /// <returns></returns>
@@ -363,13 +385,14 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 try
                 {
                     UserProfileData profile = m_scene.CommsManager.UserService.GetUserProfile(uuid);
+
                     if (profile != null)
                     {
                         m_validUserUuids.Add(uuid, true);
                     }
                     else
                     {
-                        //what about group ids?
+                        // what about group ids?
                         GroupRecord grpRec = m_GroupsModule.GetGroupRecord(uuid);
 
                         if (grpRec != null)
@@ -384,7 +407,7 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 }
                 catch (UserProfileException)
                 {
-                    //what about group ids?
+                    // what about group ids?
                     GroupRecord grpRec = m_GroupsModule.GetGroupRecord(uuid);
 
                     if (grpRec != null)
@@ -399,13 +422,17 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             }
 
             if (m_validUserUuids[uuid])
+            {
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         /// <summary>
-        /// Load an asset
+        ///     Load an asset
         /// </summary>
         /// <param name="assetFilename"></param>
         /// <param name="data"></param>
@@ -419,7 +446,7 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             if (i == -1)
             {
                 m_log.ErrorFormat(
-                    "[ARCHIVER]: Could not find extension information in asset path {0} since it's missing the separator {1}.  Skipping",
+                    "[Archiver]: Could not find extension information in asset path {0} since it's missing the separator {1}.  Skipping",
                     assetPath, ArchiveConstants.ASSET_EXTENSION_SEPARATOR);
 
                 return false;
@@ -432,8 +459,6 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             {
                 sbyte assetType = ArchiveConstants.EXTENSION_TO_ASSET_TYPE[extension];
 
-                //m_log.DebugFormat("[ARCHIVER]: Importing asset {0}, type {1}", uuid, assetType);
-
                 AssetBase asset = new AssetBase(new UUID(uuid), String.Empty);
                 asset.Type = assetType;
                 asset.Data = data;
@@ -444,26 +469,15 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 }
                 catch (AssetServerException e)
                 {
-                    m_log.ErrorFormat("[ARCHIVER] Uploading asset {0} failed: {1}", uuid, e);
+                    m_log.ErrorFormat("[Archiver]: Uploading asset {0} failed: {1}", uuid, e);
                 }
-
-                /**
-                 * Create layers on decode for image assets.  This is likely to significantly increase the time to load archives so
-                 * it might be best done when dearchive takes place on a separate thread
-                if (asset.Type=AssetType.Texture)
-                {
-                    IJ2KDecoder cacheLayerDecode = scene.RequestModuleInterface<IJ2KDecoder>();
-                    if (cacheLayerDecode != null)
-                        cacheLayerDecode.syncdecode(asset.FullID, asset.Data);
-                }
-                */
 
                 return true;
             }
             else
             {
                 m_log.ErrorFormat(
-                    "[ARCHIVER]: Tried to dearchive data with path {0} with an unknown type extension {1}",
+                    "[Archiver]: Tried to dearchive data with path {0} with an unknown type extension {1}",
                     assetPath, extension);
 
                 return false;
@@ -471,12 +485,12 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         }
 
         /// <summary>
-        /// Load region settings data
+        ///     Load region settings data
         /// </summary>
         /// <param name="settingsPath"></param>
         /// <param name="data"></param>
         /// <returns>
-        /// true if settings were loaded successfully, false otherwise
+        ///     true if settings were loaded successfully, false otherwise
         /// </returns>
         private bool LoadRegionSettings(string settingsPath, byte[] data)
         {
@@ -489,8 +503,9 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             catch (Exception e)
             {
                 m_log.ErrorFormat(
-                    "[ARCHIVER]: Could not parse region settings file {0}.  Ignoring.  Exception was {1}",
+                    "[Archiver]: Could not parse region settings file {0}.  Ignoring.  Exception was {1}",
                     settingsPath, e);
+
                 return false;
             }
 
@@ -526,6 +541,8 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             currentRegionSettings.UseEstateSun = loadedRegionSettings.UseEstateSun;
             currentRegionSettings.WaterHeight = loadedRegionSettings.WaterHeight;
 
+            currentRegionSettings.Save();
+
             IEstateModule estateModule = m_scene.RequestModuleInterface<IEstateModule>();
             estateModule.sendRegionHandshakeToAll();
 
@@ -533,12 +550,12 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         }
 
         /// <summary>
-        /// Load terrain data
+        ///     Load terrain data
         /// </summary>
         /// <param name="terrainPath"></param>
         /// <param name="data"></param>
         /// <returns>
-        /// true if terrain was resolved successfully, false otherwise.
+        ///     true if terrain was resolved successfully, false otherwise.
         /// </returns>
         private bool LoadTerrain(string terrainPath, byte[] data)
         {
@@ -548,13 +565,13 @@ namespace OpenSim.Region.CoreModules.World.Archiver
             terrainModule.LoadFromStream(terrainPath, ms);
             ms.Close();
 
-            m_log.DebugFormat("[ARCHIVER]: Restored terrain {0}", terrainPath);
+            m_log.DebugFormat("[Archiver]: Restored terrain {0}", terrainPath);
 
             return true;
         }
 
         /// <summary>
-        /// Resolve path to a working FileStream
+        ///     Resolve path to a working FileStream
         /// </summary>
         private Stream GetStream(string path)
         {
@@ -567,6 +584,7 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                 else
                 {
                     Uri uri = new Uri(path); // throw exception if not valid URI
+
                     if (uri.Scheme == "file")
                     {
                         return new FileStream(uri.AbsolutePath, FileMode.Open, FileAccess.Read);
@@ -574,10 +592,11 @@ namespace OpenSim.Region.CoreModules.World.Archiver
                     else
                     {
                         if (uri.Scheme != "http")
+                        {
                             throw new Exception(String.Format("Unsupported URI scheme ({0})", path));
+                        }
 
                         // OK, now we know we have an HTTP URI to work with
-
                         return URIFetch(uri);
                     }
                 }
@@ -592,18 +611,20 @@ namespace OpenSim.Region.CoreModules.World.Archiver
         {
             HttpWebRequest request  = (HttpWebRequest)  WebRequest.Create(uri);
 
-            // request.Credentials = credentials;
-
             request.ContentLength = 0;
 
             WebResponse response = request.GetResponse();
             Stream file = response.GetResponseStream();
 
             if (response.ContentType != "application/x-oar")
+            {
                 throw new Exception(String.Format("{0} does not identify an OAR file", uri.ToString()));
+            }
 
             if (response.ContentLength == 0)
+            {
                 throw new Exception(String.Format("{0} returned an empty file", uri.ToString()));
+            }
 
             // return new BufferedStream(file, (int) response.ContentLength);
             return new BufferedStream(file, 1000000);
