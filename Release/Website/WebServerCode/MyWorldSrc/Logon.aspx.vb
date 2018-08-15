@@ -96,11 +96,11 @@ Partial Class Logon
     SQLCmd = "Update pagedetail " +
             " Set Active= Case " +
             "  When AutoStart is not null and AutoExpire is not null " +
-            "  Then Case When GetDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
+            "  Then Case When CurDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
             "  When AutoStart is not null and AutoExpire is null " +
-            "  Then Case When AutoStart<=GetDate() Then 1 Else Active End " +
+            "  Then Case When AutoStart<=CurDate() Then 1 Else Active End " +
             "  When AutoStart is null and AutoExpire is not null " +
-            "  Then Case When AutoExpire<GetDate() Then 0 Else 1 End " +
+            "  Then Case When AutoExpire<CurDate() Then 0 Else 1 End " +
             "  End " +
             "Where (AutoStart is not null Or AutoExpire is not null) and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
     If Trace.IsEnabled Then Trace.Warn("Logon", "Update Page AutoStart: " + SQLCmd.ToString())
@@ -177,10 +177,9 @@ Partial Class Logon
  End Function
 
  ' Logon Button
- Private Sub Logon_CheckedChanged(sender As Object, e As EventArgs) Handles Logon.CheckedChanged
+ Private Sub Button1_ServerClick(sender As Object, e As EventArgs) Handles Button1.ServerClick
   Dim tMsg As String
   tMsg = ValAddEdit(True)
-  Logon.Checked = False                                     ' Allow retry in case of error
   If Not BodyTag.Attributes.Item("onload") Is Nothing Then  ' Remove onload error message display 
    BodyTag.Attributes.Remove("onload")
   End If
@@ -319,6 +318,7 @@ Partial Class Logon
    BodyTag.Attributes.Add("onload", "ShowMsg();")           ' Activate onload option to show message
    PageCtl.AlertMessage(Me, tMsg, "ErrMsg")                 ' Display Alert Message
   Else
+   If Trace.IsEnabled Then Trace.Warn("Logon", "** Go to Account page")
    If Not Trace.IsEnabled Then
     Response.Redirect("Account.aspx")                       ' Continue to Selection page
    End If

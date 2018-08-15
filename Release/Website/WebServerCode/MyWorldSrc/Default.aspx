@@ -7,6 +7,9 @@
 <html xmlns="https://www.w3.org/1999/xhtml" >
  <head>
   <title>Home - My World</title>
+  <meta id="MetaDescription" name="DESCRIPTION" content="My World virtual world." />
+  <meta id="MetaKeywords" name="KEYWORDS" content="[%KeyWorldslist%]" />
+  <meta id="MetaRobots" name="ROBOTS" content="INDEX, FOLLOW" />
   <link href="/styles/Site.css" type="text/css" rel="stylesheet" />
   <link href="/Styles/TopMenu.css" type="text/css" rel="stylesheet" />
   <link href="/styles/TreeView.css" type="text/css" rel="stylesheet" />

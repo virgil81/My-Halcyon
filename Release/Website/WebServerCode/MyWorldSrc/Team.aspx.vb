@@ -93,11 +93,11 @@ Partial Class Team
     SQLCmd = "Update pagedetail " +
              " Set Active= Case " +
              "   When AutoStart is not null and AutoExpire is not null " +
-             "   Then Case When GetDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
+             "   Then Case When CurDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
              "   When AutoStart is not null and AutoExpire is null " +
-             "   Then Case When AutoStart<=GetDate() Then 1 Else Active End " +
+             "   Then Case When AutoStart<=CurDate() Then 1 Else Active End " +
              "   When AutoStart is null and AutoExpire is not null " +
-             "   Then Case When AutoExpire<GetDate() Then 0 Else 1 End " +
+             "   Then Case When AutoExpire<CurDate() Then 0 Else 1 End " +
              "   End " +
              "Where (AutoStart is not null Or AutoExpire is not null) and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
     If Trace.IsEnabled Then Trace.Warn("Team", "Update Page AutoStart: " + SQLCmd)

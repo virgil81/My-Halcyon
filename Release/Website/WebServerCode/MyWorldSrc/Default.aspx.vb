@@ -229,14 +229,27 @@ Partial Class _Default
    If System.IO.File.Exists(FileName) Then              ' load file if it exists
     If Trace.IsEnabled Then Trace.Warn("Default", "Loading Configuration: " + FileName.ToString())
     Dim FileReader As New System.IO.StreamReader(FileName) ' Create file access
+    SQLCmd = "Delete From pagemaster " +
+             "Where PageID Not in (Select PageID From pagedetail)"
+    If Trace.IsEnabled Then Trace.Warn("Default", "Clear unlinked Pages SQLCmd: " + SQLCmd)
+    MyDB.DBCmd("MySite", SQLCmd)
     SQLFields = "Name,Path"
+    Dim ChkPage As MySql.Data.MySqlClient.MySqlDataReader
     While Not FileReader.EndOfStream()
      tLine = FileReader.ReadLine()
      tFields = tLine.Split(Chr(9))
      SQLValues = MyDB.SQLStr(tFields(0)) + "," + MyDB.SQLStr(tFields(1))
-     SQLCmd = "Insert into pagemaster (" + SQLFields.ToString() + ") Values (" + SQLValues.ToString() + ")"
-     If Trace.IsEnabled Then Trace.Warn("Default", "Insert Page record: " + SQLCmd)
-     MyDB.DBCmd("MySite", SQLCmd)
+     ' Verify the page does not already exist!
+     SQLCmd = "Select name From pagemaster Where Path=" + MyDB.SQLStr(tFields(1))
+     If Trace.IsEnabled Then Trace.Warn("Default", "Page Record Check: " + SQLCmd)
+     ChkPage = MyDB.GetReader("MySite", SQLCmd)
+     ChkPage = MyDB.GetReader("MySite", SQLCmd)
+     If Not ChkPage.HasRows() Then
+      SQLCmd = "Insert into pagemaster (" + SQLFields.ToString() + ") Values (" + SQLValues.ToString() + ")"
+      If Trace.IsEnabled Then Trace.Warn("Default", "Insert Page record: " + SQLCmd)
+      MyDB.DBCmd("MySite", SQLCmd)
+     End If
+     ChkPage.Close()
     End While
     FileReader.Close()
     System.IO.File.Delete(FileName)                    ' Remove PageList.txt configuration file
@@ -249,7 +262,6 @@ Partial Class _Default
    drGetPage = MyDB.GetReader("MySite", SQLCmd)
    If Trace.IsEnabled And MyDB.Error Then Trace.Warn("Default", "DB Error: " + MyDB.ErrMessage().ToString())
    If Not drGetPage.HasRows() Then
-    drGetPage.Close()
     ' Create page entry
     SQLFields = "Name,Path"
     SQLValues = "'Home'," + MyDB.SQLStr(Request.ServerVariables("URL"))
@@ -260,16 +272,17 @@ Partial Class _Default
     SQLCmd = "Select PageID From pagemaster Where Path=" + MyDB.SQLStr(Request.ServerVariables("URL"))
     drGetPage = MyDB.GetReader("MySite", SQLCmd)
    End If
+   drGetPage.Close()
 
    If drGetPage.Read() Then
     SQLCmd = "Update pagedetail " +
              " Set Active= Case " +
              "   When AutoStart is not null and AutoExpire is not null " +
-             "   Then Case When GetDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
+             "   Then Case When CurDate() between AutoStart and AutoExpire Then 1 Else 0 End " +
              "   When AutoStart is not null and AutoExpire is null " +
-             "   Then Case When AutoStart<=GetDate() Then 1 Else Active End " +
+             "   Then Case When AutoStart<=CurDate() Then 1 Else Active End " +
              "   When AutoStart is null and AutoExpire is not null " +
-             "   Then Case When AutoExpire<GetDate() Then 0 Else 1 End " +
+             "   Then Case When AutoExpire<CurDate() Then 0 Else 1 End " +
              "   End " +
              "Where (AutoStart is not null Or AutoExpire is not null) and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
     If Trace.IsEnabled Then Trace.Warn("Default", "Update Page AutoStart: " + SQLCmd)

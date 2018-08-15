@@ -15,11 +15,6 @@
   <script type="text/javascript" src="/scripts/TreeView.js"></script>
   <script type="text/javascript">
 
-   function DoLogon() { // Set Page display order
-    document.getElementById("Logon").checked = true;
-    setTimeout('__doPostBack(\'Logon\',\'\')', 0);
-   }
-
   </script>
  </head>
  <body id="BodyTag" runat="server">
@@ -72,11 +67,10 @@
           <table style="width: 100%;">
            <tr id="UpdDelBtn" runat="server"> 
             <td style="height: 30px; text-align: center;">
-             <span class="SimButton" onclick="DoLogon();">Login</span>
+             <button id="Button1" runat="server" type="submit">Login</button>
             </td>
            </tr>
           </table>
-          <asp:CheckBox ID="Logon" runat="server" AutoPostBack="true" CssClass="NoShow" />
          </form>
         </div>
        </div>
