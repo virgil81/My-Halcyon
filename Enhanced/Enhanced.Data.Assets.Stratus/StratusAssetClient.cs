@@ -219,15 +219,17 @@ namespace Enhanced.Data.Assets.Stratus
         {
             AssetBase asset;
 
-			if (TryRequestAsset(assetID, _firstReadServer, out asset))
+            if (TryRequestAsset(assetID, _firstReadServer, out asset))
             {
                 return asset;
             }
-            else
+
+            if ((_secondReadServer != null) && TryRequestAsset(assetID, _secondReadServer, out asset))
             {
-                TryRequestAsset(assetID, _secondReadServer, out asset);
                 return asset;
             }
+
+            return null;
         }
 
         /// <summary>
