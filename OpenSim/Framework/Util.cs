@@ -109,7 +109,7 @@ namespace OpenSim.Framework
         /// FireAndForgetMethod.SmartThreadPool is used</summary>
         private static SmartThreadPool[] m_ThreadPool = new SmartThreadPool[Enum.GetValues(typeof(PoolSelection)).Length];
 
-
+        
 
         // Unix-epoch starts at January 1st 1970, 00:00:00 UTC. And all our times in the server are (or at least should be) in UTC.
         private static readonly DateTime unixEpoch =
@@ -156,7 +156,7 @@ namespace OpenSim.Framework
         public static Encoding UTF8 = Encoding.UTF8;
 
         /// <value>
-        /// Well known UUID for the blank texture used in the Linden SL viewer version 1.20 (and hopefully onwards)
+        /// Well known UUID for the blank texture used in the Linden SL viewer version 1.20 (and hopefully onwards) 
         /// </value>
         public static UUID BLANK_TEXTURE_UUID = new UUID("5748decc-f629-461c-9a36-a35a221fe21f");
 
@@ -491,7 +491,7 @@ namespace OpenSim.Framework
 
         /// <summary>
         /// This method returns the current Unix time in microseconds. It also resolves conflicts dealing
-        /// with the fact that the system timer may only be accurate to ~15 ms and adds a microsecond to
+        /// with the fact that the system timer may only be accurate to ~15 ms and adds a microsecond to 
         /// subsequent calls that have the same resultant time.
         /// </summary>
         /// <returns></returns>
@@ -975,251 +975,6 @@ namespace OpenSim.Framework
             }
         }
 
-        public static string GetConfigVarWithDefaultSection(IConfigSource config, string varname, string section)
-        {
-            // First, check the Startup section, the default section
-            IConfig cnf = config.Configs["Startup"];
-
-            if (cnf == null)
-            {
-                return string.Empty;
-            }
-
-            string val = cnf.GetString(varname, string.Empty);
-
-            // Then check for an overwrite of the default in the given section
-            if (!string.IsNullOrEmpty(section))
-            {
-                cnf = config.Configs[section];
-
-                if (cnf != null)
-                {
-                    val = cnf.GetString(varname, val);
-                }
-            }
-
-            return val;
-        }
-
-        /// <summary>
-        ///     Gets the value of a configuration variable by looking into
-        ///     multiple sections in order. The latter sections overwrite
-        ///     any values previously found.
-        /// </summary>
-        /// <typeparam name="T">Type of the variable</typeparam>
-        /// <param name="config">The configuration object</param>
-        /// <param name="varname">The configuration variable</param>
-        /// <param name="sections">Ordered sequence of sections to look at</param>
-        /// <returns></returns>
-        public static T GetConfigVarFromSections<T>(IConfigSource config, string varname, string[] sections)
-        {
-            return GetConfigVarFromSections<T>(config, varname, sections, default(T));
-        }
-
-        /// <summary>
-        ///     Gets the value of a configuration variable by looking into
-        ///     multiple sections in order. The latter sections overwrite
-        ///     any values previously found.
-        /// </summary>
-        /// <remarks>
-        ///     If no value is found then the given default value is returned
-        /// </remarks>
-        /// <typeparam name="T">Type of the variable</typeparam>
-        /// <param name="config">The configuration object</param>
-        /// <param name="varname">The configuration variable</param>
-        /// <param name="sections">Ordered sequence of sections to look at</param>
-        /// <param name="val">Default value</param>
-        /// <returns></returns>
-        public static T GetConfigVarFromSections<T>(IConfigSource config, string varname, string[] sections, object val)
-        {
-            foreach (string section in sections)
-            {
-                IConfig cnf = config.Configs[section];
-
-                if (cnf == null)
-                {
-                    continue;
-                }
-
-                if (typeof(T) == typeof(String))
-                {
-                    val = cnf.GetString(varname, (string)val);
-                }
-                else if (typeof(T) == typeof(Boolean))
-                {
-                    val = cnf.GetBoolean(varname, (bool)val);
-                }
-                else if (typeof(T) == typeof(Int32))
-                {
-                    val = cnf.GetInt(varname, (int)val);
-                }
-                else if (typeof(T) == typeof(float))
-                {
-                    val = cnf.GetFloat(varname, (float)val);
-                }
-                else
-                {
-                    m_log.ErrorFormat("[Util]: Unhandled type {0}", typeof(T));
-                }
-            }
-
-            return (T)val;
-        }
-
-        public static void MergeEnvironmentToConfig(IConfigSource ConfigSource)
-        {
-            IConfig enVars = ConfigSource.Configs["Environment"];
-
-            // if section does not exist then user isn't expecting them, so don't bother.
-            if (enVars != null)
-            {
-                // load the values from the environment
-                EnvConfigSource envConfigSource = new EnvConfigSource();
-
-                // add the requested keys
-                string[] env_keys = enVars.GetKeys();
-
-                foreach (string key in env_keys)
-                {
-                    envConfigSource.AddEnv(key, string.Empty);
-                }
-
-                // load the values from environment
-                envConfigSource.LoadEnv();
-
-                // add them in to the master
-                ConfigSource.Merge(envConfigSource);
-                ConfigSource.ExpandKeyValues();
-            }
-        }
-
-        public static T ReadSettingsFromIniFile<T>(IConfig config, T settingsClass)
-        {
-            Type settingsType = settingsClass.GetType();
-
-            FieldInfo[] fieldInfos = settingsType.GetFields();
-
-            foreach (FieldInfo fieldInfo in fieldInfos)
-            {
-                if (!fieldInfo.IsStatic)
-                {
-                    if (fieldInfo.FieldType == typeof(System.String))
-                    {
-                        fieldInfo.SetValue(settingsClass, config.Get(fieldInfo.Name, (string)fieldInfo.GetValue(settingsClass)));
-                    }
-                    else if (fieldInfo.FieldType == typeof(System.Boolean))
-                    {
-                        fieldInfo.SetValue(settingsClass, config.GetBoolean(fieldInfo.Name, (bool)fieldInfo.GetValue(settingsClass)));
-                    }
-                    else if (fieldInfo.FieldType == typeof(System.Int32))
-                    {
-                        fieldInfo.SetValue(settingsClass, config.GetInt(fieldInfo.Name, (int)fieldInfo.GetValue(settingsClass)));
-                    }
-                    else if (fieldInfo.FieldType == typeof(System.Single))
-                    {
-                        fieldInfo.SetValue(settingsClass, config.GetFloat(fieldInfo.Name, (float)fieldInfo.GetValue(settingsClass)));
-                    }
-                    else if (fieldInfo.FieldType == typeof(System.UInt32))
-                    {
-                        fieldInfo.SetValue(settingsClass, Convert.ToUInt32(config.Get(fieldInfo.Name, ((uint)fieldInfo.GetValue(settingsClass)).ToString())));
-                    }
-                }
-            }
-
-            PropertyInfo[] propertyInfos = settingsType.GetProperties();
-
-            foreach (PropertyInfo propInfo in propertyInfos)
-            {
-                if ((propInfo.CanRead) && (propInfo.CanWrite))
-                {
-                    if (propInfo.PropertyType == typeof(System.String))
-                    {
-                        propInfo.SetValue(settingsClass, config.Get(propInfo.Name, (string)propInfo.GetValue(settingsClass, null)), null);
-                    }
-                    else if (propInfo.PropertyType == typeof(System.Boolean))
-                    {
-                        propInfo.SetValue(settingsClass, config.GetBoolean(propInfo.Name, (bool)propInfo.GetValue(settingsClass, null)), null);
-                    }
-                    else if (propInfo.PropertyType == typeof(System.Int32))
-                    {
-                        propInfo.SetValue(settingsClass, config.GetInt(propInfo.Name, (int)propInfo.GetValue(settingsClass, null)), null);
-                    }
-                    else if (propInfo.PropertyType == typeof(System.Single))
-                    {
-                        propInfo.SetValue(settingsClass, config.GetFloat(propInfo.Name, (float)propInfo.GetValue(settingsClass, null)), null);
-                    }
-
-                    if (propInfo.PropertyType == typeof(System.UInt32))
-                    {
-                        propInfo.SetValue(settingsClass, Convert.ToUInt32(config.Get(propInfo.Name, ((uint)propInfo.GetValue(settingsClass, null)).ToString())), null);
-                    }
-                }
-            }
-
-            return settingsClass;
-        }
-
-        /// <summary>
-        ///     Reads a configuration file, configFile, merging it with the main configuration, config.
-        ///     If the file doesn't exist, it copies a given exampleConfigFile onto configFile, and then
-        ///     merges it.
-        /// </summary>
-        /// <param name="config">The main configuration data</param>
-        /// <param name="configFileName">The name of a configuration file in ConfigDirectory variable, no path</param>
-        /// <param name="exampleConfigFile">Full path to an example configuration file</param>
-        /// <param name="configFilePath">Full path ConfigDirectory/configFileName</param>
-        /// <param name="created">True if the file was created in ConfigDirectory, false if it existed</param>
-        /// <returns>True if success</returns>
-        public static bool MergeConfigurationFile(IConfigSource config, string configFileName, string exampleConfigFile, out string configFilePath, out bool created)
-        {
-            created = false;
-            configFilePath = string.Empty;
-
-            IConfig cnf = config.Configs["Startup"];
-
-            if (cnf == null)
-            {
-                m_log.WarnFormat("[Utils]: Startup section doesn't exist");
-                return false;
-            }
-
-            string configDirectory = cnf.GetString("ConfigDirectory", ".");
-            string configFile = Path.Combine(configDirectory, configFileName);
-
-            if (!File.Exists(configFile) && !string.IsNullOrEmpty(exampleConfigFile))
-            {
-                // We need to copy the example onto it
-                if (!Directory.Exists(configDirectory))
-                {
-                    Directory.CreateDirectory(configDirectory);
-                }
-
-                try
-                {
-                    File.Copy(exampleConfigFile, configFile);
-                    created = true;
-                }
-                catch (Exception e)
-                {
-                    m_log.WarnFormat("[Utils]: Exception copying configuration file {0} to {1}: {2}", configFile, exampleConfigFile, e.Message);
-                    return false;
-                }
-            }
-
-            if (File.Exists(configFile))
-            {
-                // Merge
-                config.Merge(new IniConfigSource(configFile));
-                config.ExpandKeyValues();
-                configFilePath = configFile;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public static float Clip(float x, float min, float max)
         {
             return Math.Min(Math.Max(x, min), max);
@@ -1236,7 +991,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Convert an UUID to a raw uuid string.
+        ///     Convert an UUID to a raw uuid string.  
         ///     Right now this is a string without hyphens.
         /// </summary>
         /// <param name="UUID"></param>
@@ -1347,7 +1102,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Copy data from one stream to another,
+        ///     Copy data from one stream to another, 
         ///     leaving the read position of both streams at the beginning.
         /// </summary>
         /// <param name='inputStream'>
@@ -1364,7 +1119,7 @@ namespace OpenSim.Framework
             const int readSize = 256;
             byte[] buffer = new byte[readSize];
             MemoryStream ms = new MemoryStream();
-
+        
             int count = inputStream.Read(buffer, 0, readSize);
 
             while (count > 0)
@@ -1391,11 +1146,11 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Returns an error message that the
+        ///     Returns an error message that the 
         ///     user could not be found in the database
         /// </summary>
         /// <returns>
-        ///     XML string consisting of a error
+        ///     XML string consisting of a error 
         ///     element containing individual error(s)
         /// </returns>
         public static XmlRpcResponse CreateUnknownUserErrorResponse()
@@ -1414,7 +1169,7 @@ namespace OpenSim.Framework
         ///     this endpoint is not permitted access
         /// </summary>
         /// <returns>
-        ///     XML string consisting of a error
+        ///     XML string consisting of a error 
         ///     element containing individual error(s)
         /// </returns>
         public static XmlRpcResponse CreateTrustManagerAccessDeniedResponse()
@@ -1503,7 +1258,7 @@ namespace OpenSim.Framework
         ///     Returns only the first 45 characters of information
         /// </summary>
         /// <returns>
-        ///     Operating system information.
+        ///     Operating system information.  
         ///     Returns an empty string if none was available.
         /// </returns>
         public static string GetOperatingSystemInformation()
@@ -1744,7 +1499,7 @@ namespace OpenSim.Framework
             try
             {
                 OSD buffer;
-
+            
                 // We should pay attention to the content-type, but let's assume we know it's Json
                 buffer = OSDParser.DeserializeJson(data);
 
@@ -1885,12 +1640,12 @@ namespace OpenSim.Framework
 
         /// <summary>
         ///     Convert a string to a byte format suitable
-        ///     for transport in an LLUDP packet.
+        ///     for transport in an LLUDP packet. 
         ///     The output is truncated to 256 bytes if necessary.
         /// </summary>
         /// <param name="str">
         ///     If null or empty, then an bytes[0] is returned.
-        ///     Using "\0" will return a conversion of the null
+        ///     Using "\0" will return a conversion of the null 
         ///     character to a byte.  This is not the same as bytes[0]
         /// </param>
         /// <param name="args">
@@ -1903,8 +1658,8 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Convert a string to a byte format suitable
-        ///     for transport in an LLUDP packet.
+        ///     Convert a string to a byte format suitable 
+        ///     for transport in an LLUDP packet.  
         ///     The output is truncated to 256 bytes if necessary.
         /// </summary>
         /// <param name="str">
@@ -1929,7 +1684,7 @@ namespace OpenSim.Framework
             {
                 str += "\0";
             }
-
+            
             // Because this is UTF-8 encoding and not ASCII, it's possible we
             // might have gotten an oversized array even after the string trim
             byte[] data = UTF8.GetBytes(str);
@@ -1964,7 +1719,7 @@ namespace OpenSim.Framework
 
         /// <summary>
         ///     Convert a string to a byte format suitable
-        ///     for transport in an LLUDP packet.
+        ///     for transport in an LLUDP packet. 
         ///     The output is truncated to 1024 bytes if necessary.
         /// </summary>
         /// <param name="str">
@@ -2138,7 +1893,7 @@ namespace OpenSim.Framework
         /// <summary>
         ///     Environment.TickCount is an int but it counts all 32 bits so it goes positive
         ///     and negative every 24.9 days. This trims down TickCount so it doesn't wrap
-        ///     for the callers.
+        ///     for the callers. 
         ///     This trims it to a 12 day interval so don't let your frame time get too long.
         /// </summary>
         /// <returns></returns>
@@ -2316,7 +2071,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     The set of characters that are unreserved
+        ///     The set of characters that are unreserved 
         ///     in RFC 2396 but are NOT unreserved in RFC 3986.
         /// </summary>
         private static readonly string[] UriRfc3986CharsToEscape = new[] { "!", "*", "'", "(", ")" };
@@ -2441,7 +2196,7 @@ namespace OpenSim.Framework
 
         public static bool IsValidRegionXYZ(float X, float Y, float Z)
         {
-            if (X < Constants.OUTSIDE_REGION_NEGATIVE_EDGE || X >= Constants.OUTSIDE_REGION ||
+            if (X < Constants.OUTSIDE_REGION_NEGATIVE_EDGE || X >= Constants.OUTSIDE_REGION || 
                 Y < Constants.OUTSIDE_REGION_NEGATIVE_EDGE || Y >= Constants.OUTSIDE_REGION ||
                 Z < Constants.REGION_MINIMUM_Z             || Z > Constants.REGION_MAXIMUM_Z)
                 return false;
@@ -2503,7 +2258,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     Formats the region name and the location
+        ///     Formats the region name and the location 
         ///     given into a concatenated form.
         ///     The most common usage is to create a URL path for mapping.
         /// </summary>
@@ -2537,7 +2292,7 @@ namespace OpenSim.Framework
         }
 
         /// <summary>
-        ///     The prefix to the URL links.
+        ///     The prefix to the URL links. 
         ///     Set by the GridInfoService,
         ///     and is also known to the viewer as "slurl_base".
         /// </summary>
@@ -2785,7 +2540,7 @@ namespace OpenSim.Framework
         /// <param name="xmax">Outputs the X maximum for the DD rectangle</param>
         /// <param name="ymin">Outputs the Y minimum for the DD rectangle</param>
         /// <param name="ymax">Outputs the Y maximum for the DD rectangle</param>
-        public static void GetDrawDistanceBasedRegionRectangle(uint drawDistance, uint maxRange, uint regionLocX, uint regionLocY,
+        public static void GetDrawDistanceBasedRegionRectangle(uint drawDistance, uint maxRange, uint regionLocX, uint regionLocY, 
             out uint xmin, out uint xmax, out uint ymin, out uint ymax)
         {
             uint ddRegionWidth = GetRegionUnitsFromDD(drawDistance);
@@ -2874,7 +2629,7 @@ namespace OpenSim.Framework
             private string m_context = "[UTIL]: Slow operation";
             private TimeSpan m_threshold;
             private DateTime m_started;
-
+            
             /// <summary>
             /// This class reports long processing times between its creation (or Start) and Complete() call.
             /// </summary>
