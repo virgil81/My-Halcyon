@@ -1596,7 +1596,7 @@ namespace OpenSim.Framework
             return displayConnectionString;
         }
 
-        public static T ReadSettingsFromIniFile<T>(IConfig config, T settingsClass)
+       /* public static T ReadSettingsFromIniFile<T>(IConfig config, T settingsClass)
         {
             Type settingsType = settingsClass.GetType();
 
@@ -1660,7 +1660,7 @@ namespace OpenSim.Framework
             }
 
             return settingsClass;
-        }
+        } */
 
         public static string Base64ToString(string str)
         {
