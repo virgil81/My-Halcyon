@@ -27,13 +27,10 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -46,13 +43,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
-using System.Web;
+using System.Threading;
 using Amib.Threading;
 using BclExtras;
 using log4net;
-using log4net.Appender;
 using Nini.Config;
 using Nwc.XmlRpc;
 using OpenMetaverse;
