@@ -140,7 +140,7 @@
            <td style="height: 40px; vertical-align: top;">
             <span id="ExFeeName" runat="server" style="font-weight: bold;"></span>:
             <span id="ExFeeText" runat="server"></span><br />
-            <asp:TextBox id="ExchangeFee" runat="server" Columns="1" maxLength="1" cssClass="Form"/> % Charged on transactions. Remember to cover the PayPal fees!
+            <asp:TextBox id="ExchangeFee" runat="server" Columns="1" maxLength="2" cssClass="Form"/> % Charged on transactions. Small profit plus any additional tax rates!
            </td>
           </tr>
           <tr id="ShowLvl3I" runat="server">

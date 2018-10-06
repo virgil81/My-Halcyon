@@ -140,11 +140,16 @@
         <td>
          <asp:GridView ID="gvDisplay" runat="server" AllowPaging="false" AutoGenerateColumns="False" GridLines="None" CellSpacing="1" style=" width:100%;" HeaderStyle-Height="28px" PagerStyle-HorizontalAlign="Center" AlternatingRowStyle-CssClass="AltLine">
           <Columns>
-           <asp:TemplateField HeaderText="Name" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="60%">
+           <asp:TemplateField HeaderText="Name" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="40%">
             <ItemTemplate>
              <span onclick="CallEdit('<%#Container.DataItem("RegionID")%>','RegionForm.aspx');" class="NavLink" onmouseover="this.className='NOverLink';" onmouseout="this.className='NavLink';">
               <%#Container.DataItem("RegionName").ToString().Trim()%>
              </span>
+            </ItemTemplate>
+           </asp:TemplateField>
+           <asp:TemplateField HeaderText="Owner" ItemStyle-Width="20%" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+            <ItemTemplate>
+             <%#Container.DataItem("Owner").ToString()%>
             </ItemTemplate>
            </asp:TemplateField>
            <asp:TemplateField HeaderText="Estate" HeaderStyle-CssClass="Title" HeaderStyle-HorizontalAlign="Left" ItemStyle-Width="25%">

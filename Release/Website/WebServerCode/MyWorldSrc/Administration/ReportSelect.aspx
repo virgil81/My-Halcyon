@@ -51,8 +51,10 @@
         <td>
          <span class="NavLink" onclick="window.location='TransMDRpt.aspx'">Buy / Sell History</span> - Buy / Sell Transaction History Detail by Month/year. <br />
          <span class="NavLink" onclick="window.location='TransYTDRpt.aspx'">Buy / Sell Transactions</span> - Buy / Sell Transaction History YTD by Year. <br />
-         <span class="NavLink" onclick="window.location=''">Report 4</span> - description. <br />
-         <span class="NavLink" onclick="window.location=''">Report 5</span> - description. 
+         <%
+'<span Class="NavLink" onclick="window.location=''">Report 4</span> - description. <br />
+'<span Class="NavLink" onclick="window.location=''">Report 5</span> - description. 
+         %>
         </td>
        </tr>
       </table>

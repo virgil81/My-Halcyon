@@ -120,6 +120,7 @@ Partial Class _Default
             "From users"
    If Trace.IsEnabled Then Trace.Warn("Default", "Get user count SQLCmd: " + SQLCmd.ToString())
    GetCount = MyDB.GetReader("MyData", SQLCmd)
+   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get user count DB Error: " + MyDB.ErrMessage())
    If GetCount.HasRows() Then
     GetCount.Read()
     GridTUsers.InnerText = GetCount("Counted").ToString()
@@ -233,6 +234,7 @@ Partial Class _Default
              "Where PageID Not in (Select PageID From pagedetail)"
     If Trace.IsEnabled Then Trace.Warn("Default", "Clear unlinked Pages SQLCmd: " + SQLCmd)
     MyDB.DBCmd("MySite", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error Then Trace.Warn("Default", "DB Error: " + MyDB.ErrMessage().ToString())
     SQLFields = "Name,Path"
     Dim ChkPage As MySql.Data.MySqlClient.MySqlDataReader
     While Not FileReader.EndOfStream()
@@ -242,7 +244,6 @@ Partial Class _Default
      ' Verify the page does not already exist!
      SQLCmd = "Select name From pagemaster Where Path=" + MyDB.SQLStr(tFields(1))
      If Trace.IsEnabled Then Trace.Warn("Default", "Page Record Check: " + SQLCmd)
-     ChkPage = MyDB.GetReader("MySite", SQLCmd)
      ChkPage = MyDB.GetReader("MySite", SQLCmd)
      If Not ChkPage.HasRows() Then
       SQLCmd = "Insert into pagemaster (" + SQLFields.ToString() + ") Values (" + SQLValues.ToString() + ")"
@@ -262,6 +263,7 @@ Partial Class _Default
    drGetPage = MyDB.GetReader("MySite", SQLCmd)
    If Trace.IsEnabled And MyDB.Error Then Trace.Warn("Default", "DB Error: " + MyDB.ErrMessage().ToString())
    If Not drGetPage.HasRows() Then
+    drGetPage.Close()
     ' Create page entry
     SQLFields = "Name,Path"
     SQLValues = "'Home'," + MyDB.SQLStr(Request.ServerVariables("URL"))
@@ -272,7 +274,6 @@ Partial Class _Default
     SQLCmd = "Select PageID From pagemaster Where Path=" + MyDB.SQLStr(Request.ServerVariables("URL"))
     drGetPage = MyDB.GetReader("MySite", SQLCmd)
    End If
-   drGetPage.Close()
 
    If drGetPage.Read() Then
     SQLCmd = "Update pagedetail " +

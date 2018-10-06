@@ -193,8 +193,8 @@ Partial Class _IPN
        Name = Request.Form("custom").ToString().Split(":")
       Else                                                    ' If no custom content, fall back to the first_name and last_name fields
        ReDim Name(2)                                          ' Match the two expected fields
-       Name(0) = Request.Form("last_name").ToString().Trim()
-       Name(1) = Request.Form("first_name").ToString().Trim()
+       Name(0) = Request.Form("first_name").ToString().Trim()
+       Name(1) = Request.Form("last_name").ToString().Trim()
       End If
       If Len(Request.Form("item_name")) > 0 Then              ' What was processed by the sending page
        TransType = Request.Form("item_name").ToString().Trim().ToLower()
@@ -204,7 +204,8 @@ Partial Class _IPN
 
       If tLog Then                                            ' Log file output
        ' Trace Actions to Log file
-       sw.WriteLine("TransType: " + TransType.ToString() + ", Custom: " + Request.Form("custom") + vbCrLf)
+       sw.WriteLine("TransType: " + TransType.ToString() + ", Custom: " + Request.Form("custom") +
+                    "last_name: " + Name(0).ToString() + ", first_name: " + Name(0).ToString() + vbCrLf)
        sw.Flush()
       End If
       ' Process each Transtype the website passed through PayPal
@@ -236,6 +237,8 @@ Partial Class _IPN
 
        Dim tRate As Integer
        tRate = 250                                            ' Assume exchange rate of $250 Grid money to $1.00 USD
+       Dim tFRate As Double
+       tFRate = 0
        Dim UserUUID, WBUUID As String
        UserUUID = ""
        WBUUID = ""
@@ -243,6 +246,7 @@ Partial Class _IPN
        Dim GetSettings As MySql.Data.MySqlClient.MySqlDataReader
        SQLCmd = "Select " +
                 " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeRate') as Rate, " +
+                " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeFee') as XRate, " +
                 " (Select Parm2 From control Where Control='ECONOMY' and Parm1='WorldBankAcct') as WBName"
        If Trace.IsEnabled Then Trace.Warn("IPN", "Get ExchangeRate Setting: " + SQLCmd.ToString())
        If Trace.IsEnabled Then Response.Write("<br>Get ExchangeRate Setting: " + SQLCmd.ToString())
@@ -256,6 +260,7 @@ Partial Class _IPN
        If GetSettings.HasRows() Then
         GetSettings.Read()
         tRate = GetSettings("Rate")
+        tFRate = GetSettings("XRate") / 100
         WBName = GetSettings("WBName").ToString().Split(" ") ' Defines first and last account names
        Else
         ReDim WBName(1)                                      ' No name or rate was found!
@@ -285,12 +290,18 @@ Partial Class _IPN
        End If
        GetUUID.Close()
 
-       Dim tTot, tFee As Double
-       ' Create record with current status
-       tTot = CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("item_number")) ' Remove the amount of the fee charged from the total
-       tTot = tTot * tRate   ' Recalculate the inworld amount to place in the account. Prevents any user alteration on what they paid to get.
-       tFee = CDbl(Request.Form("item_number")) - CDbl(Request.Form("mc_fee")) ' Amount between transaction fee and PayPal fee. Hope it is postitive!
-       tFee = tFee * tRate
+       Dim tTot, tFee, tXFee, tNet As Double
+       tNet = (1 - 0.29) * (CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("tax"))) - 0.3 ' Remove tax amount to get the correct Gross
+       tXFee = Math.Round(tNet / (1 + tFRate), 2) ' Get the Exchange fee amount = Round(Net / (1 + tFRate),2)
+       tTot = tNet - tXFee   ' Tot = Net - exchange fee
+       tTot = tTot * tRate   ' Recalculate the inworld $amount to place in the account. Prevents any user alteration on what they paid to get.
+       tFee = tXFee * tRate  ' $Amount applied to World Bank
+       If tLog Then                                            ' Log file output
+        ' Trace Actions to Log file
+        sw.WriteLine("tNet: " + tNet.ToString() + ", tXFee: " + tXFee.ToString() +
+                     "tTot: " + tTot.ToString() + ", tFee: " + tFee.ToString() + vbCrLf)
+        sw.Flush()
+       End If
 
        ' When the World Bank and anyone else buys $ it adds to the world total funds. 
        ' When the World Bank and anyone else cashes out its removing $ from the world fund total.
@@ -327,17 +338,14 @@ Partial Class _IPN
         sw.Flush()
        End If
 
-       ' Update Purchase Table amounts
-       If CDbl(Request.Form("mc_fee")) > 0 Then
-        tTot = CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("mc_fee"))
-       Else
-        tTot = CDbl(Request.Form("mc_gross"))
-       End If
-       SQLCmd = "Insert into accountbal (UUID,Name,Action,TransDate,Amount,Actual,TransFee,TxnID) " +
+       ' Update Accountbal Table 
+       tTot = CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("mc_fee"))
+       SQLCmd = "Insert into accountbal (UUID,Name,Action,TransDate,Amount,Actual,TransFee,ExchangeRate,TxnID) " +
                 "Values (" + MyDB.SQLStr(UserUUID) + "," + MyDB.SQLStr(Name(0).ToString() + " " + Name(1).ToString()) + "," +
                 MyDB.SQLStr(TransType) + "," + "Now()," +
                 MyDB.SQLNo(Request.Form("mc_gross")) + "," + MyDB.SQLNo(tTot) + "," +
-                MyDB.SQLNo(Request.Form("item_number")) + "," + MyDB.SQLStr(Request.Form("txn_id")) + ")"
+                MyDB.SQLNo(Request.Form("mc_fee")) + "," + MyDB.SQLNo(tRate) + "," +
+                MyDB.SQLStr(Request.Form("txn_id")) + ")"
        If Trace.IsEnabled Then Trace.Warn("IPN", "Insert accountbal: " + SQLCmd.ToString())
        If Trace.IsEnabled Then Response.Write("<br>Insert accountbal: " + SQLCmd.ToString())
        tEmailOut = tEmailOut.ToString() + "Insert accountbal: " + SQLCmd.ToString() + vbCrLf + vbCrLf
@@ -347,7 +355,7 @@ Partial Class _IPN
         sw.WriteLine("Insert accountbal: " + SQLCmd.ToString() + vbCrLf)
         sw.Flush()
        End If
-       MyDB.DBCmd("MyData", SQLCmd)
+       MyDB.DBCmd("MySite", SQLCmd)
        If tLog And MyDB.Error() Then                          ' Log file output
         ' Trace Actions to Log file
         sw.WriteLine("Insert DB Error: " + MyDB.ErrMessage().ToString() + vbCrLf)

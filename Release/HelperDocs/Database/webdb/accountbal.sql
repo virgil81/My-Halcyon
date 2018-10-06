@@ -23,15 +23,18 @@ DROP TABLE IF EXISTS `accountbal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `accountbal` (
+  `TransID` `TransID` INT(11) NOT NULL AUTO_INCREMENT,
   `UUID` varchar(36) NOT NULL,
   `Name` varchar(64) NOT NULL,
   `Action` varchar(50) NOT NULL,
   `TransDate` datetime NOT NULL,
   `Amount` decimal(10,4) NOT NULL,
   `Actual` decimal(10,4) NOT NULL,
+  `TaxCollected` DECIMAL(10,4) NOT NULL DEFAULT '0',
   `TransFee` decimal(10,4) NOT NULL,
   `ExchangeRate` int(11) NOT NULL DEFAULT 0,
   `txnID` varchar(50) NOT NULL,
+  PRIMARY KEY (`TransID`);
   KEY `UUID` (`UUID`),
   KEY `TransDate` (`TransDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

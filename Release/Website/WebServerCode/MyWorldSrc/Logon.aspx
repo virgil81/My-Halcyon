@@ -71,6 +71,9 @@
             </td>
            </tr>
           </table>
+          <div style="text-align:center; padding: 10px 0 10px 0;">
+           <span style="font-weight: bold; cursor: pointer;" onclick="window.location='/ResetPass.aspx';">Reset Password</span>
+          </div>
          </form>
         </div>
        </div>

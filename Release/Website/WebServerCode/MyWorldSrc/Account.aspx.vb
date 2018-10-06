@@ -99,15 +99,16 @@ Partial Class Account
    GetUser.Close()
 
    Session("TLimited") = False                              ' Presume no time limit
-   ' Check User account Transaction time limit
-   Dim GetLimits As MySql.Data.MySqlClient.MySqlDataReader
-   SQLCmd = "Select " +
+   If Session("ELevel") = 3 Then                            ' Must have Economy level 3 to set this
+    ' Check User account Transaction time limit
+    Dim GetLimits As MySql.Data.MySqlClient.MySqlDataReader
+    SQLCmd = "Select " +
             " Case When Hours>0 " +
             " Then IF(Hours> " +
             "  Case When " +
             "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
             "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) is null " +
-            "  Then 0 " +
+            "  Then 24 " +
             "  Else" +
             "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
             "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) " +
@@ -116,13 +117,14 @@ Partial Class Account
             " End as HourLimit " +
             "From usereconomy " +
             "Where UUID=" + MyDB.SQLStr(Session("UUID"))
-   If Trace.IsEnabled Then Trace.Warn("Account", "Get usereconomy Limit SQLCmd: " + SQLCmd.ToString())
-   GetLimits = MyDB.GetReader("MySite", SQLCmd)
-   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Account", "DB Error: " + MyDB.ErrMessage().ToString())
-   If GetLimits.Read() Then
-    Session("TLimited") = GetLimits("HourLimit")
+    If Trace.IsEnabled Then Trace.Warn("Account", "Get usereconomy TLimited SQLCmd: " + SQLCmd.ToString())
+    GetLimits = MyDB.GetReader("MySite", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Account", "DB Error: " + MyDB.ErrMessage().ToString())
+    If GetLimits.Read() Then
+     Session("TLimited") = GetLimits("HourLimit")
+    End If
+    GetLimits.Close()
    End If
-   GetLimits.Close()
 
    ' Check for any estates owned
    Dim hasEstate As Boolean
@@ -152,7 +154,8 @@ Partial Class Account
    If Session("ELevel") > 1 Then                            ' Economy Levels 2&3
     SBMenu.AddItem("P", "TransHist.aspx", "$ Transaction History")
    End If
-   If Session("ELevel") = 3 And Not Session("TLimited") Then ' Economy Level 3 only
+   If Trace.IsEnabled Then Trace.Warn("Account", "Session(ELevel): " + Session("ELevel").ToString() + ", Session(TLimited): " + Session("TLimited").ToString())
+   If Session("ELevel") = 3 And Session("TLimited") = 0 Then  ' Economy Level 3 only and not time limited
     ' PayPal Email address and PayPal Merchant ID is required before going here.
     Dim GetPayPal As MySql.Data.MySqlClient.MySqlDataReader
     SQLCmd = "Select " +
@@ -356,7 +359,7 @@ Partial Class Account
   If tMsg.Length = 0 Then
    SQLCmd = "Update userpreferences Set recv_ims_via_email=" + MyDB.SQLNo(IIf(ImsInEmail.Checked, 1, 0)) + "," +
             " listed_in_directory=" + MyDB.SQLNo(IIf(ListInDirect.Checked, 1, 0)) + " " +
-            "Where user_id=" + MyDB.SQLNo(Session("UUID"))
+            "Where user_id=" + MyDB.SQLStr(Session("UUID"))
    If Trace.IsEnabled Then Trace.Warn("Account", "Update userpreferences SQLCmd: " + SQLCmd.ToString())
    MyDB.DBCmd("MyData", SQLCmd)
    If MyDB.Error() Then
@@ -538,7 +541,9 @@ Partial Class Account
            "Delete From osgroupmembership Where AgentID=" + MyDB.SQLStr(Session("UUID")) + ";" +
            "Delete From userpreferences Where user_id=" + MyDB.SQLStr(Session("UUID")) + ";" +
            "Delete From agents Where UUID=" + MyDB.SQLStr(Session("UUID")) + ";" +
-           "Delete From users Where UUID=" + MyDB.SQLStr(Session("UUID"))
+           "Delete From users Where UUID=" + MyDB.SQLStr(Session("UUID")) + ";" +
+           "Delete From economy_transactions Where sourceAvatarID=" + MyDB.SQLStr(Session("UUID")) + ";" +
+           "Delete From economy_totals Where user_id=" + MyDB.SQLStr(Session("UUID"))
   If Trace.IsEnabled Then Trace.Warn("Account", "Remove User account records SQLCmd: " + SQLCmd.ToString())
   MyDB.DBCmd("MyData", SQLCmd)
   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Account", "DB Error: " + MyDB.ErrMessage().ToString())

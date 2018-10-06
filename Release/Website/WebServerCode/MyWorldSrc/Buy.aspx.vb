@@ -77,7 +77,8 @@ Partial Class Buy
 
    ' Check User account limits
    Dim GetLimits As MySql.Data.MySqlClient.MySqlDataReader
-   SQLCmd = "Select MaxBuy,Hours " +
+   SQLCmd = "Select MaxBuy,Hours," +
+            " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeFee') as XRate " +
             "From usereconomy " +
             "Where UUID=" + MyDB.SQLStr(Session("UUID"))
    If Trace.IsEnabled Then Trace.Warn("Buy", "Get usereconomy settings SQLCmd: " + SQLCmd.ToString())
@@ -85,10 +86,12 @@ Partial Class Buy
    If GetLimits.Read() Then
     Session("MaxBuy") = GetLimits("MaxBuy")
     Session("Hours") = GetLimits("Hours")
+    Session("Fee") = GetLimits("XRate") / 100
     If Trace.IsEnabled Then Trace.Warn("Buy", "** Economy settings: MaxBuy=" + Session("MaxBuy").ToString() + ", Hours=" + Session("Hours").ToString())
    Else
     Session("MaxBuy") = 0
     Session("Hours") = 0
+    Session("Fee") = 0.04
    End If
    GetLimits.Close()
    ShowLimit.Visible = False
@@ -144,7 +147,7 @@ Partial Class Buy
 
  End Sub
 
- ' MAmt to buy was changed
+ ' DC$ (MAmt) to buy was changed
  Private Sub MAmt_TextChanged(sender As Object, e As EventArgs) Handles MAmt.TextChanged
   If Trace.IsEnabled Then Trace.Warn("Buy", "* MAmount changed called!")
   Dim tMsg As String
@@ -171,6 +174,26 @@ Partial Class Buy
    GetHours.Close()
   End If
 
+  Dim tRate As Integer
+  tRate = 250                                            ' Assume exchange rate of $250 Grid money to $1.00 USD
+  Dim tFRate As Double
+  tFRate = 0
+
+  Dim GetSettings As MySql.Data.MySqlClient.MySqlDataReader
+  SQLCmd = "Select " +
+           " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeRate') as Rate, " +
+           " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeFee') as XRate"
+  If Trace.IsEnabled Then Trace.Warn("Buy", "Get Rates SQLCmd: " + SQLCmd.ToString())
+  GetSettings = MyDB.GetReader("MySite", SQLCmd)
+  If GetSettings.HasRows() Then
+   GetSettings.Read()
+   tRate = GetSettings("Rate")
+   tFRate = GetSettings("XRate") / 100
+   If Trace.IsEnabled Then Trace.Warn("Buy", "** Rate: " + tRate.ToString())
+   If Trace.IsEnabled Then Trace.Warn("Buy", "** XRate: " + tFRate.ToString())
+  End If
+  GetSettings.Close()
+
   If MAmt.Text.ToString().Trim().Length = 0 Then
    tMsg = tMsg.ToString() + "My Dollars may not be empty!\r\n"
   ElseIf Not IsNumeric(MAmt.Text) Then
@@ -182,19 +205,20 @@ Partial Class Buy
   If tMsg.ToString().Trim().Length = 0 Then
    ' Update display with new values based on this entry amount
 
-   USDAmt.Text = CInt(MAmt.Text) / Session("Rate")
+   USDAmt.Text = CInt(MAmt.Text) / tRate                    ' Net Amount
    If Session("MaxBuy") > 0 Then                            ' Has a MaxBuy Limit
     If CInt(USDAmt.Text) > Session("MaxBuy") Then           ' Buy Amount Limit exceeded
      tMsg = "$USD Limit Exceeded! Maximum limit is $" + Session("MaxBuy").ToString() + "."
      USDAmt.Text = Session("MaxBuy")
-     MAmt.Text = CInt(USDAmt.Text) * Session("Rate")
     End If
    End If
+   USDCost.InnerText = "US " + FormatCurrency(USDAmt.Text)  ' Net Amount
+   Fee.InnerText = "US " + FormatCurrency((((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029)) - CDbl(USDAmt.Text), 2) ' Fee = Math.Round((((PNet +.30) / (1-.029))) - CDbl(USDAmt.Text),2)
+   If Trace.IsEnabled Then Trace.Warn("Buy", "** Fee: " + (CDbl(USDAmt.Text) * tFRate).ToString()) ' Debug output
+   If Trace.IsEnabled Then Trace.Warn("Buy", "** PFee: " + ((((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029)) - CDbl(USDAmt.Text)).ToString()) ' Debug output
+   USDTot.InnerText = "US " + FormatCurrency(((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029), 2) ' Gross = (PNet +.30) / (1-.029) 
+   MAmt.Text = Math.Round((CDbl(USDAmt.Text) * tRate), 0)    ' M$ Amount = Round(Net * Xrate)
    Purchase.InnerText = "M$ " + FormatNumber(CInt(MAmt.Text), 0,,, TriState.True).ToString().Replace(".00", "")
-   USDCost.InnerText = "US " + FormatCurrency(USDAmt.Text)
-   Fee.InnerText = "US " + FormatCurrency((CDbl(USDAmt.Text) * Session("Fee")))
-   If Trace.IsEnabled Then Trace.Warn("Buy", "** Fee: " + (CDbl(USDAmt.Text) * Session("Fee")).ToString())
-   USDTot.InnerText = "US " + FormatCurrency(IIf(Session("Fee") = 0, USDAmt.Text, CDbl(USDAmt.Text) + (CDbl(USDAmt.Text) * Session("Fee"))))
 
    PayPal.Enabled = True
    If Not BodyTag.Attributes.Item("onload") Is Nothing Then ' Remove onload error message display 
@@ -208,6 +232,7 @@ Partial Class Buy
 
  End Sub
 
+ ' $USD Amount changed
  Private Sub USDAmt_TextChanged(sender As Object, e As EventArgs) Handles USDAmt.TextChanged
   If Trace.IsEnabled Then Trace.Warn("Buy", "* USDAmount changed called!")
   If Session.Count() = 0 Or Len(Session("UUID")) = 0 Then   ' Ok to process incomming data
@@ -237,12 +262,32 @@ Partial Class Buy
     GetHours.Close()
    End If
 
+   Dim tRate As Integer
+   tRate = 250                                              ' Assume exchange rate of $250 Grid money to $1.00 USD
+   Dim tFRate As Double
+   tFRate = 0
+
+   Dim GetSettings As MySql.Data.MySqlClient.MySqlDataReader
+   SQLCmd = "Select " +
+            " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeRate') as Rate, " +
+            " (Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeFee') as XRate"
+   If Trace.IsEnabled Then Trace.Warn("Buy", "Get Rates SQLCmd: " + SQLCmd.ToString())
+   GetSettings = MyDB.GetReader("MySite", SQLCmd)
+   If GetSettings.HasRows() Then
+    GetSettings.Read()
+    tRate = GetSettings("Rate")
+    tFRate = GetSettings("XRate") / 100
+    If Trace.IsEnabled Then Trace.Warn("Buy", "** Rate: " + tRate.ToString())
+    If Trace.IsEnabled Then Trace.Warn("Buy", "** XRate: " + tFRate.ToString())
+   End If
+   GetSettings.Close()
+
    If USDAmt.Text.ToString().Trim().Length = 0 Then
     tMsg = tMsg.ToString() + "Missing Field Name!\r\n"
     tMsg = tMsg.ToString() + "US Dollars may not be empty!\r\n"
-   ElseIf Not IsNumeric(MAmt.Text) Then
+   ElseIf Not IsNumeric(USDAmt.Text) Then
     tMsg = tMsg.ToString() + "US Dollars must be a positive value!\r\n"
-   ElseIf CInt(MAmt.Text) < 0 Then
+   ElseIf CInt(USDAmt.Text) < 0 Then
     tMsg = tMsg.ToString() + "US Dollars must be a positive value!\r\n"
    End If
 
@@ -254,12 +299,13 @@ Partial Class Buy
       USDAmt.Text = Session("MaxBuy")
      End If
     End If
-    MAmt.Text = CInt(USDAmt.Text) * Session("Rate")
+    USDCost.InnerText = "US " + FormatCurrency(USDAmt.Text)  ' Net Amount
+    Fee.InnerText = "US " + FormatCurrency((((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029)) - CDbl(USDAmt.Text), 2) ' Fee = Math.Round((((PNet +.30) / (1-.029))) - CDbl(USDAmt.Text),2)
+    If Trace.IsEnabled Then Trace.Warn("Buy", "** Fee: " + (CDbl(USDAmt.Text) * tFRate).ToString()) ' Debug output
+    If Trace.IsEnabled Then Trace.Warn("Buy", "** PFee: " + ((((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029)) - CDbl(USDAmt.Text)).ToString()) ' Debug output
+    USDTot.InnerText = "US " + FormatCurrency(((CDbl(USDAmt.Text) * (1 + tFRate)) + 0.3) / (1 - 0.029), 2) ' Gross = (PNet +.30) / (1-.029) 
+    MAmt.Text = Math.Round((CDbl(USDAmt.Text) * tRate), 0)    ' M$ Amount = Round(Net * Xrate)
     Purchase.InnerText = "M$ " + FormatNumber(MAmt.Text,,, TriState.True).ToString().Replace(".00", "")
-    USDCost.InnerText = "US " + FormatCurrency(USDAmt.Text)
-    Fee.InnerText = "US " + FormatCurrency((CDbl(USDAmt.Text) * Session("Fee")))
-    If Trace.IsEnabled Then Trace.Warn("Buy", "** Fee: " + (CDbl(USDAmt.Text) * Session("Fee")).ToString())
-    USDTot.InnerText = "US " + FormatCurrency(IIf(Session("Fee") = 0, USDAmt.Text, CDbl(USDAmt.Text) + (CDbl(USDAmt.Text) * Session("Fee"))))
     PayPal.Enabled = True
     If Not BodyTag.Attributes.Item("onload") Is Nothing Then ' Remove onload error message display 
      BodyTag.Attributes.Remove("onload")
@@ -275,7 +321,7 @@ Partial Class Buy
  ' PayPal button Click 
  Protected Sub PayPal_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs)
   If Trace.IsEnabled Then Trace.Warn("Buy", "* PayPal Button clicked called!")
-  If Session.Count() = 0 Or Len(Session("UUID")) = 0 Then   ' Ok to process incomming data
+  If Session.Count() = 0 Or Len(Session("UUID")) = 0 Then   ' Ok to process incoming data
    Response.Redirect("/Default.aspx")                       ' Return to logon page
   Else
    Dim GetSettings As MySql.Data.MySqlClient.MySqlDataReader
@@ -293,12 +339,12 @@ Partial Class Buy
    Users = MyDB.GetReader("MyData", SQLCmd)
    Users.Read()
    business.Value = GetSettings("Parm2")
-   custom.Value = "Buy$:" + Users("username").ToString().Trim() + ":" + Users("lastname").ToString().Trim()
-   first_name.Value = Users("username").ToString().Trim()
+   custom.Value = Users("username").ToString().Trim() + ":" + Users("lastname").ToString().Trim()
+   first_name.Value = Users("username").ToString().Trim()   ' NOTE: gets replaces with real first and last names
    last_name.Value = Users("lastname").ToString().Trim()
    email.Value = Users("email").ToString().Trim()
    email.Visible = (Users("email").ToString().Trim().Length > 0)
-   item_number.Value = Fee.InnerText.ToString().Replace("US $", "") ' Send amount of the fee charged to IPN process
+   item_number.Value = 150                                  ' Item number for display. Means nothing.
    amount.Value = (USDTot.InnerText).ToString().Replace("US $", "")
    If Trace.IsEnabled Then Trace.Warn("Payment", "** USDTot.InnerText: " + USDTot.InnerText.ToString())
    If Trace.IsEnabled Then Trace.Warn("Payment", "** amount.Value: " + amount.Value.ToString())

@@ -189,9 +189,10 @@ Partial Class Administration_EstateForm
            "   (Select regionName From " + DBName.ToString() + ".regionxml Where UUID=A.RegionID) " +
            "  End " +
            " Else B.regionName End as regionName," +
+           " (Select Concat(Rtrim(username),' ',Rtrim(lastname)) as Name From users Where UUID=A.ownerUUID) as Owner," +
            " Case When B.regionName is null Then " +
-           "  Case When (Select status From " + DBName.ToString() + ".regionxml Where UUID=A.RegionID) is null "+
-           "  Then 0 "+
+           "  Case When (Select status From " + DBName.ToString() + ".regionxml Where UUID=A.RegionID) is null " +
+           "  Then 0 " +
            "  Else " +
            "  (Select status From " + DBName.ToString() + ".regionxml Where UUID=A.RegionID) " +
            "  End " +

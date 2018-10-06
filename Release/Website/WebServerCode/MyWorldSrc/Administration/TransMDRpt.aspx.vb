@@ -132,8 +132,12 @@ Partial Class Administration_TransMDRpt
            "Order by timeOccurred Desc"
   If Trace.IsEnabled Then Trace.Warn("TransHist", "Get SQLCmd: " + SQLCmd.ToString())
   Display = MyDB.GetReader("MyData", SQLCmd)
-  Display.Read()
-  ShowTotal.InnerText = "M" + FormatCurrency(Display("Total"), 0,,, True)
+  If Display.HasRows() Then
+   Display.Read()
+   If Display("Total").ToString().Trim().Length > 0 Then
+    ShowTotal.InnerText = "M" + FormatCurrency(Display("Total"), 0,,, True)
+   End If
+  End If
   Display.Close()
 
   ' Get Display list Items here

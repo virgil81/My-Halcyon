@@ -34,11 +34,12 @@ Partial Class Logon
 
   Trace.IsEnabled = False
   If Trace.IsEnabled Then Trace.Warn("Logon", "Start Page Load")
+  Session.Clear()                                           ' Clear any user logon session
 
   If IsNothing(Session("SSLStatus")) Then
    Session("SSLStatus") = False
    ' Force SSL active if it is not and is required.
-   If Request.ServerVariables("HTTPS") = "off" Then          ' Security is not active and is required
+   If Request.ServerVariables("HTTPS") = "off" Then         ' Security is not active and is required
     If Trace.IsEnabled Then Trace.Warn("Logon", "Https is off")
     Dim drServer As MySql.Data.MySqlClient.MySqlDataReader
     SQLCmd = "Select Parm2 From control Where Control='ADMINSYSTEM' and Parm1='ServerLocation'"
@@ -51,7 +52,7 @@ Partial Class Logon
       Session("SSLStatus") = True
       Response.Redirect("https://" + Request.ServerVariables("HTTP_HOST") + "/Logon.aspx")
      End If
-    Else                                                     ' show error if not located
+    Else                                                    ' show error if not located
      If Trace.IsEnabled Then Trace.Warn("Logon", "Set https error: <br>Control value for 'Server Location' (ServerLocation) was not defined!")
      Session("ErrorMessage") = "Control value for 'Server Location' (ServerLocation) was not defined!"
      Response.Redirect("/Error.aspx")
@@ -66,7 +67,6 @@ Partial Class Logon
    ' Define process unique objects here
    Dim tHtmlOut As String
    tHtmlOut = ""
-   Session.Clear()                                          ' Clear any user logon session
 
    ' Setup general page controls
 
@@ -243,7 +243,7 @@ Partial Class Logon
       If MAvatar.HasRows() Then
        MAvatar.Read()
        If users("username").ToString().Trim() + " " + users("lastname").ToString().Trim() = MAvatar("Parm2").ToString().Trim() Then
-        Session("Access") = 9                                ' SysAdmin Logon access
+        Session("Access") = 9                               ' SysAdmin Logon access
        End If
       End If
       MAvatar.Close()
@@ -251,8 +251,6 @@ Partial Class Logon
      SysAccts.Close()
 
      ' Presume no economy settings
-     Session("Rate") = 0
-     Session("Fee") = 0
      Session("MaxBuy") = 0
      Session("MaxSell") = 0
      Session("Hours") = 0
@@ -262,10 +260,6 @@ Partial Class Logon
       Dim GetSettings As MySql.Data.MySqlClient.MySqlDataReader
       SQLCmd = "Select " +
                " (Select Nbr2 From control " +
-               "  Where Control='ECONOMY' and Parm1='ExchangeRate') as ExchangeRate," +
-               " (Select Nbr2 From control " +
-               "  Where Control='ECONOMY' and Parm1='ExchangeFee') as ExchangeFee," +
-               " (Select Nbr2 From control " +
                "  Where Control='ECONOMY' and Parm1='MaxBuy') as MaxBuy," +
                " (Select Nbr2 From control " +
                "  Where Control='ECONOMY' and Parm1='MaxSell') as MaxSell," +
@@ -274,8 +268,6 @@ Partial Class Logon
       If Trace.IsEnabled Then Trace.Warn("Logon", "Get Control settings SQLCmd: " + SQLCmd.ToString())
       GetSettings = MyDB.GetReader("MySite", SQLCmd)
       If GetSettings.Read() Then
-       Session("Rate") = GetSettings("ExchangeRate")
-       Session("Fee") = GetSettings("ExchangeFee") / 100
        Session("MaxBuy") = GetSettings("MaxBuy")
        Session("MaxSell") = GetSettings("MaxSell")
        Session("Hours") = GetSettings("BuySellTime")

@@ -66,7 +66,7 @@
       <table style="width:100%;">
        <tr> 
         <td class="PageTitle"> 
-         Currency Exchange: Buy M$
+         Buy M$
         </td>
        </tr>
        <!-- Repeat the following tr content for each field to be processed. -->
@@ -90,7 +90,7 @@
             </td>
            </tr>
            <tr>
-            <td style="height: 30px; font-size: 20px; font-weight: bold;">
+            <td style="width: 60%; height: 30px; font-size: 20px; font-weight: bold;">
              Purchasing
             </td>
             <td id="Purchase" runat="server" style="height: 50px; font-size: 20px; font-weight: bold; text-align: right;">
@@ -108,7 +108,8 @@
            </tr>
            <tr>
             <td style="font-size: 20px; font-weight: normal;">
-             Transaction Fee
+             Transaction Fee<br />
+             (May include tax rates)
             </td>
             <td id="Fee" runat="server" style="height: 20px; font-size: 12px; font-weight: normal; text-align: right;">
             </td>

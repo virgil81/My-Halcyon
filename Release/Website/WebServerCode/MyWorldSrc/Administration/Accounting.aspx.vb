@@ -115,8 +115,12 @@ Partial Class Administration_Accounting
   drApp = MyDB.GetReader("MyData", SQLCmd)
   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Accounting", "DB Error: " + MyDB.ErrMessage().ToString())
   If drApp.Read() Then
-   ShowWorldBal.InnerText = "$" + drApp("WorldTotal").ToString()
-   AccountTot = drApp("WorldTotal")
+   If drApp("WorldTotal").ToString().Trim().Length = 0 Then
+    ShowWorldBal.InnerText = "$0.00"
+   Else
+    ShowWorldBal.InnerText = FormatCurrency(drApp("WorldTotal"), 2)
+   End If
+   AccountTot = IIf(drApp("WorldTotal").ToString().Trim().Length = 0, 0, drApp("WorldTotal"))
    WBBalance.InnerText = "$" + drApp("WBBal").ToString()
   End If
   drApp.Close()
@@ -127,15 +131,19 @@ Partial Class Administration_Accounting
   drApp = MyDB.GetReader("MySite", SQLCmd)
   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Accounting", "DB Error: " + MyDB.ErrMessage().ToString())
   If drApp.Read() Then
-   ShowPPBal.InnerText = FormatCurrency(drApp("Bal"), 2)
-   AcctBal = drApp("Bal")
+   If drApp("Bal").ToString().Trim().Length = 0 Then
+    ShowPPBal.InnerText = "$0.00"
+   Else
+    ShowPPBal.InnerText = FormatCurrency(drApp("Bal"), 2)
+   End If
+   AcctBal = IIf(drApp("Bal").ToString().Trim().Length = 0, 0, drApp("Bal"))
   End If
   drApp.Close()
 
-  If AccountTot > 0 Then
+  If AcctBal > 0 Then
    ShowRatio.InnerText = (AccountTot / AcctBal).ToString()
   Else
-   ShowRatio.InnerText = "0 / " + AcctBal.ToString()
+   ShowRatio.InnerText = AccountTot.ToString() + " / 0 "
   End If
   SQLCmd = "Select Nbr2 From control Where Control='ECONOMY' and Parm1='ExchangeRate'"
   drApp = MyDB.GetReader("MySite", SQLCmd)
@@ -156,14 +164,14 @@ Partial Class Administration_Accounting
   aMsg = ""
   ' Process error checking as required, place messages in tMsg.
   If Adjusment.Text.ToString().Trim().Length = 0 Then
-   aMsg = aMsg.ToString() + "Missing Adjusment amount!\r\n"
+   aMsg = aMsg.ToString() + "Missing Adjustment amount!\r\n"
   Else
    If Not IsNumeric(Adjusment.Text) Then
-    aMsg = aMsg.ToString() + "Adjusment amount must be a +/- whole number!\r\n"
+    aMsg = aMsg.ToString() + "Adjustment amount must be a +/- whole number!\r\n"
    ElseIf Adjusment.Text.ToString().Contains(".") Then
-    aMsg = aMsg.ToString() + "Adjusment amount must be a +/- whole number!\r\n"
+    aMsg = aMsg.ToString() + "Adjustment amount must be a +/- whole number!\r\n"
    ElseIf CInt(Adjusment.Text) = 0 Then
-    aMsg = aMsg.ToString() + "Adjusment amount must not be zero!\r\n"
+    aMsg = aMsg.ToString() + "Adjustment amount must not be zero!\r\n"
    End If
   End If
   'If FieldName.Text.ToString().Trim().Length = 0 Then
