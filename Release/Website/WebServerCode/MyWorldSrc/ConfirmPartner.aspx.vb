@@ -177,7 +177,9 @@ Partial Class ConfirmPartner
      ' Compose Confirmation Email to requestor
      Dim SendMail As New SendEmail
      SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-     SendMail.FromAddress = "mailer@" + Request.ServerVariables("HTTP_HOST")
+     SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                            Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                            Request.ServerVariables("HTTP_HOST"))
      SendMail.ToAddress = User("email").ToString()
      SendMail.Subject = "Your My World Partnership Confirmation!"
      SendMail.Body = " " + vbCrLf +
@@ -186,7 +188,9 @@ Partial Class ConfirmPartner
      If Not SendMail.SendMail() Then
       If Trace.IsEnabled Then Trace.Warn("ConfirmPartner", "Email Failed: " + SendMail.ErrMessage.ToString())
       tMsg = SendMail.ErrMessage.ToString()
-      SendMail.ToAddress = "support@" + Request.ServerVariables("HTTP_HOST")
+      SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                            Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                            Request.ServerVariables("HTTP_HOST"))
       SendMail.Subject = "Your My World Partnership Confirmation! - Failed to Send!"
       SendMail.Body = " " + vbCrLf + "Failed to send Partnership Confirmation email to member " + User("Email").ToString().Trim() + vbCrLf +
                       "Error Message: " + tMsg.ToString()

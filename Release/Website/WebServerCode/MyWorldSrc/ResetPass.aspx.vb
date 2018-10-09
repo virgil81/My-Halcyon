@@ -221,7 +221,9 @@ Partial Class ResetPass
        Dim SendMail As New SendEmail
        SendMail.SetTrace = Trace.IsEnabled
        SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-       SendMail.FromAddress = "mailer@" + Request.ServerVariables("HTTP_HOST")
+       SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                              Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                              Request.ServerVariables("HTTP_HOST"))
        SendMail.ToAddress = Users("Email").ToString().Trim()
        SendMail.Subject = "My World Password Reset Email"
        SendMail.Body = " " + vbCrLf + tBody.ToString()
@@ -231,7 +233,9 @@ Partial Class ResetPass
         'Response.Redirect("ConfirmReset.aspx?id=" + Users("Name").ToString())
         If Trace.IsEnabled Then Trace.Warn("ResetPass", "Email Failed: " + SendMail.ErrMessage.ToString())
         tMsg = SendMail.ErrMessage.ToString()
-        SendMail.ToAddress = "Support@" + Request.ServerVariables("HTTP_HOST")
+        SendMail.ToAddress = "Support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                              Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                              Request.ServerVariables("HTTP_HOST"))
         SendMail.Subject = "My World Password Reset Email - Failed to Send!"
         SendMail.Body = " " + vbCrLf + "Failed to send Confirmation email to member " + Users("Email").ToString().Trim() + vbCrLf +
                           "Error Message: " + tMsg.ToString()

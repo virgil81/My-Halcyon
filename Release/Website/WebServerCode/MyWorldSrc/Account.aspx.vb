@@ -277,7 +277,9 @@ Partial Class Account
       If Trace.IsEnabled Then Trace.Warn("Account", "Sending Email (My World Email Changed Notice) to " + Users("Email").ToString().Trim() + " From mailer@" + Request.ServerVariables("HTTP_HOST") + ".")
       Dim SendMail As New SendEmail
       SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-      SendMail.FromAddress = "mailer@" + Request.ServerVariables("HTTP_HOST")
+      SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                             Request.ServerVariables("HTTP_HOST"))
       SendMail.ToAddress = Users("Email").ToString().Trim()
       SendMail.Subject = "My World Email Changed Notice"
       SendMail.Body = " " + vbCrLf + tBody.ToString()
@@ -285,7 +287,9 @@ Partial Class Account
       If Not SendMail.SendMail() Then
        If Trace.IsEnabled Then Trace.Warn("Account", "Email Failed: " + SendMail.ErrMessage.ToString())
        tMsg = SendMail.ErrMessage.ToString()
-       SendMail.ToAddress = "support@" + Request.ServerVariables("HTTP_HOST")
+       SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                             Request.ServerVariables("HTTP_HOST"))
        SendMail.Subject = "My World Email Changed Notice - Failed to Send!"
        SendMail.Body = " " + vbCrLf + "Failed to send change email to grid user " + Users("Email").ToString().Trim() + vbCrLf +
                        "Error Message: " + tMsg.ToString()
@@ -461,7 +465,9 @@ Partial Class Account
       ' Compose Confirmation Email to requestor
       Dim SendMail As New SendEmail
       SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-      SendMail.FromAddress = "mailer@" + Request.ServerVariables("HTTP_HOST")
+      SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                             Request.ServerVariables("HTTP_HOST"))
       SendMail.ToAddress = Users("Email").ToString().Trim()
       SendMail.Subject = "My World Partnership Request Email"
       SendMail.Body = " " + vbCrLf + tBody.ToString()
@@ -469,7 +475,9 @@ Partial Class Account
       If Not SendMail.SendMail() Then
        If Trace.IsEnabled Then Trace.Warn("Account", "Email Failed: " + SendMail.ErrMessage.ToString())
        tMsg = SendMail.ErrMessage.ToString()
-       SendMail.ToAddress = "support@" + Request.ServerVariables("HTTP_HOST")
+       SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                             Request.ServerVariables("HTTP_HOST"))
        SendMail.Subject = "My World Partnership Request Email - Failed to Send!"
        SendMail.Body = " " + vbCrLf + "Failed to send Confirmation email to the designated Partner " + Users("Email").ToString().Trim() + vbCrLf +
                        "Error Message: " + tMsg.ToString()

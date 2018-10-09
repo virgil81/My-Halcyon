@@ -552,8 +552,12 @@ Partial Class _IPN
     SendMail.IsHTML = False
     SendMail.EmailServer = tSMTP.ToString()
     SendMail.Subject = "IPN Transaction Report"
-    SendMail.ToAddress = "director@"+Request.ServerVariables("HTTP_HOST")  ' Your debugging email address
-    SendMail.FromAddress = "mailer@"+Request.ServerVariables("HTTP_HOST")  ' Your site sender email address, must be different from your email
+    SendMail.ToAddress = "director@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                           Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                           Request.ServerVariables("HTTP_HOST"))  ' Your debugging email address
+    SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
+                                           Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
+                                           Request.ServerVariables("HTTP_HOST"))  ' Your site sender email address, must be different from your email
     SendMail.Body = tEmailOut.ToString()
     If SendMail.SendMail() Then
      If Trace.IsEnabled Then Trace.Warn("IPN", "Email sent!")
