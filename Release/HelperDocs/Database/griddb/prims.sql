@@ -101,6 +101,7 @@ CREATE TABLE `prims` (
   `CollisionSound` char(36) NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
   `CollisionSoundVolume` double NOT NULL DEFAULT 0,
   `LinkNumber` int(11) NOT NULL DEFAULT 0,
+  `ServerFlags` int(11) NOT NULL DEFAULT '0',
   `PassTouches` tinyint(4) DEFAULT NULL,
   `ServerWeight` double DEFAULT NULL,
   `StreamingCost` double DEFAULT NULL,
