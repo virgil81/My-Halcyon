@@ -69,7 +69,7 @@ namespace Enhanced.Data.Inventory.Cassandra
                 _legacyStorage = new LegacyMysqlInventoryStorage(settings.LegacyInventorySource);
             }
 
-            _storageSelector = new CassandraMigrationProviderSelector(settings.InventoryMigrationActive, settingsInventoryDisableCassandra, settings.CoreConnectionString,
+            _storageSelector = new CassandraMigrationProviderSelector(settings.InventoryMigrationActive, settings.InventoryDisableCassandra, settings.CoreConnectionString,
                 _storage, _legacyStorage);
 
             ProviderRegistry.Instance.RegisterInterface<IInventoryProviderSelector>(_storageSelector);
