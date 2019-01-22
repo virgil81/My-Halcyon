@@ -42,6 +42,7 @@ namespace Enhanced.Data.Inventory.Cassandra
         private bool _migrationActive;
 
         private InventoryStorage _cassandraStorage;
+        private bool _legacyOnly;   // disable Cassandra inventory?
         private LegacyMysqlInventoryStorage _legacyStorage;
 
         private ICheckedInventoryStorage _checkedCassandraStorage;
@@ -51,20 +52,32 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         private MigrationStatusReader _migrationStatusChecker;
 
-        public CassandraMigrationProviderSelector(bool migrationActive,
+        public CassandraMigrationProviderSelector(bool migrationActive, bool legacyOnly,
             string coreConnString, InventoryStorage cassandraStorage, LegacyMysqlInventoryStorage legacyStorage)
         {
+            _legacyOnly = legacyOnly;
             _migrationActive = migrationActive;
             _cassandraStorage = cassandraStorage;
             _legacyStorage = legacyStorage;
 
-            _checkedCassandraStorage = new CheckedInventoryStorage(_cassandraStorage);
             _checkedLegacyStorage = new CheckedInventoryStorage(_legacyStorage);
-            _migrationStatusChecker = new MigrationStatusReader(coreConnString);
+
+            if (!legacyOnly)
+            {
+                _checkedCassandraStorage = new CheckedInventoryStorage(_cassandraStorage);
+                _migrationStatusChecker = new MigrationStatusReader(coreConnString);
+            }
         }
 
         public IInventoryStorage GetProvider(UUID userId)
         {
+            // Are we sticking with MySql only?
+            if (_legacyOnly)
+            {
+                return _legacyStorage;
+            }
+
+            // Otherwise, Cassandra supported, and maybe both.
             if (!_migrationActive)
             {
                 return _cassandraStorage;
@@ -102,6 +115,11 @@ namespace Enhanced.Data.Inventory.Cassandra
 
         public ICheckedInventoryStorage GetCheckedProvider(UUID userId)
         {
+            if (_legacyOnly)
+            {
+                return _checkedLegacyStorage;
+            }
+
             if (!_migrationActive)
             {
                 return _checkedCassandraStorage;
