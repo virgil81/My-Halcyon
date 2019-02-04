@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.RemoteAdmin.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.RemoteAdmin.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.RemoteAdmin\obj\x64\Debug\Enhanced.RemoteAdmin.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.RemoteAdmin\obj\x64\Debug\Enhanced.RemoteAdmin.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.RemoteAdmin\obj\x64\Debug\Enhanced.RemoteAdmin.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.RemoteAdmin\obj\x64\Debug\Enhanced.RemoteAdmin.pdb

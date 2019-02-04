@@ -1,5 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Halcyon.exe
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Halcyon.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Halcyon\obj\x64\Debug\Halcyon.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Halcyon\obj\x64\Debug\Halcyon.exe
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Halcyon\obj\x64\Debug\Halcyon.pdb

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Console.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Console.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Console\obj\x64\Debug\OpenSim.Framework.Console.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Console\obj\x64\Debug\OpenSim.Framework.Console.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Console\obj\x64\Debug\OpenSim.Framework.Console.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Console\obj\x64\Debug\OpenSim.Framework.Console.pdb

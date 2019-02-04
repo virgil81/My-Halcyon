@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Physics.Manager.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Physics.Manager.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Physics\Manager\obj\x64\Debug\OpenSim.Region.Physics.Manager.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Physics\Manager\obj\x64\Debug\OpenSim.Region.Physics.Manager.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Physics\Manager\obj\x64\Debug\OpenSim.Region.Physics.Manager.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Physics\Manager\obj\x64\Debug\OpenSim.Region.Physics.Manager.pdb

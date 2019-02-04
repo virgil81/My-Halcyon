@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Services.UserService.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Services.UserService.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\UserService\obj\x64\Debug\OpenSim.Services.UserService.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\UserService\obj\x64\Debug\OpenSim.Services.UserService.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\UserService\obj\x64\Debug\OpenSim.Services.UserService.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\UserService\obj\x64\Debug\OpenSim.Services.UserService.pdb

@@ -1,5 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Services.AssetService.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Services.AssetService.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\AssetService\obj\x64\Debug\OpenSim.Services.AssetService.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\AssetService\obj\x64\Debug\OpenSim.Services.AssetService.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Services\AssetService\obj\x64\Debug\OpenSim.Services.AssetService.pdb

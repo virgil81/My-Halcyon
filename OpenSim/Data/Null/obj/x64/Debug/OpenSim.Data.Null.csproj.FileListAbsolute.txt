@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Data.Null.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Data.Null.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\Null\obj\x64\Debug\OpenSim.Data.Null.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\Null\obj\x64\Debug\OpenSim.Data.Null.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\Null\obj\x64\Debug\OpenSim.Data.Null.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Data\Null\obj\x64\Debug\OpenSim.Data.Null.pdb

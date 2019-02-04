@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Communications.Local.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Region.Communications.Local.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Communications\Local\obj\x64\Debug\OpenSim.Region.Communications.Local.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Communications\Local\obj\x64\Debug\OpenSim.Region.Communications.Local.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Communications\Local\obj\x64\Debug\OpenSim.Region.Communications.Local.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Region\Communications\Local\obj\x64\Debug\OpenSim.Region.Communications.Local.pdb

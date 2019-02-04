@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.Data.Assets.Stratus.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.Data.Assets.Stratus.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Data.Assets.Stratus\obj\x64\Debug\Enhanced.Data.Assets.Stratus.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Data.Assets.Stratus\obj\x64\Debug\Enhanced.Data.Assets.Stratus.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Data.Assets.Stratus\obj\x64\Debug\Enhanced.Data.Assets.Stratus.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Data.Assets.Stratus\obj\x64\Debug\Enhanced.Data.Assets.Stratus.pdb

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.Testing.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.Testing.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Testing\obj\x64\Debug\Enhanced.Testing.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Testing\obj\x64\Debug\Enhanced.Testing.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Testing\obj\x64\Debug\Enhanced.Testing.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.Testing\obj\x64\Debug\Enhanced.Testing.pdb

@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.ApplicationPlugins.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\Enhanced.ApplicationPlugins.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.ApplicationPlugins\obj\x64\Debug\Enhanced.ApplicationPlugins.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.ApplicationPlugins\obj\x64\Debug\Enhanced.ApplicationPlugins.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.ApplicationPlugins\obj\x64\Debug\Enhanced.ApplicationPlugins.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Enhanced\Enhanced.ApplicationPlugins\obj\x64\Debug\Enhanced.ApplicationPlugins.pdb

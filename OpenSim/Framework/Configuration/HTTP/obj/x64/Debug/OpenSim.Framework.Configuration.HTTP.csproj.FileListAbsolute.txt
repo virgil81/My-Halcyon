@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Configuration.HTTP.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Configuration.HTTP.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\HTTP\obj\x64\Debug\OpenSim.Framework.Configuration.HTTP.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\HTTP\obj\x64\Debug\OpenSim.Framework.Configuration.HTTP.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\HTTP\obj\x64\Debug\OpenSim.Framework.Configuration.HTTP.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Configuration\HTTP\obj\x64\Debug\OpenSim.Framework.Configuration.HTTP.pdb

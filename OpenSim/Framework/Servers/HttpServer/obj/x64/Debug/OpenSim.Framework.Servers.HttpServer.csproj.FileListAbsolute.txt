@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Servers.HttpServer.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.Servers.HttpServer.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Servers\HttpServer\obj\x64\Debug\OpenSim.Framework.Servers.HttpServer.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Servers\HttpServer\obj\x64\Debug\OpenSim.Framework.Servers.HttpServer.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Servers\HttpServer\obj\x64\Debug\OpenSim.Framework.Servers.HttpServer.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\Servers\HttpServer\obj\x64\Debug\OpenSim.Framework.Servers.HttpServer.pdb

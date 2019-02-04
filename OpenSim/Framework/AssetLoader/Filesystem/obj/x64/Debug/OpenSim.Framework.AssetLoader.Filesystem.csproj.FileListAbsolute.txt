@@ -1,6 +1,0 @@
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.AssetLoader.Filesystem.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\Release\bin\OpenSim.Framework.AssetLoader.Filesystem.pdb
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\AssetLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.AssetLoader.Filesystem.csprojAssemblyReference.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\AssetLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.AssetLoader.Filesystem.csproj.CoreCompileInputs.cache
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\AssetLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.AssetLoader.Filesystem.dll
-C:\Users\virtu\Desktop\My-Halcyon-Dev\OpenSim\Framework\AssetLoader\Filesystem\obj\x64\Debug\OpenSim.Framework.AssetLoader.Filesystem.pdb
