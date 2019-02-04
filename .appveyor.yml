@@ -10,7 +10,7 @@ platform:
 - x64
 
 pull_requests:
-  do_not_increment_build_number: true
+  do_not_increment_build_number: false
 
 nuget:
   disable_publish_on_pr: true
@@ -36,8 +36,7 @@ before_build:
       $env:EDITION = "dotnet"
     }
 - cmd: IF EXIST runprebuild.bat runprebuild.bat
-- sh: if [ -x runprebuild.sh ]; then ./runprebuild.sh; fi
-- nuget restore Halcyon.sln
+- cmd: nuget restore Halcyon.sln
 
 build:
   parallel: true
@@ -52,20 +51,42 @@ for:
     only:
     - image: Ubuntu
   build_script:
-  - msbuild /p:DefineConstants="_MONO_CLI_FLAG_" Halcyon.sln
+  - ./build.sh
 
 after_build:
 - ps: |
-    If (Test-Path "Release/bin/OpenSim.Framework.Servers.dll") {
-      $halcyon_version = (Get-ChildItem -Path Release/bin/OpenSim.Framework.Servers.dll | % versioninfo).ProductVersion
-      Update-AppveyorBuild -Version "$halcyon_version-$env:APPVEYOR_BUILD_NUMBER"
+    If (Test-Path "bin/OpenSim.Framework.Servers.dll") {
+      $my-halcyon_version = (Get-ChildItem -Path bin/OpenSim.Framework.Servers.dll | % versioninfo).ProductVersion
+      Write-Output "Detected version: $halcyon_version"
+      Write-Output "AppVeyor build number: $env:APPVEYOR_BUILD_NUMBER"
+      $build_version = "$halcyon_version-$env:APPVEYOR_BUILD_NUMBER"
+      If ("$env:APPVEYOR_BUILD_VERSION" -ne "$build_version") {
+        Update-AppveyorBuild -Version "$build_version"
+      }
     }
-- ps: Rename-Item -Path Release/bin -NewName halcyon
+- ps: Rename-Item -Path bin -NewName my-halcyon-$env:APPVEYOR_BUILD_VERSION-$env:APPVEYOR_REPO_BRANCH-$env:EDITION
 
 # No tests for now.
-test: off
+test:
+  assemblies:
+    only:
+    - InWorldz.Data.Assets.Stratus.dll
+    - InWorldz.Phlox.Engine.dll
+    - InWorldz.Region.Data.Thoosa.dll
+    - OpenSim.Framework.Tests.dll
+    - OpenSim.Region.FrameworkTests.dll
 
 artifacts:
-- path: halcyon
-  name: Halcyon-$(APPVEYOR_BUILD_VERSION)-$(APPVEYOR_REPO_BRANCH)-$(EDITION)
+- path: my-halcyon-$(APPVEYOR_BUILD_VERSION)-$(APPVEYOR_REPO_BRANCH)-$(EDITION)
+  name: My-Halcyon-$(APPVEYOR_BUILD_VERSION)-$(APPVEYOR_REPO_BRANCH)-$(EDITION)
   type: zip
+
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: g8LtHO4JCGl46XE+c9GRN/S+l+KA6A8jfD18h1vhtjdrtW1tnkmVt4n5t+0bOY7X
+  artifact: My-Halcyon-$(APPVEYOR_BUILD_VERSION)-$(APPVEYOR_REPO_BRANCH)-$(EDITION)
+  draft: true
+  prerelease: false
+  on:
+    APPVEYOR_REPO_TAG: true
