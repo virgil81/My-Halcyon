@@ -56,7 +56,7 @@ for:
 after_build:
 - ps: |
     If (Test-Path "bin/OpenSim.Framework.Servers.dll") {
-      $my-halcyon_version = (Get-ChildItem -Path bin/OpenSim.Framework.Servers.dll | % versioninfo).ProductVersion
+      $halcyon_version = (Get-ChildItem -Path bin/OpenSim.Framework.Servers.dll | % versioninfo).ProductVersion
       Write-Output "Detected version: $halcyon_version"
       Write-Output "AppVeyor build number: $env:APPVEYOR_BUILD_NUMBER"
       $build_version = "$halcyon_version-$env:APPVEYOR_BUILD_NUMBER"
