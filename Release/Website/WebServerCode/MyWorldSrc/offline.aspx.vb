@@ -4,13 +4,13 @@ Partial Class offline
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -72,6 +72,14 @@ Partial Class offline
   Message = ""
   MsgStr = ""
   ErrorMsg = ""
+
+  Dim Domain As String
+  Domain = Request.ServerVariables("HTTP_HOST")
+  Dim URLSplit() As String
+  URLSplit = Domain.ToString().Split(".")
+  If (URLSplit.Length - 1) > 1 Then
+   Domain = Domain.ToString().Substring(Domain.ToString().IndexOf(".") + 1)
+  End If
 
   If tLog Then                                              ' Log file output
    ' Trace Actions to Log file
@@ -271,14 +279,14 @@ Partial Class offline
            ' Send message as email
            Dim email As New SendEmail
            email.EmailServer = tSMTP.ToString()
-           email.FromAddress = "My World Mail <mailer@" + Request.ServerVariables("HTTP_HOST") + ">"
+           email.FromAddress = "My World Mail <mailer@" + Domain.ToString() + ">"
            email.ToAddress = GetUser("username").ToString().Trim() + " " + GetUser("lastname").ToString().Trim() + "<" + GetUser("email").ToString().Trim() + ">"
            email.Subject = "Message From My World"
            email.Body = "<br>" + GetUser("username").ToString().Trim() + " " + GetUser("lastname").ToString().Trim() + ", " +
                         "you have a message from <b>" + root.Item("fromAgentName").InnerText.ToString().Trim() + "</b>.<br><br>" +
                         "<b><i>" + tMessage.ToString() + "</i></b>"
            email.IsHTML = True
-           If email.SendMail() Then                         ' I dont care if there is a problem.
+           If email.SendMail() Then
             If tLog Then                                    ' Log file output
              ' Trace Actions to Log file
              sw.WriteLine("Offline Email was sent.")
@@ -411,7 +419,7 @@ Partial Class offline
        MyDB.DBCmd("MyData", SQLCmd)
        If MyDB.Error() Then
         ErrorMsg = "Remove offline messages DB Error: " + MyDB.ErrMessage.ToString()
-        If tLog Then                                               ' Log file output
+        If tLog Then                                        ' Log file output
          ' Trace Actions to Log file
          sw.WriteLine(ErrorMsg)
          sw.Flush()
@@ -450,8 +458,8 @@ Partial Class offline
 
    Dim email As New SendEmail
    email.EmailServer = tSMTP.ToString()
-   email.FromAddress = "mailer@MyWorld.MyWorldSrc.com"
-   email.ToAddress = "director@MyWorld.MyWorldSrc.com"
+   email.FromAddress = "My World Mail <mailer@" + Domain.ToString() + ">"
+   email.ToAddress = "director@" + Domain.ToString()
    email.Subject = "Grid Offline IM Processing Error"
    email.Body = "Offline message was sent:<br><br>" +
                 "Method: " + Method.ToString().Trim() + "<br><br>" +
@@ -464,14 +472,14 @@ Partial Class offline
     sw.Flush()
    End If
    email.IsHTML = True
-   If email.SendMail() Then                         ' I dont care if there is a problem.
-    If tLog Then                                    ' Log file output
+   If email.SendMail() Then
+    If tLog Then                                            ' Log file output
      ' Trace Actions to Log file
      sw.WriteLine("Email was sent.")
      sw.Flush()
     End If
    Else
-    If tLog Then                                    ' Log file output
+    If tLog Then                                            ' Log error message.
      ' Trace Actions to Log file
      sw.WriteLine("Email send failed! " + email.ErrMessage())
      sw.Flush()
@@ -480,7 +488,7 @@ Partial Class offline
    email.Close()
    email = Nothing
   End If
-  If tLog Then                                        ' Log file output
+  If tLog Then                                              ' Log file output
    ' Trace Actions to Log file
    sw.WriteLine("--Grid Offline IM Processing Error Processed!--" + vbCrLf)
    sw.Flush()

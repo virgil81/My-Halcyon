@@ -21,7 +21,7 @@
     </tr>
     <tr>
      <td style="width: 50%; font-weight: bold; padding-left: 5px;">
-      Grid Status: 
+      World Status: 
      </td>
      <td style="width: 50%;">
       <span id="GridStats" runat="server"></span>

@@ -4,13 +4,13 @@ Partial Class ConfirmPartner
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -106,11 +106,12 @@ Partial Class ConfirmPartner
              "Where (AutoStart is not null Or AutoExpire is not null) and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
     If Trace.IsEnabled Then Trace.Warn("ConfirmPartner", "Update Page AutoStart: " + SQLCmd.ToString())
     MyDB.DBCmd("MySite", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("ConfirmReset", "** DB Error: " + MyDB.ErrMessage().ToString())
 
     ' Check for Page display content
     Dim rsPage As MySql.Data.MySqlClient.MySqlDataReader
     SQLCmd = "Select Title,Content From pagedetail " +
-            "Where Active=1 and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
+             "Where Active=1 and PageID=" + MyDB.SQLNo(drGetPage("PageID"))
     If Trace.IsEnabled Then Trace.Warn("ConfirmPartner", "Get Page Content: " + SQLCmd.ToString())
     rsPage = MyDB.GetReader("MySite", SQLCmd)
     If rsPage.HasRows() Then
@@ -177,9 +178,7 @@ Partial Class ConfirmPartner
      ' Compose Confirmation Email to requestor
      Dim SendMail As New SendEmail
      SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-     SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                            Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                            Request.ServerVariables("HTTP_HOST"))
+     SendMail.FromAddress = "mailer@" + Session("Domain").ToString()
      SendMail.ToAddress = User("email").ToString()
      SendMail.Subject = "Your My World Partnership Confirmation!"
      SendMail.Body = " " + vbCrLf +
@@ -188,9 +187,7 @@ Partial Class ConfirmPartner
      If Not SendMail.SendMail() Then
       If Trace.IsEnabled Then Trace.Warn("ConfirmPartner", "Email Failed: " + SendMail.ErrMessage.ToString())
       tMsg = SendMail.ErrMessage.ToString()
-      SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                            Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                            Request.ServerVariables("HTTP_HOST"))
+      SendMail.ToAddress = "support@" + Session("Domain").ToString()
       SendMail.Subject = "Your My World Partnership Confirmation! - Failed to Send!"
       SendMail.Body = " " + vbCrLf + "Failed to send Partnership Confirmation email to member " + User("Email").ToString().Trim() + vbCrLf +
                       "Error Message: " + tMsg.ToString()
@@ -198,7 +195,7 @@ Partial Class ConfirmPartner
       SendMail.SendMail()
       If Not SendMail.SendMail() And Trace.IsEnabled Then Trace.Warn("ConfirmPartner", "Support Email Failed: " + SendMail.ErrMessage.ToString())
      Else
-      ShowMsg.InnerText = "Congradulations! A Confirmation email has been sent to your partner!"
+      ShowMsg.InnerText = "Congratulations! A Confirmation email has been sent to your partner!"
      End If
      SendMail.SendMail()
      SendMail.Close()

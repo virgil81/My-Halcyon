@@ -5,13 +5,13 @@ Partial Class Account
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -103,20 +103,20 @@ Partial Class Account
     ' Check User account Transaction time limit
     Dim GetLimits As MySql.Data.MySqlClient.MySqlDataReader
     SQLCmd = "Select " +
-            " Case When Hours>0 " +
-            " Then IF(Hours> " +
-            "  Case When " +
-            "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
-            "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) is null " +
-            "  Then 24 " +
-            "  Else" +
-            "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
-            "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) " +
-            "  End,TRUE,FALSE) " +
-            " Else FALSE " +
-            " End as HourLimit " +
-            "From usereconomy " +
-            "Where UUID=" + MyDB.SQLStr(Session("UUID"))
+             " Case When Hours>0 " +
+             " Then IF(Hours> " +
+             "  Case When " +
+             "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
+             "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) is null " +
+             "  Then 24 " +
+             "  Else" +
+             "   (Select TIMESTAMPDIFF(HOUR,TransDate,Now()) as Hours From accountbal " +
+             "    Where UUID=usereconomy.UUID Order by TransDate Desc Limit 0,1) " +
+             "  End,TRUE,FALSE) " +
+             " Else FALSE " +
+             " End as HourLimit " +
+             "From usereconomy " +
+             "Where UUID=" + MyDB.SQLStr(Session("UUID"))
     If Trace.IsEnabled Then Trace.Warn("Account", "Get usereconomy TLimited SQLCmd: " + SQLCmd.ToString())
     GetLimits = MyDB.GetReader("MySite", SQLCmd)
     If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Account", "DB Error: " + MyDB.ErrMessage().ToString())
@@ -274,12 +274,10 @@ Partial Class Account
       tBody = tBody.ToString().Replace("[%FirstName%]", Users("username").ToString().Trim())
       tBody = tBody.ToString().Replace("[%OldEmail%]", Users("email").ToString().Trim())
       tBody = tBody.ToString().Replace("[%NewEmail%]", Email.Text.ToString().Trim())
-      If Trace.IsEnabled Then Trace.Warn("Account", "Sending Email (My World Email Changed Notice) to " + Users("Email").ToString().Trim() + " From mailer@" + Request.ServerVariables("HTTP_HOST") + ".")
+      If Trace.IsEnabled Then Trace.Warn("Account", "Sending Email (My World Email Changed Notice) to " + Users("Email").ToString().Trim() + " From mailer@" + Session("Domain").ToString() + ".")
       Dim SendMail As New SendEmail
       SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-      SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                             Request.ServerVariables("HTTP_HOST"))
+      SendMail.FromAddress = "mailer@" + Session("Domain").ToString()
       SendMail.ToAddress = Users("Email").ToString().Trim()
       SendMail.Subject = "My World Email Changed Notice"
       SendMail.Body = " " + vbCrLf + tBody.ToString()
@@ -287,9 +285,7 @@ Partial Class Account
       If Not SendMail.SendMail() Then
        If Trace.IsEnabled Then Trace.Warn("Account", "Email Failed: " + SendMail.ErrMessage.ToString())
        tMsg = SendMail.ErrMessage.ToString()
-       SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                             Request.ServerVariables("HTTP_HOST"))
+       SendMail.ToAddress = "support@" + Session("Domain").ToString()
        SendMail.Subject = "My World Email Changed Notice - Failed to Send!"
        SendMail.Body = " " + vbCrLf + "Failed to send change email to grid user " + Users("Email").ToString().Trim() + vbCrLf +
                        "Error Message: " + tMsg.ToString()
@@ -455,7 +451,6 @@ Partial Class Account
      tBody = tBody.ToString().Replace("[%UUID%]", Session("UUID").ToString())
      tBody = tBody.ToString().Replace("[%Name2%]", Users("username").ToString())      ' Requestee
      tBody = tBody.ToString().Replace("[%UUID2%]", Users("UUID").ToString())
-     If Trace.IsEnabled Then Trace.Warn("Account", "Sending Partner Confirmation Email to " + Users("email").ToString().Trim() + " From mailer@MyWorld.com")
      Dim GetEmail As MySql.Data.MySqlClient.MySqlDataReader
      SQLCmd = "Select Parm2 as SMTPServer From control Where Parm1='SMTPServer'"
      If Trace.IsEnabled Then Trace.Warn("Account", "Get SMTPServer SQLCmd: " + SQLCmd.ToString())
@@ -465,24 +460,20 @@ Partial Class Account
       ' Compose Confirmation Email to requestor
       Dim SendMail As New SendEmail
       SendMail.EmailServer = GetEmail("SMTPServer").ToString().Trim()
-      SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                             Request.ServerVariables("HTTP_HOST"))
+      SendMail.FromAddress = "mailer@" + Session("Domain").ToString()
       SendMail.ToAddress = Users("Email").ToString().Trim()
       SendMail.Subject = "My World Partnership Request Email"
       SendMail.Body = " " + vbCrLf + tBody.ToString()
       SendMail.IsHTML = True
+      If Trace.IsEnabled Then Trace.Warn("Account", "Sending Partner Confirmation Email to " + Users("email").ToString().Trim() + " From mailer@" + Session("Domain").ToString())
       If Not SendMail.SendMail() Then
        If Trace.IsEnabled Then Trace.Warn("Account", "Email Failed: " + SendMail.ErrMessage.ToString())
        tMsg = SendMail.ErrMessage.ToString()
-       SendMail.ToAddress = "support@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                             Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                             Request.ServerVariables("HTTP_HOST"))
+       SendMail.ToAddress = "support@" + Session("Domain").ToString()
        SendMail.Subject = "My World Partnership Request Email - Failed to Send!"
        SendMail.Body = " " + vbCrLf + "Failed to send Confirmation email to the designated Partner " + Users("Email").ToString().Trim() + vbCrLf +
                        "Error Message: " + tMsg.ToString()
        SendMail.IsHTML = False
-       SendMail.SendMail()
        If Not SendMail.SendMail() And Trace.IsEnabled Then Trace.Warn("Account", "Support Email Failed: " + SendMail.ErrMessage.ToString())
       End If
       SendMail.Close()
@@ -490,16 +481,16 @@ Partial Class Account
      End If
      GetEmail.Close()
     Else
-     tMsg = "Selected Partner is missing an email address!"
+     tMsg = "Cannot add Entry:\r\n Selected Partner is missing an email address!"
     End If
    Else
-    tMsg = "No account was found for the First and Last names entered."
+    tMsg = "Cannot add Entry:\r\n No account was found for the First and Last names entered."
    End If
   End If
   Users.Close()
 
   If tMsg.ToString().Trim().Length > 0 Then
-   tMsg = "Cannot add Entry:\r\n" + tMsg
+   If Trace.IsEnabled Then Trace.Warn("Account", "message posted: " + tMsg.ToString())
    BodyTag.Attributes.Add("onload", "ShowMsg();")           ' Activate onload option to show message
    PageCtl.AlertMessage(Me, tMsg, "ErrMsg")                 ' Display Alert Message
   End If

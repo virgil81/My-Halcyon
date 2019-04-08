@@ -106,8 +106,5 @@
   <div id="FooterPos">
    <uc1:Footer id="Footer" runat="server"></uc1:Footer>
   </div>
-  <form name="QuickTipForm" action="/QuickTip.aspx" method="post" target="QuickTip">
-   <input type="hidden" name="PageName" />
-  </form>
  </body>
 </html>

@@ -19,8 +19,10 @@ Region folder layout:
 
  Replacement tags and files they are in:
   Tag               Files                                              Comment
-  %RegionServerIP%  - Region.ini, MessagingServer_Config.xml           Replaced with region server's External IP.
+  %RegionServerIP%  - Halcyon.ini                                      Replaced with region server's External IP.
+  %GridServerIP%    - MessagingServer_Config.xml                       Replaced with grid server's External IP.
   %GridName%        - Halcyon.ini, UserServer_Config.xml               as in "IMA %GridName% Grid".
+  %GridNick%        - Halcyon.ini                                      Grid short name ie. MyWorld.
   %DBLocalIP%       - Halcyon.ini, *_Config.xml                        MySQL Server internal IP address.
   %GridDB%          - Halcyon.ini, *_Config.xml                        DB name for the grid database. No spaces. Ie. mydata
   %DBUser%          - Halcyon.ini, *_Config.xml                        DB User name for grid access. NOT ROOT!
@@ -47,7 +49,7 @@ Run this from the bin folder in a command prompt to create the grid database.
 
 Run the following in MySQL Workbench query to create the DB user and assign permissions.
 
-create user '%DBUser%'@'%' identified by 'WorldDB1';
+create user '%DBUser%'@'%' identified by '%DBPass%';
 grant Select, Insert, Update, Delete on %GridDB%.* to '%DBUser%'@'%';
 grant Select, Insert, Update, Delete on mysite.* to '%DBUser%'@'%';
 FLUSH PRIVILEGES;
@@ -87,9 +89,9 @@ I run a max of 10 regions of any type on one region server.
 Performance for maximum number of users will vary depending on server abilities.
 
 Thus if a second region server was set up, its region port numbers would be like:
-Region1: 9500
-Region2: 9501
-Region3: 9502
+Region1: 9510
+Region2: 9511
+Region3: 9512
 
 ***************
 SetPorts4User.cmd - This file is used to set the region server grid ports for current server user. Execute file from command line.
@@ -212,7 +214,7 @@ Del ScriptEngines\*.* /q
 Del Terrain\*.* /q
 :Load files
 @Echo copying new files...
-xcopy X:\%1\*.* /s
+xcopy C:\%1\*.* /s
 copy HalcyonConfigs\*.*
 CD \Grid
 
@@ -326,7 +328,7 @@ MessagingServer_Config.xml
   region_comms_provider="OpenSim.Region.Communications.OGS1.dll" 
   http_port="8006" 
   http_ssl="False" 
-  published_ip="%RegionServerIP%" 
+  published_ip="%GridServerIP%" 
   ssl_public_certificate="" />
 </Root>
 ---------------
@@ -431,10 +433,9 @@ Each region server requires it to be setup with the IP Address in the Networking
     ; To run a script every few minutes, set the script filename here
     ; timer_Script = "filename"
     ; timer_Script = "disabled"
-    ; timer_Script = "filename"
 
     ; ##
-    ; ## REGIONS
+    ; ## REGIONS NOTE: This section is overridden with the contents of Region.ini for each region.
     ; ##
 
     ; Where to load the region information from.
@@ -473,12 +474,11 @@ Each region server requires it to be setup with the IP Address in the Networking
     ; ## STORAGE
     ; ##
 
-    ; Prim Storage
+    ; *** Prim Storage - only leave one storage_plugin uncommented ***
     ; "OpenSim.Data.Null.dll" stores nothing, effectively disabling persistence:
     ; "OpenSim.Data.MySQL.dll" backup region prims to MySQL.
-    ;  To use MySQL storage, supply your own *_connection_string as this is
-    ;   only an example): note that the supplied account needs create
-    ;   privileges if you want it to auto-create needed tables.
+    ;  To use MySQL storage, supply your own *_connection_string (this is only an example):
+    ;  note that the supplied account needs create privileges if you want it to auto-create needed tables.
      storage_plugin="OpenSim.Data.MySQL.dll"
     ; Used for the estate_connection_string if such is not handled separately,
     ;  and primarily for a lot of per-region information.
@@ -489,11 +489,10 @@ Each region server requires it to be setup with the IP Address in the Networking
 
     ; Backing up to the region datastore of changed objects, aka persistence,
     ;  happens during regular sweeps. The following control that behavior to
-    ;  prevent frequently changing objects from heavily loading the region data
-    ;  store.
+    ;  prevent frequently changing objects from heavily loading the region data store.
     ; If both of these values are set to zero then persistence of all changed
     ;  objects will happen on every sweep.
-    ;
+
     ; Objects will be considered for backup to persistent data storage in the
     ;  next sweep when they have not changed for this number of seconds.
     MinimumTimeBeforePersistenceConsidered = 60
@@ -523,7 +522,7 @@ Each region server requires it to be setup with the IP Address in the Networking
     permissionmodules = "DefaultPermissionsModule"
 
     ; If set to false, then, in theory, the server never carries out permission checks (allowing anybody to copy
-    ; any item, etc.  This may not yet be implemented uniformally.
+    ; any item, etc.)  This may not yet be implemented uniformally.
     ; If set to true, then all permissions checks are carried out
     ; Default is false
     serverside_object_permissions = true
@@ -587,7 +586,7 @@ Each region server requires it to be setup with the IP Address in the Networking
     ;http_listener_port = 9500      ; Set to region port overridden in Region.ini.
     default_location_x = 1000
     default_location_y = 1000
-    ; This is set for each server in the Region.ini as an override. Domain name or IP.
+    ; Domain name or IP for the region server setup.
     hostname = %RegionServerIP%
 
     ; ssl config: Experimental!  The auto https config only really works definately on windows XP now
@@ -636,8 +635,9 @@ Each region server requires it to be setup with the IP Address in the Networking
     ; these entries provide port and IP blocking / black lists to prevent scripts from accessing the region servers and 
     ; using that to make region changes that only the SysAdmin is to access. Like changing another user's password!
 
-    ;HostBlacklist = "10.0.0.1,20.0.0.*,google.com"
+    ;HostBlacklist = "250.120.220.15,20.0.0.*,google.com"
     HostBlacklist = "%RegionServerIP%, 10.0.*"
+    ; For each region port in this region server!
     ;PortBlacklist = "8010,8020"
     PortBlacklist = "9500,9501,9502,9503,9504,9505,9506,9507,9508,9509"
     ;HostnameAndPortBlacklist = "192.168.1.*:80,yahoo.com:1234"
@@ -720,7 +720,7 @@ Each region server requires it to be setup with the IP Address in the Networking
     CurrencySymbol = "No$"
 
     ; Economy specific MySQL DB Connection string. May point to a different DB than the grid DB.
-    EconomyConnString = "Data Source=10.0.0.5;Database=cgdata;User ID=CGUser;password=CGManager!;"
+    EconomyConnString = "Data Source=%DBLocalIP%;Database=%GridDB%;User ID=%DBUser%;password=%DBPass%;"
 
     ; In grid mode, this is the land XMLRPC server. Leave blank for normal functionality
     ; This points to only the path for LandTool.php which is hard coded in the viewer. 
@@ -784,7 +784,7 @@ Each region server requires it to be setup with the IP Address in the Networking
     ;
     ; See http://opensimulator.org/wiki/GridInfo
 
-    ;   uri: for grid this is the user server URI
+    ; uri: for grid this is the user server URI
     login = %GridLogonURL%:8002
 
     ; long grid name: the long name of your grid
@@ -794,11 +794,11 @@ Each region server requires it to be setup with the IP Address in the Networking
     gridnick = "%GridNick%"
 
     ; login page: optional: if it exists it will be used to tell the client to use
-    ;                       this as splash page
+    ; this as splash page
     welcome = %WebsiteURL%/Viewer.aspx
 
     ; helper uri: optional: if it exists if will be used to tell the client to use
-    ;                       this for all economy related things
+    ; this for all economy related things
     ;economy = http://192.168.147.100:9000/
     ; Sets the path for the currency.php and landtool.php pages.
     economy = %WebsiteURL%/
@@ -807,7 +807,7 @@ Each region server requires it to be setup with the IP Address in the Networking
     about = %WebsiteURL%/Default.aspx
 
     ; account creation: optional: page providing further information about obtaining
-    ;                             a user account on your grid
+    ; a user account on your grid
     register = %WebsiteURL%/Register.aspx
 
     ; help: optional: page providing further assistance for users of your grid
@@ -945,6 +945,6 @@ Once website is operational:
 *********************************
 
 Use website user account: Grid Owner to access Website Administration, Grid Management to create Regions uing Estate Mananagement.
-Then use the Grid Manager to set region server IP and ports.
+Then use the Grid Manager to define the region host server(s) then assign the server by port to the regions. Grid Manager is able to handle all region operations except starting a region at this time.
 
 See the GridOperationManual.txt file grid startup and shutdown process.

@@ -5,13 +5,13 @@ Partial Class EstateForm
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -67,11 +67,14 @@ Partial Class EstateForm
    If CDbl(KeyID.Value) > 0 Then                           ' Edit Mode, show database values
     Dim drApp As MySql.Data.MySqlClient.MySqlDataReader
     SQLCmd = "Select EstateID,EstateName,AbuseEmailToEstateOwner,AbuseEmail," +
-             " (Select Count(EstateID) as Count From estate_map Where EstateID=estate_settings.EstateID) as RegCount " +
+             " (Select Count(EstateID) as Count From estate_map " +
+             "  Where EstateID=estate_settings.EstateID and RegionID in " +
+             "   (Select uuid From regions Where owner_uuid=" + MyDB.SQLStr(Session("UUID")) + ")) as RegCount " +
              "From estate_settings " +
              "Where EstateID=" + MyDB.SQLNo(KeyID.Value)
     If Trace.IsEnabled Then Trace.Warn("EstateForm", "Get display Values SQLCmd: " + SQLCmd.ToString())
     drApp = MyDB.GetReader("MyData", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("EstateForm", "DB Error: " + MyDB.ErrMessage().ToString())
     If drApp.Read() Then
      EstateID.InnerText = drApp("EstateID").ToString()
      EstateName.Text = drApp("EstateName").ToString().Trim()
@@ -94,7 +97,6 @@ Partial Class EstateForm
     EstateName.Text = ""
     AbuseEmail.Checked = False
     ShowSubTitle.Visible = False
-    ShowRegions.Visible = False
     ShowEmail.Visible = False
     EmailAddr.Text = ""
     ' Setup Add Mode page display controls

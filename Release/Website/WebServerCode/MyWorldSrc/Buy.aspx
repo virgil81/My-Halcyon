@@ -115,7 +115,7 @@
             </td>
            </tr>
            <tr>
-            <td colspan="2" style="Height: 2px; border-bottom: 2px solid #e2e6e9;"></td>
+            <td colspan="2" style="height: 2px; border-bottom: 2px solid #e2e6e9;"></td>
            </tr>
            <tr>
             <td style="height: 50px; font-size: 20px; font-weight: bold;">

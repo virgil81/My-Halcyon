@@ -21,9 +21,19 @@
     document.EditPage.submit();
    }
 
+   function SortID(tID) {
+    document.getElementById('SetSort').value = tID;
+    setTimeout('__doPostBack(\'SetSort\',\'\')', 0);
+   }
+
    function SetFind(aName) {
     document.getElementById('FindName').value = aName;
     setTimeout('__doPostBack(\'FindName\',\'\')', 0);
+   }
+   
+   function SetDisabled(aChk) {
+    document.getElementById('DisAccounts').checked = aChk;
+    setTimeout('__doPostBack(\'DisAccounts\',\'\')', 0);
    }
 
   </script>
@@ -54,6 +64,15 @@
       <input type="text" id="Search" runat="server" cols="30" maxlength="60" class="Form" onchange="SetFind(this.value);" />
      </td>
     </tr>
+    <tr>
+     <td class="SidebarSpacer">&nbsp;</td>
+    </tr>
+    <tr>
+     <td>
+      <img src="/Images/TreeView/Dot.gif" alt=""> <span class="TreeVItem">Show Disabled Accounts:</span>
+      <input type="checkbox" id="ShowDisabled" runat="server" onchange="SetDisabled(this.checked);" />
+     </td>
+    </tr>
    </table>
   </div>
   <div id="BodyArea">
@@ -67,24 +86,36 @@
         <td>
          <asp:GridView ID="gvDisplay" runat="server" AllowPaging="False" AutoGenerateColumns="False" GridLines="None" CellSpacing="1" Width="100%" HeaderStyle-Height="28px" PagerStyle-HorizontalAlign="Center" AlternatingRowStyle-CssClass="AltLine">
           <Columns>
-           <asp:TemplateField HeaderText="User Accounts" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="30%">
+           <asp:TemplateField HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="30%">
+            <HeaderTemplate>
+             <span onclick="SortID('Name');" style="cursor: pointer;">User Accounts</span>
+            </HeaderTemplate>
             <ItemTemplate>
              <span onclick="CallEdit('<%#Container.DataItem("UUID")%>','UserForm.aspx');" class="NavLink" onmouseover="this.className='NOverLink';" onmouseout="this.className='NavLink';">
               <%#Container.DataItem("username").ToString().Trim()%> <%#Container.DataItem("lastname").ToString().Trim()%> <span class="Errors"><%#Container.DataItem("Access").ToString().Trim()%></span>
              </span>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Email" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="30%">
+           <asp:TemplateField HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="30%">
+            <HeaderTemplate>
+             <span onclick="SortID('Email');" style="cursor: pointer;">Email</span>
+            </HeaderTemplate>
             <ItemTemplate>
              <a href="mailto://<%#Container.DataItem("email")%>?body=Greetings <%#Container.DataItem("username").ToString().Trim()%>,"><%#Container.DataItem("email")%></a>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Created" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="20%">
+           <asp:TemplateField HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="20%">
+            <HeaderTemplate>
+             <span onclick="SortID('Created');" style="cursor: pointer;">Created</span>
+            </HeaderTemplate>
             <ItemTemplate>
              <%#ShowStatus(Container.DataItem("created"))%>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="World Last Logout" HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="20%">
+           <asp:TemplateField HeaderStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title" ItemStyle-Width="20%">
+            <HeaderTemplate>
+             <span onclick="SortID('Last');" style="cursor: pointer;">Last Logout</span>
+            </HeaderTemplate>
             <ItemTemplate>
              <%#ShowStatus(Container.DataItem("Status"))%>
             </ItemTemplate>
@@ -98,7 +129,9 @@
         <td id="ShowPages" runat="server" align="center"></td>
        </tr>
       </table>
+       <asp:TextBox ID="SetSort" runat="server" AutoPostBack="true" CssClass="NoShow" />
        <asp:TextBox ID="FindName" runat="server" AutoPostBack="true" CssClass="NoShow" />
+       <asp:CheckBox ID="DisAccounts" runat="server" AutoPostBack="true" CssClass="NoShow" />
       </form>
      </td>
     </tr>

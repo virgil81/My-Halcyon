@@ -4,13 +4,13 @@ Partial Class _IPN
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -290,16 +290,17 @@ Partial Class _IPN
        End If
        GetUUID.Close()
 
-       Dim tTot, tFee, tXFee, tNet As Double
-       tNet = (1 - 0.29) * (CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("tax"))) - 0.3 ' Remove tax amount to get the correct Gross
-       tXFee = Math.Round(tNet / (1 + tFRate), 2) ' Get the Exchange fee amount = Round(Net / (1 + tFRate),2)
-       tTot = tNet - tXFee   ' Tot = Net - exchange fee
-       tTot = tTot * tRate   ' Recalculate the inworld $amount to place in the account. Prevents any user alteration on what they paid to get.
-       tFee = tXFee * tRate  ' $Amount applied to World Bank
-       If tLog Then                                            ' Log file output
+       Dim tTot, tFee, tXFee, tNet, tTax As Double
+       tTax = IIf(Len(Request.Form("tax")) = 0, 0, CDbl(Request.Form("tax")))
+       tNet = CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("mc_fee")) - tTax  ' Extract the Net amount
+       tXFee = Math.Round(tNet * tFRate, 2) ' Get the Exchange fee amount = Round(tNet * tFRate),2)
+       ' Recalculate the inworld $amount to place in the account. Prevents any user alteration on what they paid to get.
+       tTot = (tNet - tXFee) * tRate   ' Tot = (Net - exchange fee) * tRate to apply to buyers account
+       tFee = tXFee * tRate  ' $ Amount applied to World Bank
+       If tLog Then                                           ' Log file output
         ' Trace Actions to Log file
-        sw.WriteLine("tNet: " + tNet.ToString() + ", tXFee: " + tXFee.ToString() +
-                     "tTot: " + tTot.ToString() + ", tFee: " + tFee.ToString() + vbCrLf)
+        sw.WriteLine("tNet: " + tNet.ToString() + ", tXFee: " + tXFee.ToString() + ", tTax: " + tTax.ToString() +
+                     ", tTot: " + tTot.ToString() + ", tFee: " + tFee.ToString() + vbCrLf)
         sw.Flush()
        End If
 
@@ -338,7 +339,7 @@ Partial Class _IPN
         sw.Flush()
        End If
 
-       ' Update Accountbal Table 
+       ' Update Accountbal Table
        tTot = CDbl(Request.Form("mc_gross")) - CDbl(Request.Form("mc_fee"))
        SQLCmd = "Insert into accountbal (UUID,Name,Action,TransDate,Amount,Actual,TransFee,ExchangeRate,TxnID) " +
                 "Values (" + MyDB.SQLStr(UserUUID) + "," + MyDB.SQLStr(Name(0).ToString() + " " + Name(1).ToString()) + "," +
@@ -547,17 +548,20 @@ Partial Class _IPN
     End If
    End If
    If tSMTP.ToString().Trim().Length > 0 Then
+    Dim Domain As String
+    Domain = Request.ServerVariables("HTTP_HOST")
+    Dim URLSplit() As String
+    URLSplit = Domain.ToString().Split(".")
+    If (URLSplit.Length - 1) > 1 Then
+     Domain = Domain.ToString().Substring(Domain.ToString().IndexOf(".") + 1)
+    End If
     Dim SendMail As New SendEmail
     SendMail.SetTrace = Trace.IsEnabled
     SendMail.IsHTML = False
     SendMail.EmailServer = tSMTP.ToString()
     SendMail.Subject = "IPN Transaction Report"
-    SendMail.ToAddress = "director@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                           Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                           Request.ServerVariables("HTTP_HOST"))  ' Your debugging email address
-    SendMail.FromAddress = "mailer@" + IIf(Request.ServerVariables("HTTP_HOST").ToString().Contains("www."),
-                                           Request.ServerVariables("HTTP_HOST").ToString().Replace("www.", ""),
-                                           Request.ServerVariables("HTTP_HOST"))  ' Your site sender email address, must be different from your email
+    SendMail.ToAddress = "director@" + Domain.ToString()
+    SendMail.FromAddress = "mailer@" + Domain.ToString()
     SendMail.Body = tEmailOut.ToString()
     If SendMail.SendMail() Then
      If Trace.IsEnabled Then Trace.Warn("IPN", "Email sent!")

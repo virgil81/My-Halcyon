@@ -5,13 +5,13 @@ Partial Class Administration_UserSelect
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -49,6 +49,7 @@ Partial Class Administration_UserSelect
     Session("FirstTime") = "UserSelect"
     Session("SelPage") = 0                                 ' Value is updated in the Page index change event
     Session("Search") = ""
+    Session("SetSort") = "lastname,username"
    End If
 
    ' Setup general page controls
@@ -110,9 +111,11 @@ Partial Class Administration_UserSelect
    tList = "Concat(username, ' ',lastname) not in (" + tList.ToString() + ") "
   End If
 
+  ShowDisabled.Checked = DisAccounts.Checked
+
   ' Get Display list Items here
   Dim Accounts As MySql.Data.MySqlClient.MySqlDataReader
-  SQLCmd = "Select UUID,username,lastname,email,created as created," +
+  SQLCmd = "Select UUID,username,lastname,email,created," +
            " Case When email=passwordSalt " +
            " Then 'Blocked' " +
            " Else '' " +
@@ -125,8 +128,10 @@ Partial Class Administration_UserSelect
            "   End as Status " +
            "  From agents Where UUID=users.UUID) as Status " +
            "From users " +
-           IIf(tList.Length > 0 Or tSearch.Length > 0, "Where ", "") + tList.ToString() + tSearch +
-           "Order by lastname,username"
+           IIf(tList.Length > 0 Or tSearch.Length > 0 Or DisAccounts.Checked, "Where ", "") +
+           tList.ToString() + tSearch.ToString() + IIf(DisAccounts.Checked, " and passwordHash='NoPass' ", "") +
+           "Order by " + Session("SetSort")
+  Session("PriorSort") = Session("SetSort")
   If Trace.IsEnabled Then Trace.Warn("UserSelect", "Get SQLCmd: " + SQLCmd.ToString())
   Accounts = MyDB.GetReader("MyData", SQLCmd)
   If Trace.IsEnabled And MyDB.Error() Then
@@ -141,6 +146,47 @@ Partial Class Administration_UserSelect
  Protected Sub gvDisplay_PageIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles gvDisplay.PageIndexChanged
   ShowPages.InnerText = "Page " + (gvDisplay.PageIndex + 1).ToString() + " of " + gvDisplay.PageCount.ToString()
   Session("SelPage") = gvDisplay.PageIndex                 ' Remember current page displayed.
+ End Sub
+
+ ' Set Display Sort
+ Private Sub SetSort_TextChanged(sender As Object, e As EventArgs) Handles SetSort.TextChanged
+  If SetSort.Text.ToString().Trim() = "Name" Then
+   Session("SetSort") = "lastname,username"
+  ElseIf SetSort.Text.ToString().Trim() = "Email" Then
+   If Session("SetSort").ToString() <> Session("PriorSort").ToString() Then
+    Session("SetSort") = "email desc"
+   Else
+    If Session("SetSort").ToString().Contains(" asc") Then
+     Session("SetSort") = "email desc"
+    Else
+     Session("SetSort") = "email asc"
+    End If
+   End If
+  ElseIf SetSort.Text.ToString().Trim() = "Created" Then
+   If Session("SetSort").ToString() <> Session("PriorSort").ToString() Then
+    Session("SetSort") = "created desc"
+   Else
+    If Session("SetSort").ToString().Contains(" asc") Then
+     Session("SetSort") = "created desc"
+    Else
+     Session("SetSort") = "created asc"
+    End If
+   End If
+  ElseIf SetSort.Text.ToString().Trim() = "Last" Then
+   If Session("SetSort").ToString() <> Session("PriorSort").ToString() Then
+    Session("SetSort") = "lastLogin desc"
+   Else
+    If Session("SetSort").ToString().Contains(" asc") Then
+     Session("SetSort") = "lastLogin desc"
+    Else
+     Session("SetSort") = "lastLogin asc"
+    End If
+   End If
+  Else
+   Session("SetSort") = "lastname,username"
+  End If
+  SetSort.Text = ""                                           ' Clear value so it may be used again
+  Display()
  End Sub
 
  Public Function ShowStatus(ByVal aStatus As Integer) As String
@@ -164,6 +210,10 @@ Partial Class Administration_UserSelect
   Session("Search") = FindName.Text.ToString().Trim()
   Display()
   'FindName.Text = ""                                      ' Allow process to be called again
+ End Sub
+
+ Private Sub DisAccounts_CheckedChanged(sender As Object, e As EventArgs) Handles DisAccounts.CheckedChanged
+  Display()
  End Sub
 
  Public Function ShowUTF8(ByVal textIn As String) As String

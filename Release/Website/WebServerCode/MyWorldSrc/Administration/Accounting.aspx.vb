@@ -5,13 +5,13 @@ Partial Class Administration_Accounting
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -133,10 +133,11 @@ Partial Class Administration_Accounting
   If drApp.Read() Then
    If drApp("Bal").ToString().Trim().Length = 0 Then
     ShowPPBal.InnerText = "$0.00"
+    AcctBal = 0
    Else
     ShowPPBal.InnerText = FormatCurrency(drApp("Bal"), 2)
+    AcctBal = drApp("Bal")
    End If
-   AcctBal = IIf(drApp("Bal").ToString().Trim().Length = 0, 0, drApp("Bal"))
   End If
   drApp.Close()
 
@@ -192,7 +193,7 @@ Partial Class Administration_Accounting
             "(sourceAvatarID,destAvatarID,transactionAmount,transactionType,transactionDescription,timeOccurred) " +
             "Values ('00000000-0000-0000-0000-000000000000'," + MyDB.SQLStr(Session("WBUUID")) + "," + MyDB.SQLNo(Adjusment.Text) + "," +
             "5001,'$ Journal Entry',UNIX_TIMESTAMP(NOW()))"
-   If Trace.IsEnabled Then Trace.Warn("Accounting", "Update Table SQLCmd: " + SQLCmd.ToString())
+   If Trace.IsEnabled Then Trace.Warn("Accounting", "Update economy_transaction SQLCmd: " + SQLCmd.ToString())
    MyDB.DBCmd("MyData", SQLCmd)
    If MyDB.Error() Then
     If Trace.IsEnabled Then Trace.Warn("Accounting", "DB Error: " + MyDB.ErrMessage().ToString())

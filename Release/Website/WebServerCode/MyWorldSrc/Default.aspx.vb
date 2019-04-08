@@ -4,13 +4,13 @@ Partial Class _Default
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -117,7 +117,8 @@ Partial Class _Default
    ' Get Grid Stats for display
    Dim GetCount As MySql.Data.MySqlClient.MySqlDataReader
    SQLCmd = "Select Count(lastname) as Counted " +
-            "From users"
+            "From users " + 
+            "Where Length(PasswordHash)>31"
    If Trace.IsEnabled Then Trace.Warn("Default", "Get user count SQLCmd: " + SQLCmd.ToString())
    GetCount = MyDB.GetReader("MyData", SQLCmd)
    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get user count DB Error: " + MyDB.ErrMessage())
@@ -132,6 +133,7 @@ Partial Class _Default
             "Where agentOnline>0"
    If Trace.IsEnabled Then Trace.Warn("Default", "Get users online count SQLCmd: " + SQLCmd.ToString())
    GetCount = MyDB.GetReader("MyData", SQLCmd)
+   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get agent online count DB Error: " + MyDB.ErrMessage())
    If GetCount.HasRows() Then
     GetCount.Read()
     GridOnline.InnerText = GetCount("Total").ToString()
@@ -142,6 +144,7 @@ Partial Class _Default
             "From regions "
    If Trace.IsEnabled Then Trace.Warn("Default", "Get total regions SQLCmd: " + SQLCmd.ToString())
    GetCount = MyDB.GetReader("MyData", SQLCmd)
+   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get region count DB Error: " + MyDB.ErrMessage())
    If GetCount.HasRows() Then
     GetCount.Read()
     RegCount = GetCount("Total")
@@ -156,6 +159,7 @@ Partial Class _Default
     SQLCmd = "Select Parm2 From control Where Control='GridSysAccounts' and Parm1='GridOwnerAcct'"
     If Trace.IsEnabled Then Trace.Warn("Default", "Get Grid Owner Name SQLCmd: " + SQLCmd.ToString())
     GetAccount = MyDB.GetReader("MySite", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get Grid Owner DB Error: " + MyDB.ErrMessage())
     If GetAccount.HasRows() Then
      GetAccount.Read()
      Name = GetAccount("Parm2").ToString().Trim().Split(" ")
@@ -169,6 +173,7 @@ Partial Class _Default
              " (Select UUID From users Where username=" + MyDB.SQLStr(Name(0)) + " and lastname=" + MyDB.SQLStr(Name(1)) + ")"
     If Trace.IsEnabled Then Trace.Warn("Default", "Get total Public regions SQLCmd: " + SQLCmd.ToString())
     GetCount = MyDB.GetReader("MyData", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get Governor region count DB Error: " + MyDB.ErrMessage())
     If GetCount.HasRows() Then
      GetCount.Read()
      PubRegions.InnerText = GetCount("Total").ToString()
@@ -181,7 +186,7 @@ Partial Class _Default
              " (Select UUID From users Where username=" + MyDB.SQLStr(Name(0)) + " and lastname=" + MyDB.SQLStr(Name(1)) + ")"
     If Trace.IsEnabled Then Trace.Warn("Default", "Get total School regions SQLCmd: " + SQLCmd.ToString())
     GetCount = MyDB.GetReader("MyData", SQLCmd)
-    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "MyDB Error: " + MyDB.ErrMessage().ToString())
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get Private region count DB Error: " + MyDB.ErrMessage())
     If GetCount.HasRows() Then
      GetCount.Read()
      PrivRegions.InnerText = GetCount("Total").ToString()
@@ -194,6 +199,7 @@ Partial Class _Default
              "Where Control='Grid' and Parm1='Status'"
     If Trace.IsEnabled Then Trace.Warn("Default", "Get Control settings SQLCmd: " + SQLCmd.ToString())
     GetSettings = MyDB.GetReader("MySite", SQLCmd)
+    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("Default", "Get Grid Status DB Error: " + MyDB.ErrMessage())
     If GetSettings.HasRows() Then
      GetSettings.Read()
      StatusURL = GetSettings("Parm2").ToString().Trim()
@@ -309,11 +315,11 @@ Partial Class _Default
                 "      </tr>" + vbCrLf
       End If
       tHtmlOut = tHtmlOut +
-                "      <tr>" + vbCrLf +
-                "       <td class=""TopicContent"">" + vbCrLf +
-                "        " + rsPage("Content").ToString() + vbCrLf +
-                "       </td>" + vbCrLf +
-                "      </tr>" + vbCrLf
+               "      <tr>" + vbCrLf +
+               "       <td class=""TopicContent"">" + vbCrLf +
+               "        " + rsPage("Content").ToString() + vbCrLf +
+               "       </td>" + vbCrLf +
+               "      </tr>" + vbCrLf
      End While
      tHtmlOut = tHtmlOut +
                 "     </table>"

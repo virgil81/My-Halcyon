@@ -77,21 +77,14 @@
            </td>
           </tr>
           <tr>
-           <td class="FldTitleCol">Internal IP</td>
-           <td class="FldEntryCol">
-            <asp:TextBox id="internalIP" runat="server" Columns="20" maxLength="40" cssClass="Form"/>
-           </td>
-          </tr>
-          <tr>
-           <td class="FldTitleCol">External IP</td>
-           <td class="FldEntryCol">
-            <asp:TextBox id="externalIP" runat="server" Columns="20" maxLength="40" cssClass="Form"/>
+           <td class="FldTitleCol">Server Host</td>
+           <td ID="ServerName" Runat="server" class="FldEntryCol">
            </td>
           </tr>
           <tr>
            <td class="FldTitleCol">Port</td>
            <td class="FldEntryCol">
-            <asp:TextBox id="Port" runat="server" Columns="4" maxLength="6" cssClass="Form"/>
+            <asp:DropDownList ID="Port" CssClass="Form" Runat="server"/>
            </td>
           </tr>
           <tr>
@@ -108,7 +101,8 @@
         </td>
        </tr>
       </table>
-       <input type="hidden" id="KeyID" value="" runat="server" />
+       <input type="hidden" id="KeyID" runat="server" value="" />
+       <input type="hidden" id="ExtIP" runat="server" value="" />
       </form>
      </td>
     </tr>

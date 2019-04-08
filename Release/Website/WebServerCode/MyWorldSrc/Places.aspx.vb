@@ -5,13 +5,13 @@ Partial Class Places
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -40,19 +40,23 @@ Partial Class Places
    ' Setup general page controls
 
    ' Process if a Map location is given in URL:
-   'http://www.3dworldz.com/reg01/128/128/25/?title=Homestead&img=http://www.3dworldz.com/Images/Links/Outpost.jpg&msg=Outpost%20in%20a%20small%20island.
-   ' img=https://www.3dWorldz.com/images/Site/3DWorldzIslandWebSm.png
-   RTitle = ""
+   ' https://www.3dworldz.com/Places.aspx/outpost/128/128/25/?title=Homestead&img=/Images/Site/Outpost.png&msg=Outpost%20in%20a%20small%20island.
+   ' https://www.3dworldz.com/Places.aspx/ima%20outpost/128/128/25/?title=IMA%20Outpost
+
+   RTitle = ""                                             ' These three fields set JavaScript values on the page.
    RImg = ""
    RMsg = ""
    If Request("Title") <> "" Then
-    RTitle = MyDB.SQLStr(Request("Title"))
+    RTitle = Request("Title")
+    If Trace.IsEnabled Then Trace.Warn("Places", "Passed Title: " + Request("Title").ToString())
    End If
    If Request("Img") <> "" Then
-    RImg = MyDB.SQLStr(Request("Img"))
+    RImg = Request("Img")
+    If Trace.IsEnabled Then Trace.Warn("Places", "Passed Img: " + Request("Img").ToString())
    End If
    If Request("Msg") <> "" Then
-    RMsg = MyDB.SQLStr(Request("Msg"))
+    RMsg = Request("Msg")
+    If Trace.IsEnabled Then Trace.Warn("Places", "Passed Msg: " + Request("Msg").ToString())
    End If
 
    Dim path() As String = HttpContext.Current.Request.Url.AbsolutePath.Split("/"c)
@@ -75,23 +79,24 @@ Partial Class Places
     End If
     GetRegion.Close()
    End If
+   ShowSearch.Visible = False                               ' Search options disabled until completed
 
-   ' Set up navigation options
-   Dim SBMenu As New TreeView
-   SBMenu.SetTrace = Trace.IsEnabled
-   'SBMenu.AddItem("M", "3", "Report List")                 ' Sub Menu entry requires number of expected entries following to contain in it
-   'SBMenu.AddItem("B", "", "Blank Entry")                  ' Blank Line as item separator
-   'SBMenu.AddItem("T", "", "Page Options")                 ' Title entry
-   'SBMenu.AddItem("L", "CallEdit(0,'TempAddEdit.aspx');", "New Entry")        ' Javascript activated entry
-   'SBMenu.AddItem("P", "/Path/page.aspx", "Link Name")     ' Program URL link entry
+   '' Set up navigation options
+   'Dim SBMenu As New TreeView
+   'SBMenu.SetTrace = Trace.IsEnabled
+   ''SBMenu.AddItem("M", "3", "Report List")                 ' Sub Menu entry requires number of expected entries following to contain in it
+   ''SBMenu.AddItem("B", "", "Blank Entry")                  ' Blank Line as item separator
+   ''SBMenu.AddItem("T", "", "Page Options")                 ' Title entry
+   ''SBMenu.AddItem("L", "CallEdit(0,'TempAddEdit.aspx');", "New Entry")        ' Javascript activated entry
+   ''SBMenu.AddItem("P", "/Path/page.aspx", "Link Name")     ' Program URL link entry
 
    'SBMenu.AddItem("B", "", "Blank Entry")
-   'SBMenu.AddItem("T", "", "Page Options")
-   'SBMenu.AddItem("L", "CallEdit(0,'TempAddEdit.aspx');", "New Entry") ' Javascript activated entry
-   'SBMenu.AddItem("P", "/TempSelect.aspx", "Template Selection")
-   If Trace.IsEnabled Then Trace.Warn("Places", "Show Menu")
-   'SidebarMenu.InnerHtml = SBMenu.BuildMenu("Menu Selections", 14) ' Build and display Menu options
-   SBMenu.Close()
+   ''SBMenu.AddItem("T", "", "Search Options")
+   ''SBMenu.AddItem("L", "CallEdit(0,'TempAddEdit.aspx');", "New Entry") ' Javascript activated entry
+   ''SBMenu.AddItem("P", "/TempSelect.aspx", "Template Selection")
+   'If Trace.IsEnabled Then Trace.Warn("Places", "Show Menu")
+   'SidebarMenu.InnerHtml = SBMenu.BuildMenu("Search Options", 14) ' Build and display Menu options
+   'SBMenu.Close()
   End If
 
  End Sub

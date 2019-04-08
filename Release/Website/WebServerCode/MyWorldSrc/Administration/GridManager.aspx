@@ -16,6 +16,7 @@
   <script type="text/javascript">
 
    var aVar = setInterval(DoRefresh, 60000);  // trigger refresh once a minute
+   var RefreshTF = true;
 
    function DoRestart(aUUID) {
     document.getElementById('ReStart').value = aUUID;
@@ -64,17 +65,40 @@
    }
 
    function DoRefresh() {
-    document.getElementById('Refresh').checked = true;
-    //setTimeout('__doPostBack(\'Refresh\',\'\')', 0);
-    __doPostBack('Refresh', '');
+    if (RefreshTF) {
+     document.getElementById('Refresh').checked = true;
+     //setTimeout('__doPostBack(\'Refresh\',\'\')', 0);
+     __doPostBack('Refresh', '');
+    }
    }
 
-   function SetSort(tOrder) { // Set Page display order
+   function OpenMsg(tID,tTitle) {                  // Page called message access
+    RefreshTF = false;
+    document.getElementById("MsgTitle").value = tTitle;
+    document.getElementById("RegID").value = tID;
+    document.getElementById("DivWinTrans").style.display = "block";
+    document.getElementById("DivWinBox").style.display = "block";
+   }
+
+   function CloseMsg() {
+    RefreshTF = true;
+    document.getElementById("RegID").value = "";
+    document.getElementById("DivWinBox").style.display = "none";
+    document.getElementById("DivWinTrans").style.display = "none";
+   }
+
+   function SendMsg() {                     // Send message
+    document.getElementById('MsgOut').value = document.getElementById('MsgText').value;
+    document.getElementById('Send').checked = true;
+    setTimeout('__doPostBack(\'Send\',\'\')', 0);
+   }
+
+   function SetSort(tOrder) {               // Set Page display order
     document.getElementById("Order").value = tOrder;
     setTimeout('__doPostBack(\'Order\',\'\')', 0);
    }
 
-   function CallEdit(tID,tAction) { // Add / Edit a record
+   function CallEdit(tID,tAction) {         // Add / Edit a record
     document.EditPage.KeyID.value=tID;
     document.EditPage.action=tAction;
     document.EditPage.submit();
@@ -113,46 +137,74 @@
       <table style="width:100%;">
        <tr>
         <td>
-         <table style="width: 100%;">
-          <tr>
-           <td class="Title" onclick="SetSort('Name');" title="Order by Name" style="width: 30%; cursor: pointer;">Name</td>
-           <td class="Title" onclick="SetSort('Map');" title="Order by Map" style="width: 16%;">Map : Port</td>
-           <td class="Title" onclick="SetSort('Owner');" title="Order by Owner" style="width: 24%; cursor: pointer;">Owner</td>
-           <td class="Title" onclick="SetSort('Status');" title="Order by Status" style="width: 14%; cursor: pointer;">Status</td>
-           <td class="Title" style="width: 8%;">Restart</td>
-           <td class="Title" style="width: 8%;">Cmd</td>
-          </tr>
-         </table>
-         <asp:GridView ID="gvDisplay" ShowHeader="false" runat="server" AllowPaging="False" AutoGenerateColumns="False" GridLines="None" CellSpacing="1" Width="100%" HeaderStyle-Height="28px" PagerStyle-HorizontalAlign="Center" AlternatingRowStyle-CssClass="AltLine">
+         <asp:GridView ID="gvDisplay" runat="server" AllowPaging="False" AutoGenerateColumns="False" GridLines="None" CellSpacing="1" Width="100%" HeaderStyle-Height="28px" PagerStyle-HorizontalAlign="Center" AlternatingRowStyle-CssClass="AltLine">
           <Columns>
-           <asp:TemplateField HeaderText="Name" ItemStyle-Width="30%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="30%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             <div style="width: 100%; text-align:left; cursor: pointer;">
+              <span onclick="SetSort('Name');" title="Order by Name">Name (MemCnt)</span>
+             </div>
+            </HeaderTemplate>
             <ItemTemplate>
              <span onclick="CallEdit('<%#Container.DataItem("UUID").ToString().Trim()%>','RegionConfig.aspx');" title="<%#Container.DataItem("UUID").ToString().Trim()%>" class="NavLink" onmouseover="this.className='NOverLink';" onmouseout="this.className='NavLink';">
-              <%#Container.DataItem("regionName").ToString().Trim()%>
+              <%#Container.DataItem("regionName").ToString().Trim()%> <%#IIf(Container.DataItem("UserCnt") > 0, "(" + Container.DataItem("UserCnt").ToString().Trim() + ")", "")%>
              </span>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Map : Port" ItemStyle-Width="16%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="10%" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             <span onclick="SetSort('Map');" title="Order by Map" style="cursor: pointer;">Map</span>
+            </HeaderTemplate>
             <ItemTemplate>
-             <%#Container.DataItem("Map").ToString().Trim()%> : <%#Container.DataItem("Port").ToString().Trim()%>
+             <%#Container.DataItem("Map").ToString().Trim()%>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Owner" ItemStyle-Width="24%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="6%" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             <span onclick="SetSort('Port');" title="Order by Port" style="cursor: pointer;">Port</span>
+            </HeaderTemplate>
+            <ItemTemplate>
+             <%#Container.DataItem("Port").ToString().Trim()%>
+            </ItemTemplate>
+           </asp:TemplateField>
+           <asp:TemplateField ItemStyle-Width="16%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             <div style="width: 100%; text-align:left; cursor: pointer;">
+              <span onclick="SetSort('Owner');" title="Order by Owner">Owner</span>
+             </div>
+            </HeaderTemplate>
             <ItemTemplate>
              <%#Container.DataItem("OwnerName").ToString().Trim()%>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Status" ItemStyle-Width="14%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="14%" ItemStyle-HorizontalAlign="Left" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             <span onclick="SetSort('Status');" title="Order by Status" style="cursor: pointer;">Status</span>
+            </HeaderTemplate>
             <ItemTemplate>
              <%#ShowStatus(Container.DataItem("UUID").ToString(), Container.DataItem("status")).ToString()%>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Restart" ItemStyle-Width="8%" ItemStyle-HorizontalAlign="Center" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="8%" ItemStyle-HorizontalAlign="Center" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             Msg
+            </HeaderTemplate>
+            <ItemTemplate>
+             <%#SetMsg(Container.DataItem("UUID").ToString(), Container.DataItem("status"), Container.DataItem("regionName").ToString().Trim()).ToString()%>
+            </ItemTemplate>
+           </asp:TemplateField>
+           <asp:TemplateField ItemStyle-Width="8%" ItemStyle-HorizontalAlign="Center" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             Restart
+            </HeaderTemplate>
             <ItemTemplate>
              <%#SetRestart(Container.DataItem("UUID").ToString(), Container.DataItem("status")).ToString()%>
             </ItemTemplate>
            </asp:TemplateField>
-           <asp:TemplateField HeaderText="Cmd" ItemStyle-Width="8%" ItemStyle-HorizontalAlign="Center" HeaderStyle-CssClass="Title">
+           <asp:TemplateField ItemStyle-Width="8%" ItemStyle-HorizontalAlign="Center" HeaderStyle-CssClass="Title">
+            <HeaderTemplate>
+             Cmd
+            </HeaderTemplate>
             <ItemTemplate>
              <%#SetAction(Container.DataItem("UUID").ToString(), Container.DataItem("status")).ToString()%>
             </ItemTemplate>
@@ -168,6 +220,9 @@
        <asp:TextBox ID="Quit" runat="server" Text="" AutoPostBack="true" CssClass="NoShow" />
        <asp:CheckBox ID="Refresh" runat="server" Text="" AutoPostBack="true" CssClass="NoShow" />
        <asp:TextBox ID="Order" runat="server" AutoPostBack="true" CssClass="NoShow" />
+       <asp:CheckBox ID="Send" runat="server" cssClass="NoShow" AutoPostBack="true" />
+       <input type="text" id="RegID" runat="server" value="" class="NoShow" />
+       <input type="text" id="MsgOut" runat="server" value="" class="NoShow" />
       </form>
      </td>
     </tr>
@@ -175,6 +230,40 @@
   </div>
   <div id="FooterPos">
    <uc1:Footer id="Footer" runat="server"></uc1:Footer>
+  </div>
+  <div id="DivWinTrans" runat="server" class="DivWinTrans"></div>
+  <div id="DivWinBox" runat="server" class="DivWinBox">
+   <div class="DivWin">
+    <table style="width: 100%; height: 100%;">
+     <tr>
+      <td>
+       <table class="WarnTable">
+        <tr>
+         <td style="height:25px;"> </td>
+        </tr>
+        <tr>
+         <td id="MsgTitle" class="WarnText">
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <textarea id="MsgText" rows="2" cols="60"></textarea>
+         </td>
+        </tr>
+        <tr>
+         <td style="text-align: center;">
+          <input type="button" value="Send" onclick="SendMsg();"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="button" value="Cancel" onclick="CloseMsg();"/>
+         </td>
+        </tr>
+        <tr>
+         <td style="height:25px;"> </td>
+        </tr>
+       </table>
+      </td>
+     </tr>
+    </table>
+   </div>
   </div>
   <form name="EditPage" action="" method="post">
    <input type="hidden" name="KeyID" value="" />

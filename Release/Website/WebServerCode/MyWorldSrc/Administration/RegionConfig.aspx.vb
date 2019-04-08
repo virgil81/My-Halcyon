@@ -5,13 +5,13 @@ Partial Class Administration_RegionConfig
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -73,24 +73,27 @@ Partial Class Administration_RegionConfig
    Dim StatusImg As String
    StatusImg = "Offline"
    Dim drApp As MySql.Data.MySqlClient.MySqlDataReader
-   SQLCmd = "Select regionName,status,locationX,locationY,internalIP,port,externalIP," +
+   SQLCmd = "Select regionName,status,locationX,locationY,port,externalIP,internalIP," +
+            " Case When Length(Trim(externalIP))>0 " +
+            " Then (Select ServerName From serverhosts Where externalIP=regionxml.externalIP) " +
+            " Else 'No selection' " +
+            " End as ServerName," +
             " (Select Concat(username,' ',lastname) as Name " +
-            "From " + DBName.ToString() + ".users Where UUID=regionxml.ownerUUID) as Owner " +
+            "  From " + DBName.ToString() + ".users Where UUID=regionxml.ownerUUID) as Owner " +
             "From regionxml " +
             "Where UUID=" + MyDB.SQLStr(KeyID.Value)
    If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Get display Values SQLCmd: " + SQLCmd.ToString())
    drApp = MyDB.GetReader("MySite", SQLCmd)
    If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("RegionConfig", "DB Error: " + MyDB.ErrMessage().ToString())
    If drApp.Read() Then
+    SetPorts(drApp("externalIP").ToString())               ' Get List of Ports for selected server
+    ExtIP.Value = drApp("externalIP").ToString()
     regionName.InnerText = drApp("regionName").ToString().Trim()
     ShowUUID.InnerText = KeyID.Value.ToString()
     LocationX.InnerText = drApp("locationX").ToString()
     LocationY.InnerText = drApp("locationY").ToString()
-    internalIP.Text = drApp("internalIP").ToString()
-    internalIP.Enabled = (drApp("status") = 0)
-    externalIP.Text = drApp("externalIP").ToString()
-    externalIP.Enabled = (drApp("status") = 0)
-    Port.Text = drApp("port").ToString()
+    ServerName.InnerText = drApp("ServerName").ToString() + ": " + drApp("externalIP").ToString() + ", " + drApp("internalIP").ToString()
+    Port.SelectedValue = drApp("port").ToString()
     Port.Enabled = (drApp("status") = 0)
     Owner.InnerText = drApp("Owner").ToString().Trim()
     If drApp("status") = 0 Then
@@ -106,8 +109,8 @@ Partial Class Administration_RegionConfig
    ' Setup Edit Mode page display controls
    PageTitle.InnerHtml = "Edit Region Settings - Status: <img src=""/Images/Icons/" + StatusImg.ToString() + ".png"" alt=""" + StatusImg.ToString() + """ style=""vertical-align: middle;""/>"
    drApp.Close()
-   UpdDelBtn.Visible = True                               ' Allow Update and Delete button to show
-   internalIP.Focus()                                       ' Set focus to the first field for entry
+   UpdDelBtn.Visible = True                                ' Allow Update and Delete button to show
+   Port.Focus()                                            ' Set focus to the first field for entry
 
    Dim SBMenu As New TreeView
    ' Set up navigation options
@@ -129,38 +132,51 @@ Partial Class Administration_RegionConfig
 
  End Sub
 
+ ' Fill Port selection based on server open ports including port assigned
+ Private Sub SetPorts(tExtIP As String)
+  Dim drServers As MySql.Data.MySqlClient.MySqlDataReader
+  SQLCmd = "Select port " +
+           "From serverports " +
+           "Where externalIP=" + MyDB.SQLStr(tExtIP) + " and port not in " +
+           " (Select port From regionxml " +
+           "  Where externalIP=" + MyDB.SQLStr(tExtIP) + " and UUID<>" + MyDB.SQLStr(KeyID.Value) + ")"
+  If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Get display Values SQLCmd: " + SQLCmd.ToString())
+  drServers = MyDB.GetReader("MySite", SQLCmd)
+  If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("RegionConfig", "DB Error: " + MyDB.ErrMessage().ToString())
+  If Port.Items.Count > 0 Then Port.Items.Clear()
+  Port.Items.Add(New ListItem("Set Port", ""))
+  While drServers.Read()
+   Port.Items.Add(New ListItem(drServers("port").ToString().Trim(), drServers("port").ToString().Trim()))
+  End While
+  drServers.Close()
+ End Sub
+
  ' Process data validation checks
  Private Function ValAddEdit(ByVal tAdd As Boolean) As String
   ' Parameter tAdd allows selections of Add mode only testing
   Dim aMsg As String
   aMsg = ""
-  ' Process error checking as required, place messages in tMsg.
-  If internalIP.Text.ToString().Trim().Length = 0 Then
-   aMsg = aMsg.ToString() + "Missing Internal IP!\r\n"
-  End If
-  If externalIP.Text.ToString().Trim().Length = 0 Then
-   aMsg = aMsg.ToString() + "Missing External IP!\r\n"
-  End If
-  If Port.Text.ToString().Trim().Length = 0 Then
-   aMsg = aMsg.ToString() + "Missing Port!\r\n"
-  ElseIf Not IsNumeric(Port.Text.ToString()) Then
-   aMsg = aMsg.ToString() + "Port must be an integer value!\r\n"
+  ' Process error checking as required, place messages in tMsg. Port.SelectedValue
+  If Port.SelectedValue.ToString().Trim().Length = 0 Then
+   aMsg = aMsg.ToString() + "Missing Port assignment!\r\n"
   Else
-   Dim ChkRegion As MySql.Data.MySqlClient.MySqlDataReader
-   SQLCmd = "Select regionName " +
-            "From regionxml " +
-            "Where externalIP=" + MyDB.SQLStr(externalIP.Text) + " and port=" + MyDB.SQLNo(Port.Text)
-   If Not tAdd Then                                       ' Edit mode verification
-    SQLCmd = SQLCmd.ToString() + " and " +
-            " UUID<>" + MyDB.SQLStr(KeyID.Value)
+   If ExtIP.Value.ToString().Trim().Length > 0 Then
+    Dim ChkRegion As MySql.Data.MySqlClient.MySqlDataReader
+    SQLCmd = "Select regionName " +
+             "From regionxml " +
+             "Where externalIP=" + MyDB.SQLStr(ExtIP.Value) + " and port=" + MyDB.SQLNo(Port.SelectedValue)
+    If Not tAdd Then                                        ' Edit mode verification
+     SQLCmd = SQLCmd.ToString() + " and " +
+              " UUID<>" + MyDB.SQLStr(KeyID.Value)
+    End If
+    If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Validate Port SQLCmd: " + SQLCmd.ToString())
+    ChkRegion = MyDB.GetReader("MySite", SQLCmd)
+    If ChkRegion.HasRows() Then
+     ChkRegion.Read()
+     aMsg = aMsg.ToString() + "Port is in use by " + ChkRegion("regionName").ToString().Trim() + "!\r\n"
+    End If
+    ChkRegion.Close()
    End If
-   If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Validate Port SQLCmd: " + SQLCmd.ToString())
-   ChkRegion = MyDB.GetReader("MySite", SQLCmd)
-   If ChkRegion.HasRows() Then
-    ChkRegion.Read()
-    aMsg = aMsg.ToString() + "Port is in use by " + ChkRegion("regionName").ToString().Trim() + "!\r\n"
-   End If
-   ChkRegion.Close()
   End If
   'If FieldName.Text.ToString().Trim().Length = 0 Then
   ' aMsg = aMsg.ToString() + "Missing Field Name!\r\n"
@@ -172,17 +188,27 @@ Partial Class Administration_RegionConfig
  Private Sub Button1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button1.Click
   Dim tMsg As String
   tMsg = ValAddEdit(False)
-
   If tMsg.ToString().Trim().Length = 0 Then
+   Dim GetServer As MySqlDataReader
+   SQLCmd = "Select ServerName,externalIP,internalIP " +
+           "From serverhost " +
+           "Where externalIP=(Select externalIP From serverports Where port=" + MyDB.SQLNo(Port.SelectedValue) + ")"
+   If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Get serverhost IPs SQLCmd: " + SQLCmd.ToString())
+   GetServer = MyDB.GetReader("MySite", SQLCmd)
+   GetServer.Read()
+   ServerName.InnerText = GetServer("ServerName").ToString()
+   ExtIP.Value = GetServer("externalIP").ToString()
+
    SQLCmd = "Update regionxml Set " +
-            "internalIP=" + MyDB.SQLStr(internalIP.Text) + "," + "port=" + MyDB.SQLNo(Port.Text) + "," +
-            "externalIP=" + MyDB.SQLStr(externalIP.Text) + " " +
+            "externalIP=" + MyDB.SQLStr(GetServer("externalIP")) + "," + "internalIP=" + MyDB.SQLStr(GetServer("internalIP")) + "," +
+            "port=" + MyDB.SQLNo(Port.SelectedValue) + " " +
             "Where UUID=" + MyDB.SQLStr(KeyID.Value)
    If Trace.IsEnabled Then Trace.Warn("RegionConfig", "Update regionxml SQLCmd: " + SQLCmd.ToString())
    MyDB.DBCmd("MySite", SQLCmd)
    If MyDB.Error() Then
     tMsg = "DB Error: " + MyDB.ErrMessage() + "\r\n"
    End If
+   GetServer.Close()
    If Not BodyTag.Attributes.Item("onload") Is Nothing Then ' Remove onload error message display 
     BodyTag.Attributes.Remove("onload")
    End If
@@ -201,5 +227,4 @@ Partial Class Administration_RegionConfig
   MyDB = Nothing
   PageCtl = Nothing
  End Sub
-
 End Class

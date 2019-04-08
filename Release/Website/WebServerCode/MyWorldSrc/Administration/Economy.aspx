@@ -133,7 +133,7 @@
            <td style="height: 40px; vertical-align: top;">
             <span id="BuySellName" runat="server" style="font-weight: bold;"></span>:
             <span id="BuySellText" runat="server"></span><br />
-            <asp:TextBox id="BuySellTime" runat="server" Columns="3" maxLength="3" cssClass="Form"/> Minumum hours between transaction
+            <asp:TextBox id="BuySellTime" runat="server" Columns="3" maxLength="3" cssClass="Form"/> Minimum hours between transaction
            </td>
           </tr>
           <tr id="ShowLvl3H" runat="server">

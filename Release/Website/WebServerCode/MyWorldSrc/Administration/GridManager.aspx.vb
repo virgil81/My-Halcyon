@@ -5,13 +5,13 @@ Partial Class Administration_GridManager
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -52,6 +52,8 @@ Partial Class Administration_GridManager
     Session("FirstTime") = "GridManager"                   ' Allows session data to be maintained with lower level pages.
     Session("SelField") = " regionName"
    End If
+   Session("FirstTimeB") = ""
+   Session("SelPageB") = ""
 
    ' Setup general page controls
 
@@ -67,9 +69,12 @@ Partial Class Administration_GridManager
    SBMenu.AddItem("P", "Admin.aspx", "Website Administration")
    SBMenu.AddItem("P", "/Account.aspx", "Account")
    SBMenu.AddItem("P", "/Logout.aspx", "Logout")
-   'SBMenu.AddItem("B", "", "Blank Entry")
-   'SBMenu.AddItem("T", "", "Page Options")
-   'SBMenu.AddItem("L", "CallEdit(0,'TempForm.aspx');", "New Entry")
+   SBMenu.AddItem("B", "", "Blank Entry")
+   SBMenu.AddItem("T", "", "Page Options")
+   SBMenu.AddItem("P", "ServerSelect.aspx", "Server Management")
+   SBMenu.AddItem("B", "", "Blank Entry")
+   SBMenu.AddItem("L", "OpenMsg(0,'Enter message to send to all regions');", "Grid Message")       ' send message to all region users
+   SBMenu.AddItem("P", "RegionRpt.aspx", "Region Report")
    If Trace.IsEnabled Then Trace.Warn("GridManager", "Show Menu")
    SidebarMenu.InnerHtml = SBMenu.BuildMenu("Menu Selections", 14) ' Build and display Menu options
    SBMenu.Close()
@@ -97,6 +102,8 @@ Partial Class Administration_GridManager
 
   Dim Display As MySql.Data.MySqlClient.MySqlDataReader
   SQLCmd = "Select regionName,UUID,status,Concat(Cast(locationX as char),',',Cast(locationY as char)) as Map,externalIP,port,ownerUUID," +
+           " (Select Count(UUID) As Total From " + DBName.ToString() + ".agents " +
+           "  Where agentOnline>0 and currentRegion=regionxml.UUID) as UserCnt," +
            " (Select Concat(username,' ',lastname) as Name From " + DBName.ToString() + ".users Where UUID=regionxml.OwnerUUID) as OwnerName,ProcessHandle " +
            "From regionxml " +
            "Order by " + Session("SelField").ToString()
@@ -114,6 +121,7 @@ Partial Class Administration_GridManager
   If Trace.IsEnabled Then Trace.Warn("GridManager", "** UpdateData() Called **")
   Dim tUUIDList As String
   tUUIDList = ""
+  Dim ReturnInfo, IP As String
   Dim GetEstate As MySql.Data.MySqlClient.MySqlDataReader
   Dim GetRegion As MySql.Data.MySqlClient.MySqlDataReader
   Dim GridList As MySql.Data.MySqlClient.MySqlDataReader
@@ -125,11 +133,8 @@ Partial Class Administration_GridManager
   If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("GridManager", "Get GridList DB error: " + MyDB.ErrMessage())
   If GridList.HasRows() Then
    While GridList.Read()
-    If tUUIDList.ToString().Trim().Length > 0 Then
-     tUUIDList = tUUIDList.ToString() + ","
-    End If
     If Trace.IsEnabled Then Trace.Warn("GridManager", "** Processing region: " + GridList("UUID").ToString().Trim())
-    ' Check estate_map for UUID: Establishes the region as a existing region, not a new one.
+    ' Check estate_map for UUID: Establishes the region as an existing region, not a new one.
     SQLCmd = "Select RegionID " +
              "From estate_map " +
              "Where RegionID=" + MyDB.SQLStr(GridList("UUID"))
@@ -137,6 +142,9 @@ Partial Class Administration_GridManager
     GetEstate = MyDB.GetReader("MyData", SQLCmd)
     If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("GridMonkey", "Get GridList DB error: " + MyDB.ErrMessage())
     If GetEstate.HasRows() Then                            ' Process region
+     If tUUIDList.ToString().Trim().Length > 0 Then
+      tUUIDList = tUUIDList.ToString() + ","
+     End If
      tUUIDList = tUUIDList.ToString() + "'" + GridList("UUID").ToString() + "'"
      SQLCmd = "Select regionName,serverIP,serverPort,locX,locY " +
               "From regions " +
@@ -147,95 +155,91 @@ Partial Class Administration_GridManager
      ' NOTE: Just because the DB says it is online, does not mean it really is! 
      SQLCmd = ""
      If GetRegion.HasRows() Then                           ' Region is supposed to be online
-      If GridList("Status") = 3 Then                       ' Region is closing, skip asking it
-      Else                                                 ' Region may be online
-       GetRegion.Read()
-       If GridList("locationX").ToString() <> GetRegion("locX").ToString() Then ' Update Location X
-        SQLCmd = SQLCmd.ToString() +
-               "locationX=" + MyDB.SQLNo(GetRegion("locX"))
-       End If
-       If GridList("locationY").ToString() <> GetRegion("locY").ToString() Then ' Update Location X
-        If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
-         SQLCmd = SQLCmd.ToString() + ","
-        End If
-        SQLCmd = SQLCmd.ToString() +
-               "locationY=" + MyDB.SQLNo(GetRegion("locY"))
-       End If
-       If GridList("externalIP").ToString() <> GetRegion("serverIP").ToString() Then ' Update externalIP
-        If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
-         SQLCmd = SQLCmd.ToString() + ","
-        End If
-        SQLCmd = SQLCmd.ToString() +
-               "externalIP=" + MyDB.SQLStr(GetRegion("serverIP"))
-       End If
-       If GridList("port").ToString() <> GetRegion("serverPort").ToString() Then ' Update port
-        If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
-         SQLCmd = SQLCmd.ToString() + ","
-        End If
-        SQLCmd = SQLCmd.ToString() +
-               "port=" + MyDB.SQLNo(GetRegion("serverPort"))
-       End If
-       If GridList("regionName").ToString() <> GetRegion("regionName").ToString() Then ' Region name changed?
-        If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
-         SQLCmd = SQLCmd.ToString() + ","
-        End If
-        SQLCmd = SQLCmd.ToString() +
-                "regionName=" + MyDB.SQLStr(GetRegion("regionName"))
-       End If
-       ' Ping server region for status
-       Dim ReturnInfo, IP As String
-       ReturnInfo = ""
-       ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
-       If GridList("internalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
-        IP = GridList("internalIP").ToString()
-       Else
-        IP = GetRegion("serverIP").ToString()
-       End If
-       Dim response As System.Net.WebResponse = Nothing
-       Dim reader As System.IO.StreamReader = Nothing
-       Dim requestWeb As System.Net.WebRequest
-       Dim responseStream As System.IO.Stream
-       If Trace.IsEnabled Then Trace.Warn("GridManager", "Ask Message: " + "http://" + IP.ToString() + ":" + GetRegion("serverPort").ToString() + "/simstatus/")
-       requestWeb = System.Net.WebRequest.Create("http://" + IP.ToString() + ":" + GetRegion("serverPort").ToString() + "/simstatus/")
-       requestWeb.Timeout = 500                            ' Half second response timeout
-       Try
-        response = requestWeb.GetResponse()
-        responseStream = response.GetResponseStream()
-        reader = New System.IO.StreamReader(responseStream)
-        ReturnInfo = reader.ReadToEnd()                    ' Get response text
-        response.Close()
-        reader.Close()
-       Catch ex As Exception
-        ReturnInfo = ""
-       End Try
-       requestWeb = Nothing
-       If Trace.IsEnabled Then Trace.Warn("GridManager", "-- Region Response: " + ReturnInfo.ToString())
-       If SQLCmd.ToString().Trim().Length <> 0 Then        ' Prior set data to write exists, extend SQL
+      GetRegion.Read()
+      ReturnInfo = ""
+      If GridList("locationX").ToString() <> GetRegion("locX").ToString() Then ' Update Location X
+       SQLCmd = SQLCmd.ToString() +
+                 "locationX=" + MyDB.SQLNo(GetRegion("locX"))
+      End If
+      If GridList("locationY").ToString() <> GetRegion("locY").ToString() Then ' Update Location X
+       If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
         SQLCmd = SQLCmd.ToString() + ","
        End If
-       If ReturnInfo.ToString() = "OK" Then                ' Region responded correctly, its online
-        If Trace.IsEnabled Then Trace.Warn("GridManager", "-- Region Status: " + GridList("Status").ToString())
-        If GridList("Status") <> 2 Then
-         If Not IsDBNull(Session("Counter" + GridList("UUID").ToString())) Then
-          If Trace.IsEnabled Then Trace.Warn("GridMonkey", "-- Process Counter: " + Session("Counter" + GridList("UUID").ToString()).ToString())
-          If CInt(Session("Counter" + GridList("UUID").ToString())) > 0 Then ' Delay status change until region has restarted
-           SQLCmd = SQLCmd.ToString() +
-                  "Status=" + MyDB.SQLStr(GridList("Status"))
-           Session("Counter" + GridList("UUID").ToString()) = Session("Counter" + GridList("UUID").ToString()) - 1
-          Else
-           SQLCmd = SQLCmd.ToString() + "Status=2"
-          End If
-         Else                                              ' Not in command processing
+       SQLCmd = SQLCmd.ToString() +
+                 "locationY=" + MyDB.SQLNo(GetRegion("locY"))
+      End If
+      If GridList("externalIP").ToString() <> GetRegion("serverIP").ToString() Then ' Update externalIP
+       If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
+        SQLCmd = SQLCmd.ToString() + ","
+       End If
+       SQLCmd = SQLCmd.ToString() +
+                 "externalIP=" + MyDB.SQLStr(GetRegion("serverIP"))
+      End If
+      If GridList("port").ToString() <> GetRegion("serverPort").ToString() Then ' Update port
+       If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
+        SQLCmd = SQLCmd.ToString() + ","
+       End If
+       SQLCmd = SQLCmd.ToString() +
+                 "port=" + MyDB.SQLNo(GetRegion("serverPort"))
+      End If
+      If GridList("regionName").ToString() <> GetRegion("regionName").ToString() Then ' Region name changed?
+       If SQLCmd.ToString().Trim().Length <> 0 Then       ' Prior set data to write exists, extend SQL
+        SQLCmd = SQLCmd.ToString() + ","
+       End If
+       SQLCmd = SQLCmd.ToString() +
+                "regionName=" + MyDB.SQLStr(GetRegion("regionName"))
+      End If
+      ' Ping server region for status
+      ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
+      If GridList("internalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
+       IP = GridList("internalIP").ToString()
+      Else
+       IP = GetRegion("serverIP").ToString()
+      End If
+      Dim response As System.Net.WebResponse = Nothing
+      Dim reader As System.IO.StreamReader = Nothing
+      Dim requestWeb As System.Net.WebRequest
+      Dim responseStream As System.IO.Stream
+      If Trace.IsEnabled Then Trace.Warn("GridManager", "Ask Message: " + "http://" + IP.ToString() + ":" + GetRegion("serverPort").ToString() + "/simstatus/")
+      requestWeb = System.Net.WebRequest.Create("http://" + IP.ToString() + ":" + GetRegion("serverPort").ToString() + "/simstatus/")
+      requestWeb.Timeout = 2000                           ' Two second response timeout
+      Try
+       response = requestWeb.GetResponse()
+       responseStream = response.GetResponseStream()
+       reader = New System.IO.StreamReader(responseStream)
+       ReturnInfo = reader.ReadToEnd()                    ' Get response text
+       response.Close()
+       reader.Close()
+      Catch ex As Exception
+       ReturnInfo = ""
+      End Try
+      requestWeb = Nothing
+      If Trace.IsEnabled Then Trace.Warn("GridManager", "-- Region Response: " + ReturnInfo.ToString())
+      If SQLCmd.ToString().Trim().Length <> 0 Then        ' Prior set data to write exists, extend SQL
+       SQLCmd = SQLCmd.ToString() + ","
+      End If
+      If ReturnInfo.ToString() = "OK" Then                ' Region responded correctly, its online
+       If Trace.IsEnabled Then Trace.Warn("GridManager", "** Region Status: " + GridList("Status").ToString())
+       If GridList("Status") <> 2 Then
+        If Not IsDBNull(Session("Counter" + GridList("UUID").ToString())) Then
+         If Trace.IsEnabled Then Trace.Warn("GridManager", "** Process Counter: " + Session("Counter" + GridList("UUID").ToString()).ToString())
+         If CInt(Session("Counter" + GridList("UUID").ToString())) > 0 Then ' Delay status change until region has restarted
+          SQLCmd = SQLCmd.ToString() +
+                    "Status=" + MyDB.SQLStr(GridList("Status"))
+          Session("Counter" + GridList("UUID").ToString()) = Session("Counter" + GridList("UUID").ToString()) - 1
+         Else
           SQLCmd = SQLCmd.ToString() + "Status=2"
          End If
+        Else                                              ' Not in command processing
+         SQLCmd = SQLCmd.ToString() + "Status=2"
         End If
-       Else
-        If GridList("Status") = 2 Then                     ' It is offline.
-         SQLCmd = SQLCmd.ToString() + "Status=0"
-        Else                                               ' Check Status
-         If GridList("Status") <> 0 Then                   ' Retain prior Status set
-          SQLCmd = SQLCmd.ToString() + "Status=" + MyDB.SQLStr(GridList("Status"))
-         End If
+       End If
+      Else
+       If GridList("Status") = 2 Then                     ' It is offline.
+        SQLCmd = SQLCmd.ToString() + "Status=0"
+       Else                                               ' Check Status
+        If GridList("Status") <> 0 Then                   ' Retain prior Status set
+         SQLCmd = SQLCmd.ToString() + "Status=" + MyDB.SQLStr(GridList("Status"))
         End If
        End If
       End If
@@ -270,30 +274,23 @@ Partial Class Administration_GridManager
    End While
   End If
   GridList.Close()
-  ' Check for any new regions not in the GridList
-  SQLCmd = "Select regionName,UUID,2 as Status,locx,locy," +
-            " serverIP as IP,serverPort as Port,'' as InternalIP,owner_uuid as OwnerUUID " +
-            "From regions "
+  ' Check for any orphan regions not in the GridList
+  SQLCmd = "Select UUID " +
+           "From regions "
   If tUUIDList.ToString().Trim().Length > 0 Then           ' Do not include already listed regions
    SQLCmd = SQLCmd.ToString() +
             "Where UUID Not in (" + tUUIDList.ToString() + ") "
   End If
   SQLCmd = SQLCmd.ToString() +
-            "Order by regionName"
+           "Order by regionName"
   If Trace.IsEnabled Then Trace.Warn("GridManager", "Get New Regions SQLCmd: " + SQLCmd.ToString())
   GetRegion = MyDB.GetReader("MyData", SQLCmd)
-  SQLFields = "regionName,UUID,status,locationX,locationY,externalIP,port,internalIP,ownerUUID"
   If GetRegion.HasRows() Then                              ' Got Regions!
    If Trace.IsEnabled Then Trace.Warn("GridManager", "** Add Regions **")
    While GetRegion.Read()
-    SQLValues = MyDB.SQLStr(GetRegion("regionName")) + "," + MyDB.SQLStr(GetRegion("UUID")) + "," +
-                 MyDB.SQLNo(GetRegion("Status")) + "," + MyDB.SQLNo(GetRegion("locx")) + "," +
-                 MyDB.SQLNo(GetRegion("locy")) + "," + MyDB.SQLStr(GetRegion("IP")) + "," +
-                 MyDB.SQLNo(GetRegion("Port")) + "," + MyDB.SQLStr(GetRegion("InternalIP")) + "," +
-                 MyDB.SQLStr(GetRegion("OwnerUUID"))
-    SQLCmd = "Insert into regionxml (" + SQLFields + ") Values (" + SQLValues + ")"
-    If Trace.IsEnabled Then Trace.Warn("GridManager", "Add Region SQLCmd: " + SQLCmd.ToString())
-    MyDB.DBCmd("GWSite", SQLCmd)
+    SQLCmd = "Delete from regions Where UUID=" + MyDB.SQLStr(GetRegion("UUID"))
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Delete Region SQLCmd: " + SQLCmd.ToString())
+    MyDB.DBCmd("MyData", SQLCmd)
     If Trace.IsEnabled And MyDB.Error() Then Trace.Warn("GridManager", "Insert DB error: " + MyDB.ErrMessage())
    End While
    GetRegion.Close()
@@ -301,25 +298,67 @@ Partial Class Administration_GridManager
   Display()
  End Sub
 
- ' Process Region Restart
- Protected Sub ReStart_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ReStart.TextChanged
-  If Trace.IsEnabled Then Trace.Warn("GridManager", "** ReStart Region Process **")
-  Dim IP As String
+ ' Send message to regions
+ Private Sub Send_CheckedChanged(sender As Object, e As EventArgs) Handles Send.CheckedChanged
+  If Trace.IsEnabled Then Trace.Warn("GridManager", "** Send Message to Region Process **")
+  Dim IP, SessionID As String
+  SessionID = ""
+
   Dim GridList As MySql.Data.MySqlClient.MySqlDataReader
-  SQLCmd = "Select externalIP,internalIP,port " +
-           "From regionxml " +
-           "Where UUID=" + MyDB.SQLStr(ReStart.Text)
-  If Trace.IsEnabled Then Trace.Warn("GridManager", "Get Region SQLCmd: " + SQLCmd.ToString())
-  GridList = MyDB.GetReader("MySite", SQLCmd)
-  GridList.Read()
-  ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
-  If GridList("InternalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
-   IP = GridList("InternalIP").ToString().Trim()
-  Else                                                     ' Else use external IP
-   IP = GridList("externalIP").ToString().Trim()
+  If RegID.Value.ToString().Length = 1 Then               ' Process message for all running regions in all servers
+   SQLCmd = "Select externalIP,internalIP,port, " +
+            " (Select AccountName From serverhosts Where externalIP=regionxml.externalIP) as AccountName," +
+            " (Select AcctPassword From serverhosts Where externalIP=regionxml.externalIP) as AcctPassword " +
+            "From regionxml " +
+            "Where Status=2 " +
+            "Order by port"
+   If Trace.IsEnabled Then Trace.Warn("GridManager", "All Regions SQLCmd: " + SQLCmd.ToString())
+   GridList = MyDB.GetReader("MySite", SQLCmd)
+   While GridList.Read()
+    ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
+    If GridList("internalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
+     IP = GridList("internalIP").ToString().Trim()
+    Else                                                  ' Else use external IP
+     IP = GridList("externalIP").ToString().Trim()
+    End If
+    ProcessMsg(IP, GridList("port"), GridList("AccountName"), GridList("AcctPassword"))
+
+   End While
+
+  Else                                                    ' Presume a region UUID was sent
+   SQLCmd = "Select externalIP,internalIP,port, " +
+            " (Select AccountName From serverhosts Where externalIP=regionxml.externalIP) as AccountName," +
+            " (Select AcctPassword From serverhosts Where externalIP=regionxml.externalIP) as AcctPassword " +
+            "From regionxml " +
+            "Where UUID=" + MyDB.SQLStr(RegID.Value)
+   If Trace.IsEnabled Then Trace.Warn("GridManager", "Get Region SQLCmd: " + SQLCmd.ToString())
+   GridList = MyDB.GetReader("MySite", SQLCmd)
+   GridList.Read()
+   ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
+   If GridList("internalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
+    IP = GridList("internalIP").ToString().Trim()
+   Else                                                   ' Else use external IP
+    IP = GridList("externalIP").ToString().Trim()
+   End If
+   ProcessMsg(IP, GridList("port"), GridList("AccountName"), GridList("AcctPassword"))
   End If
-  If IP.ToString().Trim().Length > 0 Then
-   Dim ReturnInfo, OutParms, SessionID As String
+
+  GridList.Close()
+  GridList = Nothing
+  System.Threading.Thread.Sleep(5000)                     ' Cause 5 second delay before proceeding, give region time to close
+
+  Send.Checked = False                                    ' Allow another command to process
+  Display()
+
+ End Sub
+
+ Protected Sub ProcessMsg(tIP As String, tPort As Integer, tAcct As String, tPass As String)
+  If Trace.IsEnabled Then Trace.Warn("GridManager", "** ProcessMsg Called **")
+  If Trace.IsEnabled Then Trace.Warn("GridManager", "Parms- tIP: " + tIP.ToString() + ", tPort: " +
+                                     tPort.ToString() + ", tAcct: " + tAcct.ToString())
+  Dim ReturnInfo, OutParms, SessionID As String
+
+  If tIP.ToString().Trim().Length > 0 Then
    ReturnInfo = ""
    SessionID = ""
    Dim doc As New System.Xml.XmlDocument()
@@ -335,10 +374,134 @@ Partial Class Administration_GridManager
               "  <methodName>session.login_with_password</methodName>" +
               "  <params>" +
               "   <param>" +
-              "   <value><string>Administrator</string></value>" +
+              "   <value><string>" + tAcct.ToString() + "</string></value>" +
               "   </param>" +
               "   <param>" +
-              "   <value><string>Password</string></value>" +
+              "   <value><string>" + tPass.ToString() + "</string></value>" +
+              "   </param>" +
+              "  </params>" +
+              " </methodCall>"
+   OutBytes = System.Text.Encoding.UTF8.GetBytes(OutParms.ToString())
+   If Trace.IsEnabled Then Trace.Warn("GridManager", "StartSession Message: " + "http://" + tIP.ToString() + ":" + tPort.ToString() + "/xmlrpc/RemoteAdmin")
+   If Trace.IsEnabled Then Trace.Warn("GridManager", "Sending: " + OutParms.ToString())
+   requestWeb = System.Net.WebRequest.Create("http://" + tIP.ToString() + ":" + tPort.ToString() + "/xmlrpc/RemoteAdmin")
+   requestWeb.Method = "post"
+   requestWeb.ContentType = "text/xml"
+   requestWeb.ContentLength = OutBytes.Length
+   requestStream = requestWeb.GetRequestStream()
+   requestStream.Write(OutBytes, 0, OutBytes.Length)
+   requestStream.Flush()                                   ' Send outgoing request, clear buffers
+   requestStream.Close()
+   requestWeb.Timeout = 2000                               ' Two second response timeout
+   Try
+    response = requestWeb.GetResponse()
+    responseStream = response.GetResponseStream()
+    reader = New System.IO.StreamReader(responseStream)
+    ReturnInfo = reader.ReadToEnd()                        ' Get response text
+    response.Close()
+    reader.Close()
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
+   Catch ex As Exception
+    ReturnInfo = ""
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
+   End Try
+   requestWeb = Nothing
+   If ReturnInfo.ToString().Trim().Length > 0 Then
+    doc.LoadXml(ReturnInfo.ToString())
+    ' Extract the sessionID from the response xml
+    If doc.HasChildNodes Then                              ' For Debug processing to send in email
+     root = doc.Item("methodResponse")
+     params = root("params")
+     SessionID = params.SelectNodes("./param/value/struct/member[name='Value']/value/string")(0).InnerText()
+    End If
+   End If
+
+   If SessionID.ToString().Trim().Length > 0 Then
+    OutParms = "<?xml version=""1.0""?>" +
+               "<methodCall>" +
+               " <methodName>Console.Command</methodName>" +
+               " <params>" +
+               "  <param>" +
+               "   <value><string>" + SessionID.ToString() + "</string></value>" +
+               "  </param>" +
+               "  <param>" +
+               "   <value><string>alert general " + MsgTrans.Value.ToString() + "</string></value>" +
+               "  </param>" +
+               " </params>" +
+               "</methodCall>"
+    OutBytes = System.Text.Encoding.UTF8.GetBytes(OutParms.ToString())
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Send a Message: " + "http://" + tIP.ToString() + ":" + tPort.ToString() + "/xmlrpc/RemoteAdmin")
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Sending: " + OutParms.ToString())
+    requestWeb = System.Net.WebRequest.Create("http://" + tIP.ToString() + ":" + tPort.ToString() + "/xmlrpc/RemoteAdmin")
+    requestWeb.Method = "post"
+    requestWeb.ContentType = "text/xml"
+    requestWeb.ContentLength = OutBytes.Length
+    requestStream = requestWeb.GetRequestStream()
+    requestStream.Write(OutBytes, 0, OutBytes.Length)
+    requestStream.Flush()                                  ' Send outgoing request
+    requestStream.Close()
+    requestWeb.Timeout = 2000                              ' Two second response timeout
+    Try
+     response = requestWeb.GetResponse()
+     responseStream = response.GetResponseStream()
+     reader = New System.IO.StreamReader(responseStream)
+     ReturnInfo = reader.ReadToEnd()                       ' Get response text
+     response.Close()
+     reader.Close()
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
+    Catch ex As Exception
+     ReturnInfo = ""
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
+    End Try
+   End If
+   requestWeb = Nothing
+   requestStream = Nothing
+   responseStream = Nothing
+   reader = Nothing
+   doc = Nothing
+  End If
+
+ End Sub
+
+ ' Process Region Restart
+ Protected Sub ReStart_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ReStart.TextChanged
+  If Trace.IsEnabled Then Trace.Warn("GridManager", "** ReStart Region Process **")
+  Dim IP, ReturnInfo, OutParms, SessionID As String
+  Dim GridList As MySql.Data.MySqlClient.MySqlDataReader
+  SQLCmd = "Select externalIP,internalIP,port, " +
+           " (Select AccountName From serverhosts Where externalIP=regionxml.externalIP) as AccountName," +
+           " (Select AcctPassword From serverhosts Where externalIP=regionxml.externalIP) as AcctPassword " +
+           "From regionxml " +
+           "Where UUID=" + MyDB.SQLStr(ReStart.Text)
+  If Trace.IsEnabled Then Trace.Warn("GridManager", "Get Region SQLCmd: " + SQLCmd.ToString())
+  GridList = MyDB.GetReader("MySite", SQLCmd)
+  GridList.Read()
+  ' Can use internal network address: http://10.0.0.30:9518/simstatus/ for communication with regions.
+  If GridList("internalIP").ToString().Trim().Length > 0 Then ' Use the internalIP if it has one
+   IP = GridList("internalIP").ToString().Trim()
+  Else                                                     ' Else use external IP
+   IP = GridList("externalIP").ToString().Trim()
+  End If
+  If IP.ToString().Trim().Length > 0 Then
+   ReturnInfo = ""
+   SessionID = ""
+   Dim doc As New System.Xml.XmlDocument()
+   Dim root, params As System.Xml.XmlNode
+   Dim requestStream As System.IO.Stream
+   Dim responseStream As System.IO.Stream
+   Dim response As System.Net.WebResponse = Nothing
+   Dim reader As System.IO.StreamReader = Nothing
+   Dim requestWeb As System.Net.WebRequest
+   Dim OutBytes() As Byte
+   OutParms = "<?xml version=""1.0""?>" +
+              " <methodCall>" +
+              "  <methodName>session.login_with_password</methodName>" +
+              "  <params>" +
+              "   <param>" +
+              "   <value><string>" + GridList("AccountName").ToString() + "</string></value>" +
+              "   </param>" +
+              "   <param>" +
+              "   <value><string>" + GridList("AcctPassword").ToString() + "</string></value>" +
               "   </param>" +
               "  </params>" +
               " </methodCall>"
@@ -352,7 +515,7 @@ Partial Class Administration_GridManager
    requestStream.Write(OutBytes, 0, OutBytes.Length)
    requestStream.Flush()                                   ' Send outgoing request, clear buffers
    requestStream.Close()
-   requestWeb.Timeout = 500                                ' Half second response timeout
+   requestWeb.Timeout = 2000                               ' Two second response timeout
    Try
     response = requestWeb.GetResponse()
     responseStream = response.GetResponseStream()
@@ -360,8 +523,10 @@ Partial Class Administration_GridManager
     ReturnInfo = reader.ReadToEnd()                        ' Get response text
     response.Close()
     reader.Close()
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
    Catch ex As Exception
     ReturnInfo = ""
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
    End Try
    requestWeb = Nothing
    If ReturnInfo.ToString().Trim().Length > 0 Then
@@ -397,7 +562,7 @@ Partial Class Administration_GridManager
     requestStream.Write(OutBytes, 0, OutBytes.Length)
     requestStream.Flush()                                  ' Send outgoing request
     requestStream.Close()
-    requestWeb.Timeout = 500                               ' Half second response timeout
+    requestWeb.Timeout = 2000                              ' Two second response timeout
     Try
      response = requestWeb.GetResponse()
      responseStream = response.GetResponseStream()
@@ -405,8 +570,10 @@ Partial Class Administration_GridManager
      ReturnInfo = reader.ReadToEnd()                       ' Get response text
      response.Close()
      reader.Close()
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
     Catch ex As Exception
      ReturnInfo = ""
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
     End Try
     ' NOTE: No response is actually given. The region simply shuts down and restart processed.
     If Trace.IsEnabled Then Trace.Warn("GridManager", "-- Region Response: " + ReturnInfo.ToString())
@@ -434,9 +601,11 @@ Partial Class Administration_GridManager
  ' Process Region Shutdown
  Protected Sub Quit_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles Quit.TextChanged
   If Trace.IsEnabled Then Trace.Warn("GridManager", "** Shutdown Region Process **")
-  Dim IP As String
+  Dim IP, ReturnInfo, OutParms, SessionID As String
   Dim GridList As MySql.Data.MySqlClient.MySqlDataReader   ' Used this way to not have the DB in Lock mode while using a datareader
-  SQLCmd = "Select externalIP,internalIP,port " +
+  SQLCmd = "Select externalIP,internalIP,port, " +
+           " (Select AccountName From serverhosts Where externalIP=regionxml.externalIP) as AccountName," +
+           " (Select AcctPassword From serverhosts Where externalIP=regionxml.externalIP) as AcctPassword " +
            "From regionxml " +
            "Where UUID=" + MyDB.SQLStr(Quit.Text)
   If Trace.IsEnabled Then Trace.Warn("GridManager", "Get Region SQLCmd: " + SQLCmd.ToString())
@@ -449,7 +618,6 @@ Partial Class Administration_GridManager
    IP = GridList("externalIP").ToString().Trim()
   End If
   If IP.ToString().Trim().Length > 0 Then
-   Dim ReturnInfo, OutParms, SessionID As String
    ReturnInfo = ""
    SessionID = ""
    Dim doc As New System.Xml.XmlDocument()
@@ -465,10 +633,10 @@ Partial Class Administration_GridManager
               "  <methodName>session.login_with_password</methodName>" +
               "  <params>" +
               "   <param>" +
-              "   <value><string>Administrator</string></value>" +
+              "   <value><string>" + GridList("AccountName").ToString() + "</string></value>" +
               "   </param>" +
               "   <param>" +
-              "   <value><string>Password</string></value>" +
+              "   <value><string>" + GridList("AcctPassword").ToString() + "</string></value>" +
               "   </param>" +
               "  </params>" +
               " </methodCall>"
@@ -482,7 +650,7 @@ Partial Class Administration_GridManager
    requestStream.Write(OutBytes, 0, OutBytes.Length)
    requestStream.Flush()                                   ' Send outgoing request, clear buffers
    requestStream.Close()
-   requestWeb.Timeout = 500                                ' Half second response timeout
+   requestWeb.Timeout = 2000                               ' Two second response timeout
    Try
     response = requestWeb.GetResponse()
     responseStream = response.GetResponseStream()
@@ -490,8 +658,10 @@ Partial Class Administration_GridManager
     ReturnInfo = reader.ReadToEnd()                        ' Get response text
     response.Close()
     reader.Close()
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
    Catch ex As Exception
     ReturnInfo = ""
+    If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
    End Try
    requestWeb = Nothing
    If ReturnInfo.ToString().Trim().Length > 0 Then
@@ -527,7 +697,7 @@ Partial Class Administration_GridManager
     requestStream.Write(OutBytes, 0, OutBytes.Length)
     requestStream.Flush()                                  ' Send outgoing request
     requestStream.Close()
-    requestWeb.Timeout = 500                               ' Half second response timeout
+    requestWeb.Timeout = 2000                              ' Two second response timeout
     Try
      response = requestWeb.GetResponse()
      responseStream = response.GetResponseStream()
@@ -535,8 +705,10 @@ Partial Class Administration_GridManager
      ReturnInfo = reader.ReadToEnd()                       ' Get response text
      response.Close()
      reader.Close()
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Response returned: " + ReturnInfo.ToString())
     Catch ex As Exception
      ReturnInfo = ""
+     If Trace.IsEnabled Then Trace.Warn("GridManager", "Message Failed: " + ex.Message().ToString())
     End Try
     If Trace.IsEnabled Then Trace.Warn("GridManager", "-- Region Response: " + ReturnInfo.ToString())
     ' Note: ReturnInfo is empty at this point. The reponse does not appear to happen.
@@ -571,7 +743,7 @@ Partial Class Administration_GridManager
 
   ' Get data to start the process
   Dim StartUp As MySql.Data.MySqlClient.MySqlDataReader   ' 
-  SQLCmd = "Select regionName,Port,internalIP,MachineName " +
+  SQLCmd = "Select regionName,Port,internalIP,ServerName " +
            "From regionxml " +
            "Where UUID=" + MyDB.SQLStr(Start.Text)
   If Trace.IsEnabled Then Trace.Warn("GridManager", "Set Region Starting SQLCmd: " + SQLCmd.ToString())
@@ -585,9 +757,9 @@ Partial Class Administration_GridManager
   'If IPByName.Length = 0 Then                               ' Process does not exist, OK to create
   ' MyProcess = IPByName(0)
   ' ' Fatal Flaw: No way to specify process name or machineName in Process. Would not work in a linux OS.
-  ' MyProcess.StartInfo.FileName = "\\" + StartUp("MachineName") + "\C$\IMATGrid\Halcyon.bat" 'Filename To start up.
+  ' MyProcess.StartInfo.FileName = "\\" + StartUp("ServerName") + "\C$\IMATGrid\Halcyon.bat" 'Filename To start up.
   ' MyProcess.StartInfo.Arguments = "--inimaster=..\Halcyon.ini --inifile=" + StartUp("regionName").ToString().Trim() + ".ini" ' Commandline arguments To use.
-  ' MyProcess.StartInfo.WorkingDirectory = "C:\IMATGrid\" + StartUp("regionName") ' Folder For starting the process In.
+  ' MyProcess.StartInfo.WorkingDirectory = "C:\Grid\" + StartUp("regionName") ' Folder For starting the process In.
   ' MyProcess.StartInfo.CreateNoWindow = True ' Do Not open a window for the process.
   ' MyProcess.Start() ' Start Process using info Set above.
   'End If
@@ -622,6 +794,12 @@ Partial Class Administration_GridManager
    Else
     Session("SelField") = " Map"
    End If
+  ElseIf Order.Text.ToString() = "Port" Then
+   If Session("SelField") = " Port" Then                    ' Toggle Port Order
+    Session("SelField") = " Port Desc"
+   Else
+    Session("SelField") = " Port"
+   End If
   ElseIf Order.Text.ToString() = "Owner" Then              ' Toggle Transcript Next Lesson Order
    If Session("SelField") = " OwnerName" Then
     Session("SelField") = " OwnerName Desc"
@@ -649,6 +827,19 @@ Partial Class Administration_GridManager
    tOut = "<img src=""/Images/Icons/Online.png"" id=""" + UUID.ToString() + "STA"" alt=""Online"" /> "
   Else
    tOut = "<img src=""/Images/Icons/Closing.png"" id=""" + UUID.ToString() + "STA"" alt=""Closing"" /> "
+  End If
+  Return tOut.ToString()
+ End Function
+
+ ' Process send Message Icon
+ Public Function SetMsg(ByVal UUID As String, ByVal Status As Integer, tServer As String) As String
+  Dim tOut As String
+  If Status = 2 Then                                       ' Online: Allow Region Restart
+   tOut = "<img src=""/Images/Icons/MessageIcon.png"" id=""" + UUID.ToString() + "MSG"" alt=""Message"" " +
+          "onclick=""OpenMsg('" + UUID.ToString() + "','Enter message to send to region " + tServer.ToString() + ":');"" " +
+          "style=""cursor: pointer;"" />"
+  Else                                                     ' Disable function
+   tOut = ""
   End If
   Return tOut.ToString()
  End Function
@@ -685,5 +876,4 @@ Partial Class Administration_GridManager
   MyDB = Nothing
   SqlClient.SqlConnection.ClearAllPools()      ' Causes all pooled connection to be forced closed when finished, reducing pooled connection size.
  End Sub
-
 End Class

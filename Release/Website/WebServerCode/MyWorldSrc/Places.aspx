@@ -59,8 +59,8 @@
    $.namespace('$.my.maps.config');
    $.namespace('$.my.maps');
    $.my.maps.config = {
-    my_base_url: "http://www.MyWorld.com/",
-    tile_url: "http://www.MyWorld.com",
+    my_base_url: "http://<%=Request.ServerVariables("HTTP_HOST")%>/",
+    tile_url: "http://<%=Request.ServerVariables("HTTP_HOST")%>",
     default_title: "Welcome to My World",
     default_img: "/images/site/default-new.jpg",
     default_msg: "My World is a popular virtual world for education, entertainment and social interaction. <strong>If you have a virtual world viewer installed on your computer<strong>, sign up, teleport in and start exploring!",
@@ -87,7 +87,7 @@
                 {{#slurl}} \
                     <a class="HIGHLANDER_button_hot btn_large primary" title="visit this location" href="{{{slurl}}}">Visit this location</a> \
                 {{/slurl}} \
-                <a href="http://www.MyWorld.com/" target="_top" class="HIGHLANDER_button_hot btn_large secondary join_button">Join Now, it&rsquo;s free!</a> \
+                <a href="http://<%=Request.ServerVariables("HTTP_HOST")%>/" target="_top" class="HIGHLANDER_button_hot btn_large secondary join_button">Join Now, it&rsquo;s free!</a> \
             </div> \
         </div>',
     noexists_tmpl: ' \
@@ -96,7 +96,7 @@
                 <span class="error-close">Hide message</span> \
                 <span class="location-title">We are unable to locate the region "{{{region_name}}}"</span> \
                 <p>This region may no longer exist, but please double check your spelling and coordinates to make sure there aren&rsquo;t any errors and try again.</p> \
-                <p>If your problem persists, contact <a href="http://www.MyWorld.com/ContactUs.aspx">MyWorld Support</a></p> \
+                <p>If your problem persists, contact <a href="http://<%=Request.ServerVariables("HTTP_HOST")%>/ContactUs.aspx">MyWorld Support</a></p> \
             </div> \
         </div>'
    }
@@ -510,7 +510,7 @@
      }
 
      $mymap = myMap(document.getElementById('map-container'), options);
-     var firstJoinUrl = null; //'http://www.MyWorld.com/Register.aspx'; // To be supplied by serverside if wanted.  Or hardcode, but meh.
+     var firstJoinUrl = null; //'http://<%=Request.ServerVariables("HTTP_HOST")%>/Register.aspx'; // To be supplied by serverside if wanted.  Or hardcode, but meh.
 
      var zoomLevel = 6;
      if (zoomLookup.hasOwnProperty(options.tileSize)) {

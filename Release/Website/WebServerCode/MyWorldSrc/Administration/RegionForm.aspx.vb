@@ -5,13 +5,13 @@ Partial Class Administration_RegionForm
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -71,8 +71,8 @@ Partial Class Administration_RegionForm
 
    ' Define list of Region Types
    RegionTypes.Items.Add(New ListItem("Full", 1))
-   RegionTypes.Items.Add(New ListItem("Homestead", 3))
-   RegionTypes.Items.Add(New ListItem("Landscape", 2))
+   RegionTypes.Items.Add(New ListItem("Ocean / Strait", 2))
+   RegionTypes.Items.Add(New ListItem("Scenic", 3))
 
    ' Display data fields based on edit or add mode
    If KeyID.Value.ToString().Trim().Length > 0 Then                           ' Edit Mode, show database values
@@ -187,12 +187,12 @@ Partial Class Administration_RegionForm
    aMsg = aMsg.ToString() + "Missing Prim Maximum!\r\n"
   ElseIf Not IsNumeric(primMax.Text.ToString()) Then
    aMsg = aMsg.ToString() + "Prim Maximum must be an integer value!\r\n"
-  ElseIf RegionTypes.SelectedValue = 1 And CInt(primMax.Text) > 45000 Then
+  ElseIf RegionTypes.SelectedValue = 1 And CInt(primMax.Text) > 45000 Then ' Full region
    aMsg = aMsg.ToString() + "Prim Maximum may not be more than 45000!\r\n"
-  ElseIf RegionTypes.SelectedValue = 2 And CInt(primMax.Text) > 7500 Then
+  ElseIf RegionTypes.SelectedValue = 2 And CInt(primMax.Text) > 7500 Then  ' Ocean / Strait
    aMsg = aMsg.ToString() + "Prim Maximum may not be more than 7500!\r\n"
-  ElseIf RegionTypes.SelectedValue = 3 And CInt(primMax.Text) > 15000 Then
-   aMsg = aMsg.ToString() + "Prim Maximum may not be more than 15000!\r\n"
+  ElseIf RegionTypes.SelectedValue = 3 And CInt(primMax.Text) > 5000 Then  ' Scenic
+   aMsg = aMsg.ToString() + "Prim Maximum may not be more than 5000!\r\n"
   End If
   If LocationX.Text.ToString().Trim().Length = 0 Then
    aMsg = aMsg.ToString() + "Missing Location X!\r\n"

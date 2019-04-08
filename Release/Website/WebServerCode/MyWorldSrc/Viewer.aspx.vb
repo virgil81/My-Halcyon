@@ -4,13 +4,13 @@ Partial Class Viewer
  '*************************************************************************************************
  '* Open Source Project Notice:
  '* The "MyWorld" website is a community supported open source project intended for use with the 
- '* Halcyon Simulator project posted at https://github.com/inworldz and compatible derivatives of 
+ '* Halcyon Simulator project posted at https://github.com/HalcyonGrid and compatible derivatives of 
  '* that work. 
  '* Contributions to the MyWorld website project are to be original works contributed by the authors
  '* or other open source projects. Only the works that are directly contributed to this project are
  '* considered to be part of the project, included in it as community open source content. This does 
- '* not include separate projects or sources used and owned by the respective contibutors that may 
- '* contain simliar code used in their other works. Each contribution to the MyWorld project is to 
+ '* not include separate projects or sources used and owned by the respective contributors that may 
+ '* contain similar code used in their other works. Each contribution to the MyWorld project is to 
  '* include in a header like this what its sources and contributor are and any applicable exclusions 
  '* from this project. 
  '* The MyWorld website is released as public domain content is intended for Halcyon Simulator 
@@ -80,7 +80,8 @@ Partial Class Viewer
    ' Get Grid Stats for display
    Dim GetCount As MySql.Data.MySqlClient.MySqlDataReader
    SQLCmd = "Select Count(lastname) as Counted " +
-            "From users"
+            "From users " + 
+            "Where Length(PasswordHash)>31"
    If Trace.IsEnabled Then Trace.Warn("Viewer", "Get user count SQLCmd: " + SQLCmd.ToString())
    GetCount = MyDB.GetReader("MyData", SQLCmd)
    If GetCount.HasRows() Then
